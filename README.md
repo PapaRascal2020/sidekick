@@ -1,5 +1,5 @@
 > [!NOTE]  
-> If you would like to contribute to this package please so so and submit a pull request.
+> If you would like to contribute to this package please do so and submit a pull request.
 > Any issues contact me at sidekick@ashleyjohnson.co.uk
 
 ![image](sidekick.png)
@@ -36,6 +36,18 @@ Examples of the syntax are at the bottom of this readme.
 
 ### Installation
 
+#### Released Version
+
+Add the following to the `require` section.
+
+```array
+    "paparascaldev/sidekick": "^0.1.0"
+```
+
+Save `composer.json`
+
+#### Development Version (for testing)
+
 In your Laravel app do the following:
 
 In `composer.json` add the following repository to the `repositories` section:
@@ -56,16 +68,18 @@ Then add the following to the `require` section.
 
 Save `composer.json`
 
-Then, open `bootstrap/providers.php` and add the following:
+===========================================================
 
-```php
-\PapaRascalDev\Sidekick\SidekickServiceProvider::class,
-```
-
-Once this is done, open the terminal and type the following:
+Then after you have selected an installation method from above, open the terminal and type the following:
 
 ```bash
  composer update
+```
+
+Once this is done, open `bootstrap/providers.php` and add the following:
+
+```php
+\PapaRascalDev\Sidekick\SidekickServiceProvider::class,
 ```
 
 That's it! You are now ready to use the package.
