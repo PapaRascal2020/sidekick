@@ -17,10 +17,7 @@ class Mistral implements Driver
      */
     public function converse(): Completion
     {
-        return new Completion(
-            url: $this->config['baseUrl'].$this->config['services']['completion'],
-            headers: $this->config['headers']
-        );
+        return $this->complete();
     }
 
     /**

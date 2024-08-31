@@ -18,12 +18,7 @@ class Claude implements Driver
      */
     public function converse(): Completion
     {
-        return new Completion(
-            url: $this->config['baseUrl'].$this->config['services']['completion'],
-            headers: $this->config['headers'],
-            inlinePrompt: false,
-            submitTypes: true
-        );
+        return $this->complete();
     }
 
     /**
