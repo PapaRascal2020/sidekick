@@ -1,0 +1,18 @@
+{
+    "name": "paparascaldev/sidekick",
+    "description": "Laravel's AI sidekick, work with various AI services with a uniformed syntax",
+    "type": "laravel-plugin",
+    "license": "GPL-2.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "PapaRascalDev\\Sidekick\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ashley Johnson"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require": {}
+}
