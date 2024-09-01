@@ -18,8 +18,8 @@ class Completion
 
     public function sendMessage(
         string $model,
-        string $systemPrompt,
-        array $messages,
+        string $systemPrompt = "",
+        array $messages = [],
         int $maxTokens = 1024
     ): array
     {

@@ -9,4 +9,5 @@ class ConversationMessage extends Model
 {
     use HasUuids;
     protected $guarded = ['id'];
+    protected $table   = 'sidekick_conversation_messages';
 }

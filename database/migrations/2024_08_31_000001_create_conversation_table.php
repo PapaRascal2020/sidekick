@@ -21,11 +21,18 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('class');
             $table->string('model');
+            $table->string('system_prompt')->nullable();
+            $table->bigInteger('max_tokens');
             $table->timestamps();
         });
 
         Schema::create('sidekick_conversation_messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
+            $table->foreignUuid('conversation_id')
+                ->references('id')
+                ->on('sidekick_conversations')
+                ->constrained()
+                ->onDelete('cascade');
             $table->string('role');
             $table->longtext('content');
             $table->timestamps();

@@ -16,14 +16,6 @@ class Claude implements Driver
     /**
      * @return Completion
      */
-    public function converse(): Completion
-    {
-        return $this->complete();
-    }
-
-    /**
-     * @return Completion
-     */
     public function complete(): Completion
     {
         return new Completion(
@@ -32,5 +24,10 @@ class Claude implements Driver
             inlinePrompt: false,
             submitTypes: true
         );
+    }
+
+    public function uniformedResponse($response)
+    {
+        return $response['content'][0]['text'];
     }
 }

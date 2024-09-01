@@ -15,14 +15,6 @@ class Mistral implements Driver
     /**
      * @return Completion
      */
-    public function converse(): Completion
-    {
-        return $this->complete();
-    }
-
-    /**
-     * @return Completion
-     */
     public function complete(): Completion
     {
         return new Completion(
@@ -40,5 +32,10 @@ class Mistral implements Driver
             url: $this->config['baseUrl'].$this->config['services']['embedding'],
             headers: $this->config['headers']
         );
+    }
+
+    public function uniformedResponse($response)
+    {
+        return $response['choices'][0]['message']['content'];
     }
 }

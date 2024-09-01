@@ -42,10 +42,6 @@ class OpenAi implements Driver
             headers: $this->config['headers']
         );
     }
-    public function converse(): Completion
-    {
-        return $this->complete();
-    }
 
     public function embedding(): Embedding
     {
@@ -61,5 +57,10 @@ class OpenAi implements Driver
             url: $this->config['baseUrl'].$this->config['services']['moderate'],
             headers: $this->config['headers']
         );
+    }
+
+    public function uniformedResponse($response)
+    {
+        return $response['choices'][0]['message']['content'];
     }
 }

@@ -4,5 +4,5 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 interface Driver
 {
-    public function converse();
+    public function complete();
 }

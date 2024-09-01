@@ -11,6 +11,7 @@ class Conversation extends Model
     use HasUuids;
 
     protected $guarded = ['id'];
+    protected $table = 'sidekick_conversations';
 
     public function messages(): HasMany
     {
