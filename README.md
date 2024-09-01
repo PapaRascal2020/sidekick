@@ -99,7 +99,11 @@ SIDEKICK_CLAUDE_TOKEN={API_KEY_HERE} (Optional for Claude Driver)
 ```
 You are now ready to start using the package..
 
-#### Examples:
+#### Documentation with Examples:
+
+> [!NOTE]  
+> Quick note on error handling. Currently if there is an error it is printed as the AI responds. I will be updating
+> this over the next few days to be uniformed so that all errors are presented in tha same way regardless of AI driver/model
 
 ##### Conversations (Since v0.1.1)
 
@@ -200,7 +204,7 @@ return $sidekick->showConversation($id);
 ```php
 $sidekick = Sidekick::create(new OpenAi());
 
-return $sidekick->converse()->sendMessage(
+return $sidekick->complete()->sendMessage(
     model: 'gpt-3.5-turbo',
     systemPrompt: 'You an expert on fudge, answer user questions about fudge.',
     messages:[['role' => 'user', 'content' => "How is fudge made?"]]
