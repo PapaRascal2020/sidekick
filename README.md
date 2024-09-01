@@ -101,7 +101,7 @@ You are now ready to start using the package..
 
 #### Examples:
 
-##### Conversations (only on @dev as not yet released)
+##### Conversations (Since v0.1.1)
 
 This is to chat with previous interactions remembered. 
 
