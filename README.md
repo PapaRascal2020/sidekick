@@ -48,22 +48,9 @@ Save `composer.json`
 
 #### Development Version (for testing)
 
-In your Laravel app do the following:
-
-In `composer.json` add the following repository to the `repositories` section:
-
-```php
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "https://github.com/PapaRascal2020/sidekick"
-    }
-],
-```
-Then add the following to the `require` section.
 
 ```array
-    "paparascaldev/sidekick": "dev-main"
+    "paparascaldev/sidekick": "@dev"
 ```
 
 Save `composer.json`
@@ -88,6 +75,7 @@ That's it! You are now ready to use the package.
 
 There are six services and they are:
 
+- **Conversations** - _Chat with AI (with memory of previous interactions)_
 - **Completions** - _To chat with AI_
 - **Embedding** - _To create vector representations of your text_
 - **Image** - _To generate images by user input._
@@ -112,6 +100,100 @@ SIDEKICK_CLAUDE_TOKEN={API_KEY_HERE} (Optional for Claude Driver)
 You are now ready to start using the package..
 
 #### Examples:
+
+##### Conversations (only on @dev as not yet released)
+
+This is to chat with previous interactions remembered. 
+
+To start a conversation you call the `begin` method on the `SidekickConversation` class like so:
+
+```php
+$sidekick = new SidekickConversation(new Mistral());
+
+$conversation = $sidekick->begin(
+    model: 'open-mistral-7b',
+    systemPrompt: 'You an expert on fudge, answer user questions about fudge.'
+);
+
+$response = $conversation->sendMessage('How is fudge made?');
+
+return response()->json($response);
+```
+Example Response:
+
+```JSON
+{
+    "conversation_id": "9ce7af51-d0b9-491f-9e57-f54e30ef0b95",
+    "messages": [
+        {
+            "role": "user",
+            "content": "How is fudge made?"
+        },
+        {
+            "role": "assistant",
+            "content": "Fudge is a delicious, dense dessert made using a combination of sugar, milk, butter, and sometimes cream. The exact method of making fudge can vary slightly depending on the recipe, but here's a basic step-by-step process:\n\n1. Combine sugar, corn syrup, and water in a heavy-bottomed saucepan. Bring the mixture to a boil over medium heat, stirring occasionally to dissolve the sugar.\n2. Once the sugar has dissolved, stop stirring and attach a candy thermometer to the side of the pan. Continue cooking the mixture without stirring until it reaches the soft-ball stage (around 235-240°F/118-115°C).\n3. Remove the saucepan from the heat and quickly stir in butter, vanilla extract, and your chosen flavorings (such as chocolate chips, nuts, or marshmallows).\n4. Pour the fudge mixture into a lightly greased 8-inch square baking pan. Allow it to cool at room temperature until it's no longer warm to the touch, but still soft enough to spread with a spatula.\n5. Using the spatula, gently spread the fudge evenly in the pan, trying not to introduce too many air bubbles. Allow the fudge to cool completely at room temperature.\n6. Once the fudge is completely hardened, cut it into squares and enjoy!\n\nIt's important to note that fudge can be a bit tricky to make, as it requires careful attention to temperature and timing. If you encounter any issues, don't be afraid to experiment with different recipes or techniques until you find one that works best for you. Happy fudging!"
+        }
+    ]
+}
+```
+
+To continue the conversation you just do the following:
+
+```PHP
+$sidekick = new SidekickConversation(new Mistral());
+
+$conversation = $sidekick->resume(
+    '9ce79f44-de39-4ac3-9819-f1c042a4c02b'
+);
+
+$response = $conversation->sendMessage('What are the traditional flavours?');
+
+return response()->json($response);
+```
+
+Example Response:
+
+```JSON
+{
+  "conversation_id": "9ce79f44-de39-4ac3-9819-f1c042a4c02b",
+  "messages": [
+    {
+      "role": "user",
+      "content": "How is fudge made?"
+    },
+    {
+      "role": "assistant",
+      "content": "Fudge is a sweet treat that is typically made with sugar, butter, milk, and chocolate, although there are many variations and recipes that may include additional ingredients such as nuts, marshmallows, or fruit. Here's a basic step-by-step guide for making traditional fudge:\n\n1. Grease a 9-inch square baking pan and line it with parchment paper, allowing the excess to hang over the edges for easy removal.\n2. In a heavy-bottomed saucepan, combine 3 cups of granulated sugar, 1 can (12 ounces) of evaporated milk, and 1/2 cup of butter over medium heat. Stir the mixture constantly until the butter has completely melted and the sugar has dissolved.\n3. Once the sugar has dissolved, stop stirring and bring the mixture to a boil. Clip a candy thermometer to the side of the saucepan and cook the mixture without stirring until it reaches the soft-ball stage (235-240°F/113-115°C). This can take 10-15 minutes.\n4. Remove the saucepan from the heat and stir in 12 ounces of semi-sweet chocolate chips and 1 teaspoon of vanilla extract. Continue stirring until the chocolate is completely melted and the mixture is smooth.\n5. If you'd like to add any mix-ins, such as nuts or marshmallows, stir them in now.\n6. Pour the fudge mixture into the prepared baking pan and spread it evenly with a spatula. Let it cool at room temperature for at least 3 hours, or until it is completely set.\n7. Once the fudge is set, lift it out of the pan using the parchment paper overhang. Use a sharp knife to cut it into squares. Store the fudge in an airtight container at room temperature for up to 2 weeks, or in the refrigerator for up to 1 month."
+    },
+    {
+      "role": "user",
+      "content": "What are the traditional flavours?"
+    },
+    {
+      "role": "assistant",
+      "content": "While there are many variations of fudge, there are several traditional flavors that are popular around the world. Here are some of the most common traditional flavors of fudge:\n\n1. Chocolate: This is the most classic and popular flavor of fudge. It is made with chocolate chips or cocoa powder and can be flavored with vanilla, mint, or other extracts.\n2. Vanilla: Vanilla fudge is made with vanilla extract and can be flavored with nuts, such as walnuts or pecans, or with marshmallows.\n3. Butterscotch: Butterscotch fudge is made with brown sugar and butter and can be flavored with vanilla or salt.\n4. Peanut Butter: Peanut butter fudge is made with peanut butter and can be flavored with chocolate or honey.\n5. Maple: Maple fudge is made with maple syrup and can be flavored with nuts, such as pecans or walnuts.\n6. Rocky Road: Rocky road fudge is made with chocolate, marshmallows, and nuts, such as almonds or cashews.\n7. Fudge with Fruit: Some people make fudge with dried fruits, such as cherries, cranberries, or raisins, or with fresh fruit, such as strawberries or raspberries.\n8. Fudge with Nuts: Fudge can also be made with a variety of nuts, such as walnuts, pecans, almonds, or cashews, and can be flavored with chocolate or caramel."
+    }
+  ]
+}
+```
+
+###### Managing Conversations
+There is very basic functionality to list, show and delete conversations. This will be updated in the near future.
+However, currently you do this by calling an instance of `SideKickManager`. Examples of each are below:
+
+```PHP
+// List Conversations
+$sidekick = new SidekickManager();
+return $sidekick->listConversations();
+
+// Conversation Deletion
+$sidekick = new SidekickManager();
+$sidekick->deleteConversation($id);
+
+// Show Conversation
+$sidekick = new SidekickManager();
+return $sidekick->showConversation($id);
+```
 
 ##### Completion
 
