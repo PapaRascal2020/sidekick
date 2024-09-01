@@ -31,6 +31,18 @@ class Claude implements Driver
         return $response['content'][0]['text'];
     }
 
+    public function uniformedErrorResponse($response)
+    {
+        return [
+            'driver' => 'Claude',
+            'error' => [
+                'type' => $response['type'],
+                'code' => $response['error']['type'],
+                'message' => $response['error']['message']
+            ]
+        ];
+    }
+
     public function validate($response): bool
     {
         return !($response['type'] == "error");

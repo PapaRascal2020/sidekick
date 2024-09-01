@@ -50,8 +50,8 @@ class SidekickConversation
             messages: $allMessages,
             maxTokens: $this->conversation->max_tokens);
 
-        if(!$this->validResponse($response)) {
-            throw new \Exception(json_encode($response));
+        if(!$this->sidekick->validate($response)) {
+            return $this->sidekick->uniformedErrorResponse($response);
         }
 
         $this->conversation->messages()->create($newMessage);
@@ -67,11 +67,6 @@ class SidekickConversation
             'conversation_id' => $this->conversation->id,
             'messages' => $this->conversation->messages()->get(['role', 'content'])->toArray()
         ];
-    }
-
-    private function validResponse($response): bool
-    {
-        return $this->sidekick->validate($response);
     }
 
 }

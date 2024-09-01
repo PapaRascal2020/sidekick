@@ -39,6 +39,18 @@ class Mistral implements Driver
         return $response['choices'][0]['message']['content'];
     }
 
+    public function uniformedErrorResponse($response)
+    {
+        return [
+            'driver' => 'Mistral',
+            'error' => [
+                'type' => $response['type'],
+                'code' => $response['code'],
+                'message' => $response['message']
+            ]
+        ];
+    }
+
     public function validate($response): bool
     {
         return !($response['object'] == "error");
