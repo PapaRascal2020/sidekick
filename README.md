@@ -11,8 +11,8 @@ Say hello to Sidekick! A Laravel plugin that provides a common syntax for using 
 ![Stability](https://img.shields.io/badge/Stability-beta-yellow)
 
 ### Upcoming Features
+If there are any features you would like to see then contact me on the email provided at the top of the readme.
 
-- Implementation of a database migration and model to store and persist conversations
 - Support for more models and/or add another Driver from another service.
 
 ### About
