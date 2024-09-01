@@ -44,13 +44,17 @@ class SidekickConversation
             $newMessage
         ];
 
-        $this->conversation->messages()->create($newMessage);
-
         $response = $this->sidekick->complete()->sendMessage(
             model: $this->conversation->model,
             systemPrompt: $this->conversation->system_prompt,
             messages: $allMessages,
             maxTokens: $this->conversation->max_tokens);
+
+        if(!$this->validResponse($response)) {
+            throw new \Exception(json_encode($response));
+        }
+
+        $this->conversation->messages()->create($newMessage);
 
         $chatResponse = [
             'role' => 'assistant',
@@ -63,6 +67,11 @@ class SidekickConversation
             'conversation_id' => $this->conversation->id,
             'messages' => $this->conversation->messages()->get(['role', 'content'])->toArray()
         ];
+    }
+
+    private function validResponse($response): bool
+    {
+        return $this->sidekick->validate($response);
     }
 
 }

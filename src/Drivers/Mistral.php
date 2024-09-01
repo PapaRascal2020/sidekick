@@ -38,4 +38,9 @@ class Mistral implements Driver
     {
         return $response['choices'][0]['message']['content'];
     }
+
+    public function validate($response): bool
+    {
+        return !($response['object'] == "error");
+    }
 }

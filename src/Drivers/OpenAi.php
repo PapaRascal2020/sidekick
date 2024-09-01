@@ -63,4 +63,9 @@ class OpenAi implements Driver
     {
         return $response['choices'][0]['message']['content'];
     }
+
+    public function validate($response): bool
+    {
+        return !isset($response['error']);
+    }
 }

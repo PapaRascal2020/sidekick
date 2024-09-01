@@ -30,4 +30,9 @@ class Claude implements Driver
     {
         return $response['content'][0]['text'];
     }
+
+    public function validate($response): bool
+    {
+        return !($response['type'] == "error");
+    }
 }
