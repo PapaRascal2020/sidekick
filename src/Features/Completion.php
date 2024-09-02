@@ -3,7 +3,6 @@
 namespace PapaRascalDev\Sidekick\Features;
 
 use Illuminate\Support\Facades\Http;
-use phpDocumentor\Reflection\Types\Boolean;
 
 class Completion
 {
