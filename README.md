@@ -41,7 +41,7 @@ Examples of the syntax are at the bottom of this readme.
 Add the following to the `require` section.
 
 ```array
-    "paparascaldev/sidekick": "^0.1.0"
+    "paparascaldev/sidekick": "^0.1.2"
 ```
 
 Save `composer.json`
