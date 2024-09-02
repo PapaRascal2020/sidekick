@@ -1,132 +1,106 @@
-> [!NOTE]  
-> If you would like to contribute to this package please do so and submit a pull request.
-> Any issues contact me at sidekick@ashleyjohnson.co.uk
 
-![image](sidekick.png)
-
-## Sidekick for Laravel
+<table style="border: none;">
+<tr style="border: none;">
+<td width="120" style="border: none;">
+<img alt="image" height="100" src="sidekick.png" width="100"/>
+</td>
+<td valign="top" style="border: none;">
+<h2> Sidekick for Laravel</h2>
 Say hello to Sidekick! A Laravel plugin that provides a common syntax for using Claude, Mistral and OpenAi APIs.
+</td>
+</tr>
+<tr style="border: none;">
+<td colspan="2" style="border: none;">
+    <img alt="Laravel Plugin" src="https://img.shields.io/badge/Type-Laravel%20Package-red"/>
+    <img alt="Latest Version" src="https://img.shields.io/badge/Version-0.1.2-blue"/>
+    <img alt="Stability" src="https://img.shields.io/badge/Stability-beta-yellow"/>
+    <img alt="Status" src="https://img.shields.io/badge/Project%20Status-Active-green"/>
+</td>
+</tr>
+</table>
 
-![Latest Version](https://img.shields.io/badge/Version-0.1.2-blue)
-![Stability](https://img.shields.io/badge/Stability-beta-yellow)
+### Description
+This project provides a unified wrapper around the OpenAI, Claude, and Mistral APIs for Laravel. The goal is to simplify switching between different AI models and APIs, making it as seamless as possible.
 
-### Upcoming Features
-If there are any features you would like to see then contact me on the email provided at the top of the readme.
-
-- Support for more models and/or add another Driver from another service.
-
-### About
-Provides a uniformed wrapper around OpenAi, Claude & Mistral APIs (Previously: EloquentAi).
-The aim of this project is to create a package where switching between
-AIs and there models as simple as possible.
-
-This will be achieved by created a common syntax for calling different services
-(Completions, Text To Speech, Speech To Text, Text To Image) in a way that is similar to eloquent.
-
-**AI Models Tested:**
-
-#### Open Ai
-gpt-3.5-turbo, gpt-4, tts-1, tts-1-hd, dall-e-2, dall-e-3, whisper-1, text-embedding-3-small, text-embedding-3-large, text-embedding-ada-002, text-moderation-latest, text-moderation-stable, text-moderation-007
-#### Mistral AI
-mistral-small-latest, mistral-medium-latest, mistral-large-latest, open-mistral-7b, mistral-embed
-#### Claude AI
-claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307
-
-Examples of the syntax are at the bottom of this readme.
-
-### Installation
-
-#### Released Version
-
-Add the following to the `require` section.
-
-```array
-    "paparascaldev/sidekick": "^0.1.2"
-```
-
-Save `composer.json`
-
-#### Development Version (for testing)
-
-
-```array
-    "paparascaldev/sidekick": "@dev"
-```
-
-Save `composer.json`
-
-===========================================================
-
-Then after you have selected an installation method from above, open the terminal and type the following:
-
+### Installation Guide
+The easiest way to install the package in your laravel app is to run the following command from within your projects directory:
 ```bash
- composer update
+    composer require paparascaldev/sidekick
 ```
 
-Once this is done, open `bootstrap/providers.php` and add the following:
+#### Other Methods
+If you would like to install a specific version you can manually update your `composer.json` file under `require` section like so:
+```json
+    "paparascaldev/sidekick": "^0.1.1"
+```
+_You can also use `@dev` tag._
 
-```php
-\PapaRascalDev\Sidekick\SidekickServiceProvider::class,
+After you have updated the file run:
+```bash
+    composer upadte
 ```
 
-That's it! You are now ready to use the package.
+### Configuring the `.env`
+Once Sidekick is installed you need to update your `.env` file with your access tokens.
 
-### Getting Started
-
-There are six services and they are:
-
-- **Conversations** - _Chat with AI (with memory of previous interactions)_
-- **Completions** - _To chat with AI_
-- **Embedding** - _To create vector representations of your text_
-- **Image** - _To generate images by user input._
-- **Audio** - _Take text and convert to audio_
-- **Transcription** - _Take an audio file and return text_
-- **Moderation** - _Moderate a string of text (i.e Comment) for harmful content_
-
-Currently, Open AI offers all of them where as Claude AI & Mistral AI are for some.
-To get the best out of this plugin you will need at least an Open AI api key, you 
-can get this by going to https://platform.openai.com and registering an account.
-
-For Mistral AI (https://console.mistral.ai/) & Claude AI (https://console.anthropic.com/)
-models you would need to get sign up on the relevant sites (above)
-
-Start by updating your `.env` file with the following fields.
+You only need to specify the token for the provider(s) you will use. 
 
 ```dotenv
-SIDEKICK_OPENAI_TOKEN={API_KEY_HERE} (Required)
-SIDEKICK_MISTRAL_TOKEN={API_KEY_HERE} (Optional for Mistral Driver)
-SIDEKICK_CLAUDE_TOKEN={API_KEY_HERE} (Optional for Claude Driver)
+SIDEKICK_OPENAI_TOKEN={API_KEY_HERE} (Recommended)
+SIDEKICK_MISTRAL_TOKEN={API_KEY_HERE} (Optional)
+SIDEKICK_CLAUDE_TOKEN={API_KEY_HERE} (Optional)
 ```
-You are now ready to start using the package..
 
-#### Documentation with Examples:
+### Running Migrations
+Run your migrations using the command below:
 
-To see how it works I have created some routes `/sidekick/playground` so you can see the routes in action. 
-In order to use them you need to set `SIDEKICK_OPENAI_TOKEN` inside the `.env` and migrated the databases.
+```bash
+    php artisan migrate
+```
 
-> [!NOTE]  
-> Quick note on error handling. Currently if there is an error it is printed as the AI responds. I will be updating
-> this over the next few days to be uniformed so that all errors are presented in tha same way regardless of AI driver/model
+### The Sidekick Playground
 
-##### Conversations (Since v0.1.1)
+After the `.env` is updated you can start testing the plugin. I have added some routes with example calls for you to try out or learn from. 
 
-This is to chat with previous interactions remembered. 
+You can also publish these to your `routes` and `views` directory to directly modify with the following commands:
 
-To start a conversation you call the `begin` method on the `SidekickConversation` class like so:
+```
+    php artisan vendor:publish --tag=views
+    php artisan vendor:publish --tag=routes
+```
+
+To access the playground head to: 
+
+```
+/sidekick/playground
+```
+
+### Documentation
+
+For the documentation we will be using the OpenAi model as it supports all endpoints, where Claude and Mistral are supported you can just hot-swap OpenAi when initialising the `Sidekick/SidekickConversation` class.
+
+#### Sidekick Conversations
+
+This allows you to create a chatbot that remembers previos interactions.
+
+To start a new conversation:
 
 ```php
-$sidekick = new SidekickConversation(new Mistral());
+$sidekick = new SidekickConversation(new OpenAi());
 
 $conversation = $sidekick->begin(
-    model: 'open-mistral-7b',
-    systemPrompt: 'You an expert on fudge, answer user questions about fudge.'
+    model: 'gtp-3.5-turbo',
+    systemPrompt: 'You can instruct the chatbot using this parameter'
 );
 
-$response = $conversation->sendMessage('How is fudge made?');
+$response = $conversation->sendMessage($user_input);
 
 return response()->json($response);
 ```
-Example Response:
+
+This will create a new conversation in the `Database` and make the call to the AI for a response.
+
+An example of the formatted response can be found below:
 
 ```JSON
 {
@@ -144,21 +118,21 @@ Example Response:
 }
 ```
 
-To continue the conversation you just do the following:
+Once you have this response, to continue the conversation you can write the following in your controller making sure to pass the `conversation_id` in the request:
 
 ```PHP
-$sidekick = new SidekickConversation(new Mistral());
+$sidekick = new SidekickConversation(new OpenAi());
 
 $conversation = $sidekick->resume(
-    '9ce79f44-de39-4ac3-9819-f1c042a4c02b'
+    $conversation_id
 );
 
-$response = $conversation->sendMessage('What are the traditional flavours?');
+$response = $conversation->sendMessage($user_input);
 
 return response()->json($response);
 ```
 
-Example Response:
+An example of the formatted response can be found below:
 
 ```JSON
 {
@@ -184,7 +158,7 @@ Example Response:
 }
 ```
 
-###### Managing Conversations
+#### Managing Sidekick Conversations
 There is very basic functionality to list, show and delete conversations. This will be updated in the near future.
 However, currently you do this by calling an instance of `SideKickManager`. Examples of each are below:
 
@@ -202,7 +176,7 @@ $sidekick = new SidekickManager();
 return $sidekick->showConversation($id);
 ```
 
-##### Completion
+#### Completion
 
 ```php
 $sidekick = Sidekick::create(new OpenAi());
@@ -214,10 +188,10 @@ return $sidekick->complete()->sendMessage(
 );
 ```
 
-##### Embedding
+#### Embedding
 
 ```php
-$sidekick = Sidekick::create(new Mistral());
+$sidekick = Sidekick::create(new OpenAi());
 
 return $sidekick->embedding()->make(
     'mistral-embed',
@@ -225,7 +199,7 @@ return $sidekick->embedding()->make(
 );
 ```
 
-##### Image (Image From Text)
+#### Image (Image From Text)
 
 ```php
  $sidekick = Sidekick::create(new OpenAi());
@@ -241,7 +215,7 @@ $image =  $sidekick->image()->make(
 // In a real world situation you may save it and then render out.
 return "<img src='{$image['data'][0]['url']}' />";
 ```
-##### Audio (Text To Speech)
+#### Audio (Text To Speech)
 
 ```php
 $sidekick = Sidekick::create(new OpenAi());
@@ -258,7 +232,7 @@ header('Content-Type: audio/mpeg');
 echo $audio
 ```
 
-##### Transcription (Speech To Text)
+#### Transcription (Speech To Text)
 
 ```php
 $sidekick = Sidekick::create(new OpenAi());
@@ -268,14 +242,14 @@ return $sidekick->transcribe()->audioFile(
     'http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3'
 );
 ```
-###### Example Response
+#### Example Response
 ```json
 {
   "text":"The stale smell of old beer lingers. It takes heat to bring out the odor. A cold dip restores health and zest. A salt pickle tastes fine with ham. Tacos al pastor are my favorite. A zestful food is the hot cross bun."
 }
 ```
 
-##### Moderation 
+#### Moderation 
 This is a service where you feed it text from a comment for example and it will return 
 with an array of boolean values for certain moderation points.
 
@@ -287,7 +261,7 @@ return $sidekick->moderate()->text(
     'Have a great day.',
 );
 ```
-###### Example Response
+#### Example Response
 
 ```json
 {
@@ -326,3 +300,27 @@ return $sidekick->moderate()->text(
   ]}
 ```
 
+
+> [!NOTE]  
+> Quick note on error handling. Currently if there is an error it is printed as the AI responds. I will be updating
+> this over the next few days to be uniformed so that all errors are presented in tha same way regardless of AI driver/model
+
+### Ways to Contribute
+
+I want this composer package for Laravel to be as useful as possible, so with that in mind here are the ways you can contribute:
+
+- Submitting a Pull Request (if your a dev and want to help with this project)
+- Raise issues to Github 
+- Submit ideas/feedback to sidekick@ashleyjohnson.co.uk
+- Star this repository (if you feel inclined)
+
+### Testing Information
+
+I have tested the package using the following models:
+
+#### Open Ai
+```gpt-3.5-turbo, gpt-4, tts-1, tts-1-hd, dall-e-2, dall-e-3, whisper-1, text-embedding-3-small, text-embedding-3-large, text-embedding-ada-002, text-moderation-latest, text-moderation-stable, text-moderation-007```
+#### Mistral AI
+```mistral-small-latest, mistral-medium-latest, mistral-large-latest, open-mistral-7b, mistral-embed```
+#### Claude AI
+```claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307```
