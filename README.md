@@ -10,7 +10,7 @@ Say hello to Sidekick! A Laravel plugin that provides a common syntax for using 
 </td>
 </tr>
 <tr style="border: none;">
-<td colspan="2" style="border: none;" align="center">
+<td colspan="2" style="border: none;">
     <a href="https://laravel.com"><img alt="Laravel Plugin" src="https://img.shields.io/badge/Laravel%20Plugin-red?logo=laravel&logoColor=white"/></a>&nbsp;&nbsp;&nbsp;
     <img alt="Status" src="https://img.shields.io/badge/Project%20Status-Active-green"/> &nbsp;&nbsp;&nbsp;
     <img alt="Latest Version" src="https://img.shields.io/packagist/v/paparascaldev/sidekick?label=Latest%20Release"/> &nbsp;&nbsp;
