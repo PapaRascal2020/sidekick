@@ -7,7 +7,7 @@
 ## Sidekick for Laravel
 Say hello to Sidekick! A Laravel plugin that provides a common syntax for using Claude, Mistral and OpenAi APIs.
 
-![Latest Version](https://img.shields.io/badge/Version-0.1.1-blue)
+![Latest Version](https://img.shields.io/badge/Version-0.1.2-blue)
 ![Stability](https://img.shields.io/badge/Stability-beta-yellow)
 
 ### Upcoming Features
