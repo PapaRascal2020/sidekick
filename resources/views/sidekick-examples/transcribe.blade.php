@@ -1,25 +1,43 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sidekick Transcribe Example</title>
-</head>
-<body style="padding: 40px; text-align: center; background: #000; color: #fff; font-family: arial, sans-serif;">
-<a href="/sidekick/playground" style="border: 0;">
-    <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0e3449a7-44de-4ce2-b384-cea763c0901e_500x500.heic" alt="Sidekick Robot" width="100" />
-</a>
-<h1>Transcribe Example</h1>
-<form method="POST" action="/sidekick/playground/transcribe">
-    @csrf
-    <p>Fot this I am using a url to a sample audio file. An example is already in the box below</p>
-    <input style="width: 300px; height:50px;" value="http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3" name="audio" required></input>
-    <br>
-    <input style="width: 300px; height: 50px;" type="submit" value="Convert Audio to Text" />
-</form>
+@extends('sidekick::sidekick-shared.layout')
 
-@if(isset($response))
-    <h3>Response</h3>
-    <p>{!! json_encode($response) !!}</p>
-@endif
-</body>
-</html>
+@section('title')
+    Transcription Generation Sample
+@endsection
+
+@section('content')
+
+    <!-- Chat Messages Area -->
+    <div class="bg-slate-700 flex-1 p-6 overflow-y-auto">
+        <div class="space-y-4">
+            <div class="flex items-start justify-center">
+                <div class="text-gray-300 w-3/4 text-center">
+                    <p class="font-bold text-3xl mb-20">&#129302; Transcription Generation Sample</p>
+                    <p>Enter a URL to an audio file and click <b class="font-bold">convert</b> to generate the transcription (audio to text).
+                        For convenience, Sidekick has added an example URL in case you don't know where to find one.</p>
+                </div>
+            </div>
+
+            <div class="flex items-start justify-center">
+                @if(isset($response))
+                    <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4">
+                        <p class="text-gray-800 font-bold">Response</p>
+                        <p class="text-gray-800">{!! json_encode($response) !!}</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <footer class="bg-slate-900 p-4">
+        <form method="POST" action="/sidekick/playground/transcribe">
+            <div class="flex">
+                @csrf
+                <input type="text" name="audio" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="" value="http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3">
+                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">Convert</button>
+            </div>
+        </form>
+    </footer>
+
+@endsection
 

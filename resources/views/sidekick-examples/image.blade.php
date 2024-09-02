@@ -1,22 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sidekick Image Example</title>
-</head>
-<body style="padding: 40px; text-align: center; background: #000; color: #fff; font-family: arial, sans-serif;">
-<a href="/sidekick/playground" style="border: 0;">
-    <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0e3449a7-44de-4ce2-b384-cea763c0901e_500x500.heic" alt="Sidekick Robot" width="100" />
-</a>
-<h1>Image Generation Example</h1>
-<form method="POST" action="/sidekick/playground/image">
-    @csrf
-    <textarea style="width: 300px; height: 100px;" placeholder="Type the text you want to convert to an image..." name="text_to_convert" required></textarea>
-    <br>
-    <input style="width: 300px; height: 50px;" type="submit" value="Convert to Image" />
-</form>
+@extends('sidekick::sidekick-shared.layout')
 
-@if(isset($image))
-    <img style="padding-top: 20px;" src="{!! $image !!}" alt="generated image" height="150" />
-@endif
-</body>
-</html>
+@section('title')
+    Image Generation Sample
+@endsection
+
+@section('content')
+
+    <!-- Chat Messages Area -->
+    <div class="bg-slate-700 flex-1 p-6 overflow-y-auto">
+        <div class="space-y-4">
+            <div class="flex items-start justify-center">
+                <div class="text-gray-300 w-3/4 text-center">
+                    <p class="font-bold text-3xl mb-20">&#129302; Image Generation Sample</p>
+                    <p>Describe the image you want in the text box below and click <b class="font-bold">convert</b> to generate an image.</p>
+                    @if(isset($image))
+                        <img src="{!! $image !!}" alt="generated image" class="w-full pt-20"/>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <footer class="bg-slate-900 p-4">
+        <form method="POST" action="/sidekick/playground/image">
+            <div class="flex">
+                @csrf
+                <input type="text" name="text_to_convert" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type your message...">
+                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">Convert</button>
+            </div>
+        </form>
+    </footer>
+
+@endsection

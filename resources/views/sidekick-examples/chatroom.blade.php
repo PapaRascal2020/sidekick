@@ -1,73 +1,58 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sidekick Chatroom</title>
-    <style type="text/css">
-        .chatWindow {
-            border: 1px solid #fff;
-            height: 600px;
-            width: 500px;
-            overflow-y: scroll;
-            text-align: left;
-            margin: auto;
-            margin-bottom: 20px;
-        }
+@extends('sidekick::sidekick-shared.layout')
 
-        .chatWindow .user {
-            padding: 10px;
-            background: #000;
-        }
+@section('title')
+    Talk to Sidekick! - Chat
+@endsection
 
-        .chatWindow .assistant {
-            padding: 10px;
-            background: #222;
-        }
+@section('content')
+    <!-- Header -->
+    <header class="bg-slate-900 shadow p-4 flex justify-between items-center">
+        <h1 class="text-xl text-white font-semibold text-gray-900">Conversation (id: {{$response['conversation_id']}})</h1>
+        <a href="/sidekick/playground/chat" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">New Chat</a>
+    </header>
 
-        .chatWindow .assistant h5 {
-            text-transform: capitalize;
-        }
-
-        .chatWindow .user h5{
-            text-transform: capitalize;
-        }
-    </style>
-</head>
-<body style="padding: 40px; text-align: center; background: #000; color: #fff; font-family: arial, sans-serif;">
-<a href="/sidekick/playground" style="border: 0;">
-    <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0e3449a7-44de-4ce2-b384-cea763c0901e_500x500.heic" alt="Sidekick Robot" width="100" />
-</a>
-<h1>Talk with Sidekick</h1>
-<h3>Conversation (id: {{$response['conversation_id']}})</h3>
-    <div class="chatWindow" id="scrollableDiv">
-        @foreach($response['messages'] as $message)
-            <div class="{{ $message['role'] }}">
-                <h5>{{ $message['role'] }}</h5>
-                <p>{{ $message['content'] }}</p>
-            </div>
-        @endforeach
-        <div style="padding: 10px; border-radius: 15px;">
-            <form method="POST" action="/sidekick/playground/chat/update">
-                @csrf
-                <input type="hidden" name="conversation_id" value="{{$response['conversation_id']}}" />
-                <textarea style="width: 100%; height: 60px; background: #888" placeholder="Reply..." name="message" required></textarea>
-                <br>
-                <input style="width: 100%; height: 20px;" type="submit" value="Send Response" />
-            </form>
+    <!-- Chat Messages Area -->
+    <div id="scrollableDiv" class="bg-slate-700 flex-1 p-6 overflow-y-auto">
+        <div class="space-y-4">
+            @foreach($response['messages'] as $message)
+                @if($message['role'] === 'user')
+                    <div class="flex items-start">
+                        <div class="bg-gray-200 p-4 rounded-lg w-3/4">
+                            <p class="text-gray-800 font-bold">&#128583; User</p>
+                            <p class="text-gray-800">{{ $message['content'] }}</p>
+                        </div>
+                    </div>
+                @else
+                    <div class="flex items-start justify-end">
+                        <div class="bg-blue-600 text-white p-4 rounded-lg w-3/4">
+                            <p class="font-bold">&#129302; Assistant</p>
+                            <p>{{ $message['content'] }}</p>
+                        </div>
+                    </div>
+                @endif
+            @endforeach
         </div>
     </div>
 
-    <script>
+    <!-- Input Area -->
+    <footer class="bg-slate-900 p-4">
+        <form method="POST" action="/sidekick/playground/chat/update">
+            <div class="flex">
+                @csrf
+                <input type="hidden" name="conversation_id" value="{{$response['conversation_id']}}" />
+                <input type="text" name="message"  class="flex-1 border border-gray-300 text-black rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type your message...">
+                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">Send</button>
+            </div>
+        </form>
+    </footer>
+@endsection
 
-        function scrollToBottom() {
-            const container = document.getElementById('scrollableDiv');
-            container.scrollTop = container.scrollHeight;
-        }
+<script>
+   function scrollToBottom() {
+       const container = document.getElementById('scrollableDiv');
+       container.scrollTop = container.scrollHeight;
+   }
 
-        // Scroll to bottom when the page loads
-        window.onload = scrollToBottom;
-    </script>
-
-
-</body>
-</html>
-
+   // Scroll to bottom when the page loads
+   window.onload = scrollToBottom;
+</script>

@@ -1,24 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Sidekick Moderation Example</title>
-</head>
-<body style="padding: 40px; text-align: center; background: #000; color: #fff; font-family: arial, sans-serif;">
-<a href="/sidekick/playground" style="border: 0;">
-    <img src="https://substackcdn.com/image/fetch/w_1456,c_limit,f_webp,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F0e3449a7-44de-4ce2-b384-cea763c0901e_500x500.heic" alt="Sidekick Robot" width="100" />
-</a>
-<h1>Moderation Example</h1>
-<form method="POST" action="/sidekick/playground/moderate">
-    @csrf
-    <textarea style="width: 300px; height: 100px;" placeholder="Type a comment to moderate..." name="text" required></textarea>
-    <br>
-    <input style="width: 300px; height: 50px;" type="submit" value="Moderate this text" />
-</form>
+@extends('sidekick::sidekick-shared.layout')
 
-@if(isset($response))
-    <h3>Response</h3>
-    <p>{!! json_encode($response) !!}</p>
-@endif
-</body>
-</html>
+@section('title')
+    Moderate Sample
+@endsection
+
+@section('content')
+
+    <!-- Chat Messages Area -->
+    <div class="bg-slate-700 flex-1 p-6 overflow-y-auto">
+        <div class="space-y-4">
+            <div class="flex items-start justify-center">
+                <div class="text-gray-300 w-3/4 text-center">
+                    <p class="font-bold text-3xl mb-20">&#129302; Moderate Sample</p>
+                    <p>Type a dummy comment or post into the text box below and hit <strong class="font-bold">Send</strong>. The AI will then review the content and send back a moderation response.</p>
+                </div>
+            </div>
+
+            <div class="flex items-start justify-center">
+                @if(isset($response))
+                    <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4">
+                        <p class="text-gray-800 font-bold">Response</p>
+                        <p class="text-gray-800">{!! json_encode($response) !!}</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Area -->
+    <footer class="bg-slate-900 p-4">
+        <form method="POST" action="/sidekick/playground/moderate">
+            <div class="flex">
+                @csrf
+                <input type="text" name="text" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type some text..." >
+                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">Send</button>
+            </div>
+        </form>
+    </footer>
+
+@endsection
 
