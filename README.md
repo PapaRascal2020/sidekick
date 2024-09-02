@@ -10,11 +10,16 @@ Say hello to Sidekick! A Laravel plugin that provides a common syntax for using 
 </td>
 </tr>
 <tr style="border: none;">
-<td colspan="2" style="border: none;">
-    <img alt="Laravel Plugin" src="https://img.shields.io/badge/Type-Laravel%20Package-red"/>
-    <img alt="Latest Version" src="https://img.shields.io/badge/Version-0.1.2-blue"/>
-    <img alt="Stability" src="https://img.shields.io/badge/Stability-beta-yellow"/>
-    <img alt="Status" src="https://img.shields.io/badge/Project%20Status-Active-green"/>
+<td colspan="2" style="border: none;" align="center">
+    <br/>
+    <div style="width: 100%; display: flex; justify-content: space-evenly;">
+        <a href="https://laravel.com"><img alt="Laravel Plugin" src="https://img.shields.io/badge/Laravel%20Plugin-red?style=for-the-badge&logo=laravel&logoColor=white"/></a>&nbsp;&nbsp;&nbsp;
+        <img alt="Status" src="https://img.shields.io/badge/Project%20Status-Active-green?style=for-the-badge"/> &nbsp;&nbsp;&nbsp;
+        <img alt="Latest Version" src="https://img.shields.io/packagist/v/paparascaldev/sidekick?label=Latest%20Release&style=for-the-badge"/> &nbsp;&nbsp;
+        <img alt="Stability" src="https://img.shields.io/badge/Stability-beta-yellow?style=for-the-badge"/> &nbsp;&nbsp;&nbsp;
+        <a href="https://packagist.org/packages/paparascaldev/sidekick"><img alt="Status" src="https://img.shields.io/badge/Packagist-F28D1A?style=for-the-badge&logo=Packagist&logoColor=white"/></a>
+    </div>
+    <br/>
 </td>
 </tr>
 </table>
