@@ -23,6 +23,8 @@ Say hello to Sidekick! A Laravel plugin that provides a common syntax for using 
 ### Description
 This project provides a unified wrapper around the OpenAI, Claude, and Mistral APIs for Laravel. The goal is to simplify switching between different AI models and APIs, making it as seamless as possible.
 
+<img alt="Animated Gif" src="demo.gif"/>
+
 ### Installation Guide
 The easiest way to install the package in your laravel app is to run the following command from within your projects directory:
 ```bash
