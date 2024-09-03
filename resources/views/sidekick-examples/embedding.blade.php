@@ -20,7 +20,7 @@
                 @if(isset($response))
                     <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4">
                         <p class="text-gray-800 font-bold">Response</p>
-                        <textarea class="text-gray-800 bg-gray-200 w-full h-48">{!! json_encode($response) !!}</textarea>
+                        <textarea class="text-gray-800 bg-gray-200 w-full h-48">{{ json_encode($response['data'][0]['embedding']) }}</textarea>
                     </div>
                 @endif
             </div>

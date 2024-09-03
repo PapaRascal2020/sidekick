@@ -8,6 +8,9 @@ class Claude implements Driver
 {
     protected array $config;
 
+    /**
+     * Grabs the config.
+     */
     function __construct()
     {
         $this->config = config('sidekick.config.driver.Claude');
@@ -26,12 +29,20 @@ class Claude implements Driver
         );
     }
 
-    public function uniformedResponse($response)
+    /**
+     * @param $response
+     * @return mixed
+     */
+    public function getResponse($response)
     {
         return $response['content'][0]['text'];
     }
 
-    public function uniformedErrorResponse($response)
+    /**
+     * @param $response
+     * @return array
+     */
+    public function getErrorMessage($response)
     {
         return [
             'driver' => 'Claude',
@@ -43,6 +54,10 @@ class Claude implements Driver
         ];
     }
 
+    /**
+     * @param $response
+     * @return bool
+     */
     public function validate($response): bool
     {
         return !($response['type'] == "error");

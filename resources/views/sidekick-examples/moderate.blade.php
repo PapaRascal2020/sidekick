@@ -20,7 +20,14 @@
                 @if(isset($response))
                     <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4">
                         <p class="text-gray-800 font-bold">Response</p>
-                        <p class="text-gray-800">{!! json_encode($response) !!}</p>
+                        <p class="text-gray-800 pt-4">{</p>
+                        <p class="text-gray-800 pl-4">flagged: {{ $response['results'][0]['flagged'] ? 'true' : 'false' }}</p>
+                        <p class="text-gray-800 pl-4">categories: [</p>
+                        @foreach($response['results'][0]['categories'] as $key => $value)
+                            <p class="text-gray-800 pl-8">{{ $key }}: {{ $value ? 'true' : 'false' }}</p>
+                        @endforeach
+                        <p class="text-gray-800 pl-4">]</p>
+                        <p class="text-gray-800">}</p>
                     </div>
                 @endif
             </div>

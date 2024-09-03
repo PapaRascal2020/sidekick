@@ -9,6 +9,10 @@ class Sidekick
 {
     protected Driver $driver;
 
+    /**
+     * @param Driver $driver
+     * @return Driver
+     */
     public static function create(Driver $driver): Driver
     {
         return new $driver();

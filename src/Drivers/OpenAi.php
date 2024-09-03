@@ -59,12 +59,12 @@ class OpenAi implements Driver
         );
     }
 
-    public function uniformedResponse($response)
+    public function getResponse($response)
     {
         return $response['choices'][0]['message']['content'];
     }
 
-    public function uniformedErrorResponse($response)
+    public function getErrorMessage($response)
     {
         return [
             'driver' => 'OpenAi',

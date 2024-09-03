@@ -128,7 +128,7 @@ Once you have this response, to continue the conversation you can write the foll
 $sidekick = new SidekickConversation(new OpenAi());
 
 $conversation = $sidekick->resume(
-    $conversation_id
+    conversationId: $conversation_id
 );
 
 $response = $conversation->sendMessage($user_input);
@@ -164,20 +164,26 @@ An example of the formatted response can be found below:
 
 #### Managing Sidekick Conversations
 There is very basic functionality to list, show and delete conversations. This will be updated in the near future.
-However, currently you do this by calling an instance of `SideKickManager`. Examples of each are below:
+However, currently you do this by calling an instance of `SidekickChatManager`. Examples of each are below:
 
 ```PHP
-// List Conversations
-$sidekick = new SidekickManager();
-return $sidekick->listConversations();
+public function index() {
+    // List Conversations
+    $sidekick = new SidekickChatManager();
+    return $sidekick->showAll();
+}
 
-// Conversation Deletion
-$sidekick = new SidekickManager();
-$sidekick->deleteConversation($id);
+public function show(Conversation $conversation) {
+    // show Conversation
+    $sidekick = new SidekickManager();
+    $sidekick->show($conversation);
+}
 
-// Show Conversation
-$sidekick = new SidekickManager();
-return $sidekick->showConversation($id);
+public function delete(Conversation $conversation) {
+    // Delete Conversation
+    $sidekick = new SidekickManager();
+    return $sidekick->delete($conversation);
+}
 ```
 
 #### Completion
@@ -198,8 +204,8 @@ return $sidekick->complete()->sendMessage(
 $sidekick = Sidekick::create(new OpenAi());
 
 return $sidekick->embedding()->make(
-    'mistral-embed',
-    'This is sample content to embed'
+    model: 'mistral-embed',
+    input: 'This is sample content to embed'
 );
 ```
 
@@ -209,10 +215,10 @@ return $sidekick->embedding()->make(
  $sidekick = Sidekick::create(new OpenAi());
  
 $image =  $sidekick->image()->make(
-    'dall-e-3',
-    'A man on a waterboard',
-    '1024',
-    '1024'
+    model:'dall-e-3',
+    prompt: $request->get('text_to_convert'),
+    width:'1024',
+    height:'1024'
 );
 
 // This is just a basic example of printing to screen.
@@ -225,8 +231,8 @@ return "<img src='{$image['data'][0]['url']}' />";
 $sidekick = Sidekick::create(new OpenAi());
 
 $audio = $sidekick->audio()->fromText(
-    'tts-1',
-    'Have a nice day!'
+    model: 'tts-1',
+    text: 'Have a nice day!'
 );
 
 // This is just a basic example of streaming it to the browser.
@@ -242,8 +248,8 @@ echo $audio
 $sidekick = Sidekick::create(new OpenAi());
 
 return $sidekick->transcribe()->audioFile(
-    'whisper-1',
-    'http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3'
+    model: 'whisper-1',
+    filePath: 'http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3'
 );
 ```
 #### Example Response
@@ -261,8 +267,8 @@ with an array of boolean values for certain moderation points.
 $sidekick = Sidekick::create(new OpenAi());
 
 return $sidekick->moderate()->text(
-    'text-moderation-latest',
-    'Have a great day.',
+    model: 'text-moderation-latest',
+    content: 'Have a great day.',
 );
 ```
 #### Example Response

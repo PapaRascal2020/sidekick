@@ -20,9 +20,6 @@ class SidekickServiceProvider extends ServiceProvider
         $this->initializeMigrations();
         $this->initializeMigrationPublishing();
 
-//        $this->initializeControllers();
-//        $this->initializeControllersPublishing();
-
         $this->initializeRoutes();
         $this->initializeRoutesPublishing();
 

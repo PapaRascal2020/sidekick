@@ -7,8 +7,25 @@ use Illuminate\Support\Facades\Http;
 class Image
 {
 
+    /**
+     * @param string $url
+     * @param array $headers
+     */
     function __construct(protected string $url, protected array $headers)
     {}
+
+    /**
+     * Make
+     *
+     * Creates an image from a description provided in text.
+     *
+     * @param string $model
+     * @param string $prompt
+     * @param int $width
+     * @param int $height
+     * @param string $quality
+     * @return array
+     */
     public function make(
         string $model,
         string $prompt,
@@ -18,6 +35,19 @@ class Image
     {
         return self::generate($model, $prompt, $width, $height, $quality);
     }
+
+    /**
+     * Generate
+     *
+     * Creates an image from a description provided in text.
+     *
+     * @param string $model
+     * @param string $prompt
+     * @param int $width
+     * @param int $height
+     * @param string $quality
+     * @return array
+     */
 
     public function generate(
         string $model,

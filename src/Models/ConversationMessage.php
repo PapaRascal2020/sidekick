@@ -9,5 +9,7 @@ class ConversationMessage extends Model
 {
     use HasUuids;
     protected $guarded = ['id'];
+    protected $visible = ['role', 'content'];
+
     protected $table   = 'sidekick_conversation_messages';
 }

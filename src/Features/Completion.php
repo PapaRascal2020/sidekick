@@ -2,10 +2,18 @@
 
 namespace PapaRascalDev\Sidekick\Features;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class Completion
 {
+    /**
+     * @param string $url
+     * @param array $headers
+     * @param bool $inlinePrompt
+     * @param bool $submitTypes
+     * @param array $payload
+     */
     function __construct(
         protected string $url,
         protected array $headers,
@@ -15,6 +23,18 @@ class Completion
     )
     {}
 
+    /**
+     * Send Message
+     *
+     * Sends a message to the given model and returns the response.
+     *
+     * @param string $model
+     * @param string $systemPrompt
+     * @param array $messages
+     * @param int $maxTokens
+     * @return array
+     * @throws ConnectionException
+     */
     public function sendMessage(
         string $model,
         string $systemPrompt = "",

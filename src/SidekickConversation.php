@@ -10,17 +10,30 @@ class SidekickConversation
     protected Driver $sidekick;
     protected Conversation $conversation;
 
+    /**
+     * @param Driver $driver
+     */
     function __construct(Driver $driver)
     {
         $this->sidekick = Sidekick::create($driver);
     }
 
+    /**
+     * @param string $conversationId
+     * @return $this
+     */
     public function resume(string $conversationId): static
     {
         $this->conversation = Conversation::findOrFail($conversationId);
         return $this;
     }
 
+    /**
+     * @param string $model
+     * @param string $systemPrompt
+     * @param int $maxTokens
+     * @return $this
+     */
     public function begin(
         string $model,
         string $systemPrompt = '',
@@ -37,10 +50,14 @@ class SidekickConversation
         return $this;
     }
 
+    /**
+     * @param string $message
+     * @return array
+     */
     public function sendMessage(string $message) {
         $newMessage = ['role' => 'user', 'content' => $message];
         $allMessages = [
-            ...$this->conversation->messages()->get(['role', 'content'])->toArray(),
+            ...$this->conversation->messages()->get()->toArray(),
             $newMessage
         ];
 
@@ -50,23 +67,24 @@ class SidekickConversation
             messages: $allMessages,
             maxTokens: $this->conversation->max_tokens);
 
-        if(!$this->sidekick->validate($response)) {
-            return $this->sidekick->uniformedErrorResponse($response);
+        if($this->sidekick->validate($response)) {
+            $this->conversation->messages()->create($newMessage);
+
+            $chatResponse = [
+                'role' => 'assistant',
+                'content' => $this->sidekick->getResponse($response)
+            ];
+
+            $this->conversation->messages()->create($chatResponse);
+
+            return [
+                'conversation_id' => $this->conversation->id,
+                'messages' => $this->conversation->messages()->get()->toArray()
+            ];
         }
 
-        $this->conversation->messages()->create($newMessage);
+        return $this->sidekick->getErrorMessage($response);
 
-        $chatResponse = [
-            'role' => 'assistant',
-            'content' => $this->sidekick->uniformedResponse($response)
-        ];
-
-        $this->conversation->messages()->create($chatResponse);
-
-        return [
-            'conversation_id' => $this->conversation->id,
-            'messages' => $this->conversation->messages()->get(['role', 'content'])->toArray()
-        ];
     }
 
 }
