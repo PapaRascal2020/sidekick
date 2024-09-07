@@ -4,6 +4,19 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\Completion;
 
+/**
+ * Unlike other AI's passing no model sets a defaults
+ * to Command-r
+ *
+ * Supported Models:
+ *
+ *- command-r-08-2024
+ *- command-r-plus-08-2024
+ *
+ * Supported Methods
+ * - Completions
+ */
+
 class Cohere implements Driver
 {
 
@@ -56,8 +69,7 @@ class Cohere implements Driver
             requestRules: [
                 'chat_history' => '$allMessages ? $allMessages : null',
                 'message' => '$message'
-            ],
-            responseFormat: []
+            ]
         );
     }
 

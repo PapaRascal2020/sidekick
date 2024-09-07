@@ -4,11 +4,21 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\Completion;
 
+/**
+ * Supported Models:
+ *
+ * - claude-3-opus-20240229
+ * - claude-3-sonnet-20240229
+ * - claude-3-haiku-20240307
+ *
+ * Supported Methods
+ * - Completions
+ */
+
 class Claude implements Driver
 {
-
     /**
-     * OpenAi Api Base URL
+     * Api Base URL
      * @strind $baseUrl
      */
     private string $baseUrl = "https://api.anthropic.com/v1";
@@ -54,8 +64,7 @@ class Claude implements Driver
                     '$allMessages ? $allMessages : null',
                     '["role" => "user", "content" => $message]',
                 ]
-            ],
-            responseFormat: []
+            ]
         );
     }
 

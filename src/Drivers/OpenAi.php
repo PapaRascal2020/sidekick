@@ -3,8 +3,31 @@
 namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\{Completion, Audio, Transcribe, Image, Embedding, Moderate};
-use Illuminate\Config\Repository;
-use Illuminate\Foundation\Application;
+
+/**
+ * Supported Models:
+ *
+ *- gpt-3.5-turbo
+ * - gpt-4
+ * - tts-1
+ * - tts-1-hd
+ * - dall-e-2
+ * - dall-e-3
+ * - whisper-1
+ * - text-embedding-3-small
+ * - text-embedding-3-large
+ * - text-embedding-ada-002
+ * - text-moderation-latest
+ * - text-moderation-stable
+ * - text-moderation-007
+ *
+ * Supported Methods
+ * - Completions
+ * - Embed
+ * - Audio
+ * - Transcription
+ * - Moderate
+ */
 
 class OpenAi implements Driver
 {
@@ -81,8 +104,7 @@ class OpenAi implements Driver
                     '$allMessages ? $allMessages : null',
                     '["role" => "user", "content" => $message]',
                     ]
-                ],
-            responseFormat: []
+                ]
         );
     }
 

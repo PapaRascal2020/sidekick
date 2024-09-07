@@ -2,9 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use PapaRascalDev\Sidekick\Drivers\Claude;
 use PapaRascalDev\Sidekick\Drivers\Cohere;
-use PapaRascalDev\Sidekick\Drivers\Mistral;
 use \PapaRascalDev\Sidekick\Sidekick;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
 use PapaRascalDev\Sidekick\SidekickConversation;

@@ -4,6 +4,18 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\{Completion, Embedding};
 
+/**
+ * Supported Models:
+ *
+ * - claude-3-opus-20240229
+ * - claude-3-sonnet-20240229
+ * - claude-3-haiku-20240307
+ *
+ * Supported Methods
+ * - Completions
+ * - Embed
+ */
+
 class Mistral implements Driver
 {
 
@@ -58,8 +70,7 @@ class Mistral implements Driver
                     '$allMessages ? $allMessages : null',
                     '["role" => "user", "content" => $message]',
                 ]
-            ],
-            responseFormat: []
+            ]
         );
     }
 

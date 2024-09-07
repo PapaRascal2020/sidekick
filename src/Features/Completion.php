@@ -16,7 +16,6 @@ class Completion
         protected string $url,
         protected array  $headers,
         protected        $requestRules,
-        protected        $responseFormat,
     )
     {
     }
