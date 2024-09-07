@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use PapaRascalDev\Sidekick\Drivers\Claude;
+use PapaRascalDev\Sidekick\Drivers\Cohere;
+use PapaRascalDev\Sidekick\Drivers\Mistral;
 use \PapaRascalDev\Sidekick\Sidekick;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
 use PapaRascalDev\Sidekick\SidekickConversation;
@@ -11,20 +14,22 @@ Route::get('/sidekick/playground', function () {
 });
 
 Route::post('/sidekick/playground/chat', function (Request $request) {
-    $sidekick = new SidekickConversation(new OpenAi());
+    $options = explode("|", $request->get('engine'));
+    $sidekick = new SidekickConversation(new $options[0]());
 
     $conversation = $sidekick->begin(
-        model: 'gpt-3.5-turbo',
+        model: $options[1],
         systemPrompt: 'Your Sidekick, a robot to chat to users'
     );
 
     $response = $conversation->sendMessage($request->get('message'));
 
-    return view('sidekick::sidekick-examples.chatroom', ['response' => $response]);
+    return view('sidekick::sidekick-examples.chatroom', ['response' => $response, 'options' => $options[0]]);
 });
 
 Route::post('/sidekick/playground/chat/update', function (Request $request) {
-    $sidekick = new SidekickConversation(new OpenAi());
+    $engine = $request->get('engine');
+    $sidekick = new SidekickConversation(new $engine());
 
     $conversation = $sidekick->resume(
         conversationId: $request->get('conversation_id')
@@ -32,7 +37,7 @@ Route::post('/sidekick/playground/chat/update', function (Request $request) {
 
     $response = $conversation->sendMessage($request->get('message'));
 
-    return view('sidekick::sidekick-examples.chatroom', ['response' => $response]);
+    return view('sidekick::sidekick-examples.chatroom', ['response' => $response, 'options' => $engine]);
 });
 
 Route::get('/sidekick/playground/chat', function () {
@@ -44,14 +49,16 @@ Route::get('/sidekick/playground/completion', function () {
 });
 
 Route::post('/sidekick/playground/completion', function (Request $request) {
-    $sidekick = Sidekick::create(new OpenAi());
+    $sidekick = Sidekick::create(new Cohere());
     $response =  $sidekick->complete()->sendMessage(
-        model: 'gpt-3.5-turbo',
+        model: '',
         systemPrompt: 'You are a knowledge base, please answer there questions',
-        messages:[['role' => 'user', 'content' => $request->get('message')]]
+        message: $request->get('message'),
     );
 
-    return view('sidekick::sidekick-examples.completion', ['response' => $sidekick->uniformedResponse($response)]);
+    $result = $sidekick->validate($response) ? $sidekick->getResponse($response) : $sidekick->getErrorMessage($response);
+
+    return view('sidekick::sidekick-examples.completion', ['response' => $result]);
 });
 
 Route::get('/sidekick/playground/audio', function () {

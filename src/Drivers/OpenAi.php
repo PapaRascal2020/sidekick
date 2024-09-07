@@ -3,59 +3,102 @@
 namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\{Completion, Audio, Transcribe, Image, Embedding, Moderate};
+use Illuminate\Config\Repository;
+use Illuminate\Foundation\Application;
 
 class OpenAi implements Driver
 {
-    protected array $config;
+
+    /**
+     * OpenAi Api Base URL
+     * @strind $baseUrl
+     */
+    private string $baseUrl = "https://api.openai.com/v1";
+
+    /**
+     * Headers
+     *
+     * To be passed with every request
+     *
+     * @array $headers
+     */
+    protected array $headers;
+
+    public array $messageRoles = [
+        'user' => 'user',
+        'assistant' => 'assistant'
+    ];
+
+    public bool $listAsObject = false;
+
+    public array $chatMaps = [];
+
     function __construct()
     {
-        $this->config = config('sidekick.config.driver.OpenAi');
+        $apiToken = getenv("SIDEKICK_OPENAI_TOKEN");
+
+        $this->headers = [
+            "Authorization" => "Bearer {$apiToken}",
+            "Content-Type" => "application/json",
+            "Accept" => "application/json",
+        ];
     }
+
     public function image(): Image
     {
         return new Image(
-            url: $this->config['baseUrl'].$this->config['services']['image'],
-            headers: $this->config['headers']
+            url: "{$this->baseUrl}/images/generations",
+            headers: $this->headers
         );
     }
 
     public function audio(): Audio
     {
         return new Audio(
-            url: $this->config['baseUrl'].$this->config['services']['audio'],
-            headers: $this->config['headers']
+            url: "{$this->baseUrl}/audio/speech",
+            headers: $this->headers
         );
     }
 
     public function transcribe(): Transcribe
     {
         return new Transcribe(
-            url: $this->config['baseUrl'].$this->config['services']['transcription'],
-            headers: $this->config['headers']
+            url: "{$this->baseUrl}/audio/transcriptions",
+            headers: $this->headers
         );
     }
 
     public function complete(): Completion
     {
         return new Completion(
-            url: $this->config['baseUrl'].$this->config['services']['completion'],
-            headers: $this->config['headers']
+            url: "{$this->baseUrl}/chat/completions",
+            headers: $this->headers,
+            requestRules: [
+                'model' => '$model',
+                'max_tokens' => '$maxTokens',
+                'messages' => [
+                    '$systemPrompt ? ["role" => "system", "content" => $systemPrompt] : null',
+                    '$allMessages ? $allMessages : null',
+                    '["role" => "user", "content" => $message]',
+                    ]
+                ],
+            responseFormat: []
         );
     }
 
     public function embedding(): Embedding
     {
         return new Embedding(
-            url: $this->config['baseUrl'].$this->config['services']['embedding'],
-            headers: $this->config['headers']
+            url: "{$this->baseUrl}/embeddings",
+            headers: $this->headers
         );
     }
 
     public function moderate(): Moderate
     {
         return new Moderate(
-            url: $this->config['baseUrl'].$this->config['services']['moderate'],
-            headers: $this->config['headers']
+            url: "{$this->baseUrl}/moderations",
+            headers: $this->headers
         );
     }
 

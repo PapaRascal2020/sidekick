@@ -6,10 +6,40 @@ use PapaRascalDev\Sidekick\Features\{Completion, Embedding};
 
 class Mistral implements Driver
 {
-    protected array $config;
+
+    /**
+     * OpenAi Api Base URL
+     * @strind $baseUrl
+     */
+    private string $baseUrl = "https://api.mistral.ai/v1";
+
+    /**
+     * Headers
+     *
+     * To be passed with every request
+     *
+     * @array $headers
+     */
+    protected array $headers;
+
+    public array $messageRoles = [
+        'user' => 'user',
+        'assistant' => 'assistant'
+    ];
+
+    public bool $listAsObject = false;
+    public array $chatMaps = [];
+
+
     function __construct()
     {
-        $this->config = config('sidekick.config.driver.Mistral');
+        $apiToken = getenv("SIDEKICK_MISTRAL_TOKEN");
+
+        $this->headers = [
+            "Authorization" => "Bearer {$apiToken}",
+            "Content-Type" => "application/json",
+            "Accept" => "application/json",
+        ];
     }
 
     /**
@@ -18,8 +48,18 @@ class Mistral implements Driver
     public function complete(): Completion
     {
         return new Completion(
-            url: $this->config['baseUrl'].$this->config['services']['completion'],
-            headers: $this->config['headers']
+            url: "{$this->baseUrl}/chat/completions",
+            headers: $this->headers,
+            requestRules: [
+                'model' => '$model',
+                'max_tokens' => '$maxTokens',
+                'messages' => [
+                    '$systemPrompt ? ["role" => "system", "content" => $systemPrompt] : null',
+                    '$allMessages ? $allMessages : null',
+                    '["role" => "user", "content" => $message]',
+                ]
+            ],
+            responseFormat: []
         );
     }
 
@@ -29,8 +69,8 @@ class Mistral implements Driver
     public function embedding(): Embedding
     {
         return new Embedding(
-            url: $this->config['baseUrl'].$this->config['services']['embedding'],
-            headers: $this->config['headers']
+            url: "{$this->baseUrl}/embeddings",
+            headers: $this->headers
         );
     }
 

@@ -2,7 +2,6 @@
 
 namespace PapaRascalDev\Sidekick\Features;
 
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class Completion
@@ -10,67 +9,61 @@ class Completion
     /**
      * @param string $url
      * @param array $headers
-     * @param bool $inlinePrompt
-     * @param bool $submitTypes
-     * @param array $payload
+     * @param $requestRules
+     * @param $responseFormat
      */
     function __construct(
         protected string $url,
-        protected array $headers,
-        protected bool $inlinePrompt = true,
-        protected bool $submitTypes = false,
-        protected array $payload = []
+        protected array  $headers,
+        protected        $requestRules,
+        protected        $responseFormat,
     )
-    {}
+    {
+    }
+
 
     /**
-     * Send Message
-     *
-     * Sends a message to the given model and returns the response.
-     *
      * @param string $model
      * @param string $systemPrompt
-     * @param array $messages
+     * @param string $message
+     * @param array|object $allMessages
      * @param int $maxTokens
      * @return array
      * @throws ConnectionException
      */
     public function sendMessage(
         string $model,
-        string $systemPrompt = "",
-        array $messages = [],
-        int $maxTokens = 1024
+        string $systemPrompt,
+        string $message,
+        array|object  $allMessages = [],
+        int    $maxTokens = 1024
     ): array
     {
-        if($this->submitTypes) {
-            foreach ($messages as $message) {
-                $text = $message['content'];
-                $message['content'] = [
-                    'type' => 'text',
-                    'text' => $text
-                ];
+        $request = [];
+        foreach ($this->requestRules as $key => $value) {
+            if (is_array($value)) {
+                $temp = [];
+                foreach ($value as $k => $val) {
+                    if ($eval = eval("return $val;")) {
+                        if(isset($eval['role'])) {
+                            $temp[] = $eval;
+                        } else {
+                            $temp = [
+                                ...$temp,
+                                ...$eval
+                            ];
+                        }
+                    } else {
+                        unset($value[$k]);
+                    }
+                }
+                $request[$key] = [...$temp];
+            } else {
+                $request[$key] = eval("return $value;");
             }
         }
 
-        if($this->inlinePrompt) {
-            $payload = [
-                'model' => $model,
-                'messages' => [
-                    ['role' => 'system', 'content' => $systemPrompt],
-                    ...$messages
-                ],
-                'max_tokens' => $maxTokens,
-            ];
-        } else {
-            $payload = [
-                'model' => $model,
-                'system' => $systemPrompt,
-                'messages' => $messages,
-                'max_tokens' => $maxTokens
-            ];
-        }
-
         return Http::withHeaders($this->headers)
-            ->post($this->url, $payload)->json();
+            ->post($this->url, $request)->json();
     }
 }

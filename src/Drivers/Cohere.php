@@ -4,14 +4,14 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\Completion;
 
-class Claude implements Driver
+class Cohere implements Driver
 {
 
     /**
      * OpenAi Api Base URL
      * @strind $baseUrl
      */
-    private string $baseUrl = "https://api.anthropic.com/v1";
+    private string $baseUrl = "https://api.cohere.com/v1";
 
     /**
      * Headers
@@ -23,18 +23,25 @@ class Claude implements Driver
     protected array $headers;
 
     public array $messageRoles = [
-        'user' => 'user',
-        'assistant' => 'assistant'
+        'user' => 'USER',
+        'assistant' => 'CHATBOT'
     ];
 
-    public bool $listAsObject = false;
-    public array $chatMaps = [];
+    public bool $listAsObject = true;
+
+    public array $chatMaps = [
+        'content' => 'message'
+    ];
+
 
     function __construct()
     {
+        $apiToken = getenv("SIDEKICK_COHERE_TOKEN");
+
         $this->headers = [
-            'anthropic-version' => '2023-06-01',
-            'x-api-key' => getenv('SIDEKICK_CLAUDE_TOKEN')
+            "Authorization" => "Bearer {$apiToken}",
+            "Content-Type" => "application/json",
+            "Accept" => "application/json",
         ];
     }
 
@@ -44,16 +51,11 @@ class Claude implements Driver
     public function complete(): Completion
     {
         return new Completion(
-            url: "{$this->baseUrl}/messages",
+            url: "{$this->baseUrl}/chat",
             headers: $this->headers,
             requestRules: [
-                'model' => '$model',
-                'max_tokens' => '$maxTokens',
-                'system' => '$systemPrompt ?? null',
-                'messages' => [
-                    '$allMessages ? $allMessages : null',
-                    '["role" => "user", "content" => $message]',
-                ]
+                'chat_history' => '$allMessages ? $allMessages : null',
+                'message' => '$message'
             ],
             responseFormat: []
         );
@@ -65,7 +67,7 @@ class Claude implements Driver
      */
     public function getResponse($response)
     {
-        return $response['content'][0]['text'];
+        return $response['text'];
     }
 
     /**
@@ -75,11 +77,11 @@ class Claude implements Driver
     public function getErrorMessage($response)
     {
         return [
-            'driver' => 'Claude',
+            'driver' => 'Cohere',
             'error' => [
-                'type' => $response['type'],
-                'code' => $response['error']['type'],
-                'message' => $response['error']['message']
+                'type' => 'error',
+                'code' => null,
+                'message' => $response['message']
             ]
         ];
     }
@@ -90,6 +92,6 @@ class Claude implements Driver
      */
     public function validate($response): bool
     {
-        return !($response['type'] == "error");
+        return !(isset($response['message']));
     }
 }

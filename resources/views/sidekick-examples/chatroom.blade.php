@@ -7,7 +7,7 @@
 @section('content')
     <!-- Header -->
     <header class="bg-slate-900 shadow p-4 flex justify-between items-center">
-        <h1 class="text-xl text-white font-semibold text-gray-900">Conversation (id: {{$response['conversation_id']}})</h1>
+        <h1 class="text-xl text-white font-semibold text-gray-900">Conversation <small class="text-sm">(id: {{$response['conversation_id'] ?? request()->get('conversation_id')}}) - Engine: {{$options}}</small></h1>
         <a href="/sidekick/playground/chat" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">New Chat</a>
     </header>
 
@@ -15,7 +15,7 @@
     <div id="scrollableDiv" class="bg-slate-700 flex-1 p-6 overflow-y-auto">
         <div class="space-y-4">
             @foreach($response['messages'] as $message)
-                @if($message['role'] === 'user')
+                @if(strtolower($message['role']) === 'user')
                     <div class="flex items-start">
                         <div class="bg-gray-200 p-4 rounded-lg w-3/4">
                             <p class="text-gray-800 font-bold">&#128583; User</p>
@@ -40,6 +40,7 @@
             <div class="flex">
                 @csrf
                 <input type="hidden" name="conversation_id" value="{{$response['conversation_id']}}" />
+                <input type="hidden" name="engine" value="{{$options}}" />
                 <input type="text" name="message"  class="flex-1 border border-gray-300 text-black rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type your message...">
                 <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">Send</button>
             </div>

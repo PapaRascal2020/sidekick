@@ -9,7 +9,22 @@ class ConversationMessage extends Model
 {
     use HasUuids;
     protected $guarded = ['id'];
-    protected $visible = ['role', 'content'];
 
     protected $table   = 'sidekick_conversation_messages';
+
+
+    protected $visible = ['role', 'content'];
+
+    public function toCustomArray(
+        array $mappings = [],
+    ): array
+    {
+        $array = parent::toArray();
+
+        foreach ($mappings as $newKey => $oldKey) {
+            $array[$newKey] = $array[$oldKey];
+            unset($array[$oldKey]);
+        }
+        return $array;
+    }
 }

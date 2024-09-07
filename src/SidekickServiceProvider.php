@@ -11,11 +11,6 @@ class SidekickServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('sidekick.php'),
-            ], 'config');
-        }
 
         $this->initializeMigrations();
         $this->initializeMigrationPublishing();
@@ -58,7 +53,6 @@ class SidekickServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'sidekick');
     }
 
     /**
@@ -95,17 +89,6 @@ class SidekickServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../resources/views' => resource_path('views/vendor/sidekick'),
         ], 'views');
-    }
-
-    private function initializeControllers()
-    {
-    }
-
-    private function initializeControllersPublishing(): void
-    {
-        $this->publishes([
-            __DIR__ . '/../src/Controllers' => app_path('Http/Controllers/Vendor/Sidekick'),
-        ], 'controllers');
     }
 
 }

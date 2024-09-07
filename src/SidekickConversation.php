@@ -2,6 +2,7 @@
 
 namespace PapaRascalDev\Sidekick;
 
+use Illuminate\Support\Arr;
 use PapaRascalDev\Sidekick\Drivers\Driver;
 use PapaRascalDev\Sidekick\Models\Conversation;
 
@@ -55,36 +56,64 @@ class SidekickConversation
      * @return array
      */
     public function sendMessage(string $message) {
-        $newMessage = ['role' => 'user', 'content' => $message];
-        $allMessages = [
-            ...$this->conversation->messages()->get()->toArray(),
-            $newMessage
-        ];
+
+        if($this->sidekick->listAsObject) {
+            $allMessages = $this->toCustomArray($this->messages(), $this->sidekick->chatMaps);
+        } else {
+            $allMessages = [
+                ...$this->toCustomArray($this->messages(), $this->sidekick->chatMaps),
+            ];
+        }
 
         $response = $this->sidekick->complete()->sendMessage(
             model: $this->conversation->model,
             systemPrompt: $this->conversation->system_prompt,
-            messages: $allMessages,
+            allMessages: $allMessages,
+            message: $message,
             maxTokens: $this->conversation->max_tokens);
 
         if($this->sidekick->validate($response)) {
-            $this->conversation->messages()->create($newMessage);
+            $this->conversation->messages()->create([
+                'role' => $this->sidekick->messageRoles['user'],
+                'content' => $message
+            ]);
 
-            $chatResponse = [
-                'role' => 'assistant',
+            $this->conversation->messages()->create([
+                'role' => $this->sidekick->messageRoles['assistant'],
                 'content' => $this->sidekick->getResponse($response)
-            ];
-
-            $this->conversation->messages()->create($chatResponse);
+            ]);
 
             return [
                 'conversation_id' => $this->conversation->id,
-                'messages' => $this->conversation->messages()->get()->toArray()
+                'messages' => $this->conversation->messages()->get()->toArray(),
             ];
         }
 
         return $this->sidekick->getErrorMessage($response);
 
     }
+    public function toCustomArray(
+        array $messages,
+        array $mappings = [],
+    ): array
+    {
+        $mappedMessages = [];
+        foreach($messages as $message) {
+            foreach ($mappings as $oldKey => $newKey) {
+                $message[$newKey] = $message[$oldKey];
+                unset($message[$oldKey]);
+            }
+            $mappedMessages[] = $message;
+        }
 
+        return $mappedMessages;
+    }
+
+    /**
+     * @return void
+     */
+    public function messages(): array
+    {
+        return $this->conversation->messages()->get()->toArray();
+    }
 }
