@@ -57,7 +57,16 @@ You only need to specify the token for the provider(s) you will use.
 SIDEKICK_OPENAI_TOKEN={API_KEY_HERE} (Recommended)
 SIDEKICK_MISTRAL_TOKEN={API_KEY_HERE} (Optional)
 SIDEKICK_CLAUDE_TOKEN={API_KEY_HERE} (Optional)
+SIDEKICK_COHERE_TOKEN={API_KEY_HERE} (Optional)
 ```
+
+#### Where can I get an API key?
+If you are not yet signed up with any of the AI providers, here are some links to help:
+
+- https://platform.openai.com (Open Ai)
+- https://console.anthropic.com (Claude)
+- https://console.mistral.ai (Mistral)
+- https://dashboard.cohere.com (Cohere)
 
 ### Running Migrations
 Run your migrations using the command below:
