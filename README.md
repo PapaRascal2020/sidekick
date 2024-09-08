@@ -6,7 +6,7 @@
 </td>
 <td valign="top" style="border: none;">
 <h2> Sidekick for Laravel</h2>
-Say hello to Sidekick! A Laravel plugin that provides a common syntax for using Claude, Mistral and OpenAi APIs.
+Say hello to Sidekick! A Laravel plugin that provides a common syntax for using Claude, Mistral, Cohere and OpenAi APIs.
 </td>
 </tr>
 <tr style="border: none;">
@@ -21,7 +21,7 @@ Say hello to Sidekick! A Laravel plugin that provides a common syntax for using 
 </table>
 
 ### Description
-This project provides a unified wrapper around the OpenAI, Claude, and Mistral APIs for Laravel. The goal is to simplify switching between different AI models and APIs, making it as seamless as possible.
+This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mistral APIs for Laravel. The goal is to simplify switching between different AI models and APIs, making it as seamless as possible.
 <br/>
 <br>
 
