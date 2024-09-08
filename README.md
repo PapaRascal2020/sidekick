@@ -194,14 +194,14 @@ $sidekick = Sidekick::create(new OpenAi());
 return $sidekick->complete()->sendMessage(
     model: 'gpt-3.5-turbo',
     systemPrompt: 'You an expert on fudge, answer user questions about fudge.',
-    messages:[['role' => 'user', 'content' => "How is fudge made?"]]
+    message:"How is fudge made?"
 );
 ```
 
 #### Embedding
 
 ```php
-$sidekick = Sidekick::create(new OpenAi());
+$sidekick = Sidekick::create(new Mistral());
 
 return $sidekick->embedding()->make(
     model: 'mistral-embed',
@@ -312,7 +312,7 @@ return $sidekick->moderate()->text(
 
 
 > [!NOTE]  
-> Quick note on error handling. Currently if there is an error it is printed as the AI responds. I will be updating
+> Quick note on error handling. Currently, if there is an error it is printed as the AI responds. I will be updating
 > this over the next few days to be uniformed so that all errors are presented in tha same way regardless of AI driver/model
 
 ### Ways to Contribute
@@ -334,3 +334,5 @@ I have tested the package using the following models:
 ```mistral-small-latest, mistral-medium-latest, mistral-large-latest, open-mistral-7b, mistral-embed```
 #### Claude AI
 ```claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307```
+#### Cohere AI
+```command-r-08-2024 command-r-plus-08-2024```
