@@ -13,9 +13,10 @@ Route::get('/sidekick/playground', function () {
 
 Route::post('/sidekick/playground/chat', function (Request $request) {
     $options = explode("|", $request->get('engine'));
-    $sidekick = new SidekickConversation(new $options[0]());
+    $sidekick = new SidekickConversation();
 
     $conversation = $sidekick->begin(
+        driver: new $options[0](),
         model: $options[1],
         systemPrompt: 'Your Sidekick, a robot to chat to users'
     );

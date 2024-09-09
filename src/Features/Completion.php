@@ -38,17 +38,18 @@ class Completion
         int    $maxTokens = 1024
     ): array
     {
+        // Takes request and maps it to the $this->requestRules
         $request = [];
         foreach ($this->requestRules as $key => $value) {
             if (is_array($value)) {
-                $temp = [];
+                $arrayMap = [];
                 foreach ($value as $k => $val) {
                     if ($eval = eval("return $val;")) {
                         if(isset($eval['role'])) {
-                            $temp[] = $eval;
+                            $arrayMap[] = $eval;
                         } else {
-                            $temp = [
-                                ...$temp,
+                            $arrayMap = [
+                                ...$arrayMap,
                                 ...$eval
                             ];
                         }
@@ -56,7 +57,7 @@ class Completion
                         unset($value[$k]);
                     }
                 }
-                $request[$key] = [...$temp];
+                $request[$key] = [...$arrayMap];
             } else {
                 $request[$key] = eval("return $value;");
             }

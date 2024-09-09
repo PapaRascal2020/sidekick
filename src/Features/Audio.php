@@ -28,7 +28,7 @@ class Audio
     public function fromText(
         string $model,
         string $text,
-        String $voice = "alloy"
+        String $voice = "alloy" //default voice as OpenAi is the only supported driver
     ): string
     {
         return Http::withHeaders($this->headers)

@@ -103,9 +103,10 @@ This allows you to create a chatbot that remembers previos interactions.
 To start a new conversation:
 
 ```php
-$sidekick = new SidekickConversation(new OpenAi());
+$sidekick = new SidekickConversation();
 
 $conversation = $sidekick->begin(
+    driver: new OpenAi(),
     model: 'gtp-3.5-turbo',
     systemPrompt: 'You can instruct the chatbot using this parameter'
 );
@@ -138,7 +139,7 @@ An example of the formatted response can be found below:
 Once you have this response, to continue the conversation you can write the following in your controller making sure to pass the `conversation_id` in the request:
 
 ```PHP
-$sidekick = new SidekickConversation(new OpenAi());
+$sidekick = new SidekickConversation();
 
 $conversation = $sidekick->resume(
     conversationId: $conversation_id

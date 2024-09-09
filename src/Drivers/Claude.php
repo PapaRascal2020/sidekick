@@ -32,12 +32,32 @@ class Claude implements Driver
      */
     protected array $headers;
 
+    /**
+     * Message Roles
+     *
+     * Some AI tools have different naming for
+     * user and bot roles so added this so it
+     * can be specified.
+     *
+     * @array $messageRoles
+     */
     public array $messageRoles = [
         'user' => 'user',
         'assistant' => 'assistant'
     ];
 
+
+    /**
+     * List As Object
+     *
+     * This is to specify if the chat history
+     * should be sent as an Object or Array
+     * to the payload.
+     *
+     * @array $listAsObject
+     */
     public bool $listAsObject = false;
+
     public array $chatMaps = [];
 
     function __construct()

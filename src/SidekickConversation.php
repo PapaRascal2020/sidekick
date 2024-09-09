@@ -12,35 +12,32 @@ class SidekickConversation
     protected Conversation $conversation;
 
     /**
-     * @param Driver $driver
-     */
-    function __construct(Driver $driver)
-    {
-        $this->sidekick = Sidekick::create($driver);
-    }
-
-    /**
      * @param string $conversationId
      * @return $this
      */
     public function resume(string $conversationId): static
     {
         $this->conversation = Conversation::findOrFail($conversationId);
+        $this->sidekick = Sidekick::create(new $this->conversation->class());
         return $this;
     }
 
     /**
+     * @param Driver $driver
      * @param string $model
      * @param string $systemPrompt
      * @param int $maxTokens
      * @return $this
      */
     public function begin(
+        Driver $driver,
         string $model,
         string $systemPrompt = '',
         int $maxTokens = 1024
     ): static
     {
+        $this->sidekick = Sidekick::create($driver);
+
         $this->conversation = new Conversation();
         $this->conversation->model = $model;
         $this->conversation->class = get_class($this->sidekick);
@@ -92,6 +89,12 @@ class SidekickConversation
         return $this->sidekick->getErrorMessage($response);
 
     }
+
+    /**
+     * @param array $messages
+     * @param array $mappings
+     * @return array
+     */
     public function toCustomArray(
         array $messages,
         array $mappings = [],

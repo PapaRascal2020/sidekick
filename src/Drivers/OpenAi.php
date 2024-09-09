@@ -33,7 +33,7 @@ class OpenAi implements Driver
 {
 
     /**
-     * OpenAi Api Base URL
+     * Api Base URL
      * @strind $baseUrl
      */
     private string $baseUrl = "https://api.openai.com/v1";
@@ -47,11 +47,29 @@ class OpenAi implements Driver
      */
     protected array $headers;
 
+    /**
+     * Message Roles
+     *
+     * Some AI tools have different naming for
+     * user and bot roles so added this so it
+     * can be specified.
+     *
+     * @array $messageRoles
+     */
     public array $messageRoles = [
         'user' => 'user',
         'assistant' => 'assistant'
     ];
 
+    /**
+     * List As Object
+     *
+     * This is to specify if the chat history
+     * should be sent as an Object or Array
+     * to the payload.
+     *
+     * @array $listAsObject
+     */
     public bool $listAsObject = false;
 
     public array $chatMaps = [];
@@ -62,8 +80,6 @@ class OpenAi implements Driver
 
         $this->headers = [
             "Authorization" => "Bearer {$apiToken}",
-            "Content-Type" => "application/json",
-            "Accept" => "application/json",
         ];
     }
 

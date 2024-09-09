@@ -21,7 +21,7 @@ class Cohere implements Driver
 {
 
     /**
-     * OpenAi Api Base URL
+     * Api Base URL
      * @strind $baseUrl
      */
     private string $baseUrl = "https://api.cohere.com/v1";
@@ -35,10 +35,29 @@ class Cohere implements Driver
      */
     protected array $headers;
 
+    /**
+     * Message Roles
+     *
+     * Some AI tools have different naming for
+     * user and bot roles so added this so it
+     * can be specified.
+     *
+     * @array $messageRoles
+     */
     public array $messageRoles = [
         'user' => 'USER',
         'assistant' => 'CHATBOT'
     ];
+
+    /**
+     * List As Object
+     *
+     * This is to specify if the chat history
+     * should be sent as an Object or Array
+     * to the payload.
+     *
+     * @array $listAsObject
+     */
 
     public bool $listAsObject = true;
 
