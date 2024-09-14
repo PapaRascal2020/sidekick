@@ -9,7 +9,7 @@ use PapaRascalDev\Sidekick\Models\Conversation;
 class SidekickConversation
 {
     protected Driver $sidekick;
-    protected Conversation $conversation;
+    public Conversation $conversation;
 
     /**
      * @param string $conversationId

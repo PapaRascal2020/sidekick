@@ -27,16 +27,17 @@ class Completion
      * @param string $message
      * @param array|object $allMessages
      * @param int $maxTokens
-     * @return array
+     * @param bool $stream
      * @throws ConnectionException
      */
     public function sendMessage(
-        string $model,
-        string $systemPrompt,
-        string $message,
-        array|object  $allMessages = [],
-        int    $maxTokens = 1024
-    ): array
+        string          $model,
+        string          $systemPrompt,
+        string          $message,
+        array|object    $allMessages = [],
+        int             $maxTokens = 1024,
+        bool            $stream = false
+    )
     {
         // Takes request and maps it to the $this->requestRules
         $request = [];
@@ -62,6 +63,7 @@ class Completion
                 $request[$key] = eval("return $value;");
             }
         }
+
 
         return Http::withHeaders($this->headers)
             ->post($this->url, $request)->json();

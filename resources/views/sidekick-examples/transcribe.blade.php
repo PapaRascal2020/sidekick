@@ -21,7 +21,7 @@
                 @if(isset($response))
                     <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4">
                         <p class="text-gray-800 font-bold">Response</p>
-                        <p class="text-gray-800">{!! json_encode($response) !!}</p>
+                        <p class="text-gray-800">{!! $response['text'] !!}</p>
                     </div>
                 @endif
             </div>

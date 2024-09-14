@@ -39,8 +39,9 @@
         <!-- Header -->
         @yield('content')
     </main>
-
 </div>
+
+@stack('page-scripts')
 
 </body>
 </html>
