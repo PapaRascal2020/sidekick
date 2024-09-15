@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use PapaRascalDev\Sidekick\Models\Conversation;
 use \PapaRascalDev\Sidekick\Sidekick;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
 use PapaRascalDev\Sidekick\SidekickConversation;
@@ -45,6 +46,21 @@ Route::post('/sidekick/playground/chat/update', function (Request $request) {
 
 Route::get('/sidekick/playground/chat', function () {
     return view('sidekick::sidekick-examples.chat');
+});
+
+Route::get('/sidekick/playground/chat/{id}', function (string $id) {
+    $conversation = Conversation::findOrFail($id);
+    return view('sidekick::sidekick-examples.chatroom', [
+        'conversationId' => $conversation->id,
+        'options' => $conversation->model,
+        'messages' => $conversation->messages
+    ]);
+});
+
+Route::get('/sidekick/playground/chat/delete/{id}', function (string $id) {
+    $conversation = Conversation::findOrFail($id);
+    $conversation->delete();
+    return redirect('/sidekick/playground/chat');
 });
 
 Route::get('/sidekick/playground/completion', function () {

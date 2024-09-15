@@ -7,8 +7,12 @@
 @section('content')
     <!-- Header -->
     <header class="bg-slate-900 shadow p-4 flex justify-between items-center">
-        <h1 class="text-xl text-white font-semibold text-gray-900">Conversation <small class="text-sm">(id: {{$conversationId}}) - Engine: {{$options}}</small></h1>
-        <a href="/sidekick/playground/chat" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">New Chat</a>
+        <h1 class="text-xl text-white font-semibold text-gray-900">Conversation <small class="text-sm">(id: {{$conversationId}}) - Engine: {{($options != '') ? $options : 'Auto-Select'}}</small></h1>
+
+        <div>
+            <a href="/sidekick/playground/chat" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">New Chat</a>
+            <a href="/sidekick/playground/chat/delete/{{$conversationId}}" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">X</a>
+        </div>
     </header>
 
     <!-- Chat Messages Area -->
@@ -17,6 +21,25 @@
             <div class="bg-slate-700 text-center">
                 <p class="text-gray-400">To start the conversation send a message</p>
             </div>
+            @if(isset($messages))
+                @foreach($messages as $message)
+                    @if(strtolower($message['role']) === 'user')
+                        <div class="flex items-start">
+                            <div class="bg-gray-200 p-4 rounded-lg w-3/4">
+                                <p class="text-gray-800 font-bold">&#128583; User</p>
+                                <p class="text-gray-800">{{ $message['content'] }}</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="flex items-start justify-end">
+                            <div class="bg-blue-600 text-white p-4 rounded-lg w-3/4">
+                                <p class="font-bold">&#129302; Assistant</p>
+                                <p>{{ $message['content'] }}</p>
+                            </div>
+                        </div>
+                    @endif
+                @endforeach
+            @endif
 
         </div>
     </div>
@@ -85,8 +108,6 @@
                     .then(data => {
                         const loader = document.getElementById('loader');
                         const response = data.response.messages[data.response.messages.length - 1];
-
-
 
                         loader.remove();
 

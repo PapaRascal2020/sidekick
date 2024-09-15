@@ -2,7 +2,9 @@
 
 namespace PapaRascalDev\Sidekick;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use PapaRascalDev\Sidekick\Models\Conversation;
 
 class SidekickServiceProvider extends ServiceProvider
 {
@@ -20,6 +22,8 @@ class SidekickServiceProvider extends ServiceProvider
 
         $this->initializeViews();
         $this->initializeViewsPublishing();
+
+        View::share('conversations', Conversation::all('id', 'model'));
     }
 
     /**
