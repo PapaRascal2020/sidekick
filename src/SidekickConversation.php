@@ -2,7 +2,6 @@
 
 namespace PapaRascalDev\Sidekick;
 
-use Illuminate\Support\Arr;
 use PapaRascalDev\Sidekick\Drivers\Driver;
 use PapaRascalDev\Sidekick\Models\Conversation;
 

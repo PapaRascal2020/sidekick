@@ -8,11 +8,23 @@
             "PapaRascalDev\\Sidekick\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "PapaRascalDev\\Sidekick\\Tests\\": "tests/"
+        }
+    },
     "authors": [
         {
             "name": "Ashley Johnson"
         }
     ],
     "minimum-stability": "beta",
-    "require": {}
+    "require": {
+        "php": "^8.0",
+        "ext-json": "*",
+        "laravel/framework": "^9.0|^10.0|^11.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5.13"
+    }
 }
