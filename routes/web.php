@@ -52,7 +52,7 @@ Route::get('/sidekick/playground/chat/{id}', function (string $id) {
     $conversation = Conversation::findOrFail($id);
     return view('sidekick::sidekick-examples.chatroom', [
         'conversationId' => $conversation->id,
-        'options' => $conversation->model,
+        'options' => $conversation->class,
         'messages' => $conversation->messages
     ]);
 });
