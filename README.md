@@ -26,8 +26,7 @@ This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mi
 <br>
 
 
-
-https://github.com/user-attachments/assets/4a3afa1a-0130-4c6c-bf1e-54dbe51117e4
+https://github.com/user-attachments/assets/54ce8f4d-e483-4900-b3e0-5a87cd8b0117
 
 
 ### Installation Guide
