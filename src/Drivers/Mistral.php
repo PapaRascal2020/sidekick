@@ -125,11 +125,19 @@ class Mistral implements Driver
         return $response['choices'][0]['message']['content'];
     }
 
+    /**
+     * @param $response
+     * @return string
+     */
     public function getStreamedText($response)
     {
         return $response['choices'][0]['delta']['content'] ?? "";
     }
 
+    /**
+     * @param $response
+     * @return array
+     */
     public function getErrorMessage($response)
     {
         return [
@@ -142,6 +150,10 @@ class Mistral implements Driver
         ];
     }
 
+    /**
+     * @param $response
+     * @return bool
+     */
     public function validate($response): bool
     {
         return !($response['object'] == "error");

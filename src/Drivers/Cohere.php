@@ -93,6 +93,9 @@ class Cohere implements Driver
         );
     }
 
+    /**
+     * @return StreamedCompletion
+     */
     public function completeStreamed(): StreamedCompletion
     {
         return new StreamedCompletion(
@@ -115,6 +118,10 @@ class Cohere implements Driver
         return $response['text'] ?? "";
     }
 
+    /**
+     * @param $response
+     * @return string
+     */
     public function getStreamedText($response)
     {
         return $response['text'] ?? "";

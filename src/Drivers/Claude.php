@@ -89,6 +89,9 @@ class Claude implements Driver
         );
     }
 
+    /**
+     * @return StreamedCompletion
+     */
     public function completeStreamed(): StreamedCompletion
     {
         return new StreamedCompletion(
@@ -115,6 +118,10 @@ class Claude implements Driver
         return $response['content'][0]['text'];
     }
 
+    /**
+     * @param $response
+     * @return string
+     */
     public function getStreamedText($response)
     {
         return $response['delta']['text'] ?? "";

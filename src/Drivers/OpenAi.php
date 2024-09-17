@@ -83,6 +83,9 @@ class OpenAi implements Driver
         ];
     }
 
+    /**
+     * @return Image
+     */
     public function image(): Image
     {
         return new Image(
@@ -91,6 +94,9 @@ class OpenAi implements Driver
         );
     }
 
+    /**
+     * @return Audio
+     */
     public function audio(): Audio
     {
         return new Audio(
@@ -99,6 +105,9 @@ class OpenAi implements Driver
         );
     }
 
+    /**
+     * @return Transcribe
+     */
     public function transcribe(): Transcribe
     {
         return new Transcribe(
@@ -107,6 +116,9 @@ class OpenAi implements Driver
         );
     }
 
+    /**
+     * @return Completion
+     */
     public function complete(): Completion
     {
         return new Completion(
@@ -124,6 +136,9 @@ class OpenAi implements Driver
         );
     }
 
+    /**
+     * @return StreamedCompletion
+     */
     public function completeStreamed(): StreamedCompletion
     {
         return new StreamedCompletion(
@@ -141,6 +156,9 @@ class OpenAi implements Driver
         );
     }
 
+    /**
+     * @return Embedding
+     */
     public function embedding(): Embedding
     {
         return new Embedding(
@@ -149,6 +167,9 @@ class OpenAi implements Driver
         );
     }
 
+    /**
+     * @return Moderate
+     */
     public function moderate(): Moderate
     {
         return new Moderate(
@@ -157,16 +178,28 @@ class OpenAi implements Driver
         );
     }
 
+    /**
+     * @param $response
+     * @return mixed
+     */
     public function getResponse($response)
     {
         return $response['choices'][0]['message']['content'];
     }
 
+    /**
+     * @param $response
+     * @return string
+     */
     public function getStreamedText($response)
     {
         return $response['choices'][0]['delta']['content'] ?? "";
     }
 
+    /**
+     * @param $response
+     * @return array
+     */
     public function getErrorMessage($response)
     {
         return [
@@ -179,6 +212,10 @@ class OpenAi implements Driver
         ];
     }
 
+    /**
+     * @param $response
+     * @return bool
+     */
     public function validate($response): bool
     {
         return !isset($response['error']);

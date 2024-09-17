@@ -109,10 +109,13 @@ class SidekickConversation
                     'content' => $this->sidekick->getResponse($response)
                 ]);
 
-                return [
-                    'conversation_id' => $this->conversation->id,
-                    'messages' => $this->conversation->messages()->get()->toArray(),
-                ];
+                return response()->json([
+                    'response' => [
+                        'conversation_id' => $this->conversation->id,
+                        'messages' => $this->conversation->messages()->get()->toArray()
+                    ],
+                    'options' => get_class($this->sidekick)
+                ]);
             }
 
             return $this->sidekick->getErrorMessage($response);
