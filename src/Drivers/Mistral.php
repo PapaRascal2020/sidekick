@@ -2,7 +2,7 @@
 
 namespace PapaRascalDev\Sidekick\Drivers;
 
-use PapaRascalDev\Sidekick\Features\{Completion, Embedding};
+use PapaRascalDev\Sidekick\Features\{Completion, Embedding, StreamedCompletion};
 
 /**
  * Supported Models:
@@ -92,6 +92,23 @@ class Mistral implements Driver
         );
     }
 
+    public function completeStreamed(): StreamedCompletion
+    {
+        return new StreamedCompletion (
+            url: "{$this->baseUrl}/chat/completions",
+            headers: $this->headers,
+            requestRules: [
+                'model' => '$model',
+                'max_tokens' => '$maxTokens',
+                'messages' => [
+                    '$systemPrompt ? ["role" => "system", "content" => $systemPrompt] : null',
+                    '$allMessages ? $allMessages : null',
+                    '["role" => "user", "content" => $message]',
+                ]
+            ]
+        );
+    }
+
     /**
      * @return Embedding
      */
@@ -106,6 +123,11 @@ class Mistral implements Driver
     public function getResponse($response)
     {
         return $response['choices'][0]['message']['content'];
+    }
+
+    public function getStreamedText($response)
+    {
+        return $response['choices'][0]['delta']['content'] ?? "";
     }
 
     public function getErrorMessage($response)

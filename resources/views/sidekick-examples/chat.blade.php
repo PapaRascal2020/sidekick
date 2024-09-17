@@ -21,7 +21,7 @@
     <!-- Input Area -->
     <footer class="bg-slate-900 p-4">
             <form method="POST" action="/sidekick/playground/chat">
-                <div class="flex gap-4">
+                <div class="flex gap-2">
                     @csrf
                     <select name="engine" class="text-black">
                         <option value="\PapaRascalDev\Sidekick\Drivers\OpenAi|gpt-3.5-turbo">Open AI : GPT 3.5 Turbo</option>
@@ -41,8 +41,8 @@
                             <option value="\PapaRascalDev\Sidekick\Drivers\Cohere|">Cohere : Auto-Select</option>
                         @endif
                     </select>
-                    <input type="text" name="prompt" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type a system prompt...">
-                    <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">Send</button>
+                    <input type="text" name="prompt" required class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type a system prompt...">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">&#x23CE;</button>
                 </div>
             </form>
     </footer>

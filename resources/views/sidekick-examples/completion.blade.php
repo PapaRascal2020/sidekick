@@ -12,7 +12,7 @@
             <div class="flex items-start justify-center">
                 <div class="text-gray-300 w-3/4 text-center">
                     <p class="font-bold text-3xl mb-20">&#129302; Completion Sample</p>
-                    <p>Type some text into the box below and click <strong class="font-bold">Send</strong> to see the AI's response.</p>
+                    <p>Type some text into the box below and click <strong class="font-bold">&#x23CE;</strong> to see the AI's response.</p>
                 </div>
             </div>
 
@@ -30,7 +30,7 @@
         <form id="completion-form">
             <div class="flex">
                 <input type="text" name="message" id="message-input" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type some text...">
-                <input type="submit" class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700" value="Send">
+                <input type="submit" class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700" value="&#x23CE;">
             </div>
         </form>
     </footer>

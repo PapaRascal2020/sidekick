@@ -6,8 +6,8 @@
 
 @section('content')
     <!-- Header -->
-    <header class="bg-slate-900 shadow p-4 flex justify-between items-center">
-        <h1 class="text-xl text-white font-semibold text-gray-900">Conversation <small class="text-sm">(id: {{$conversationId}}) - Engine: {{($options != '') ? $options : 'Auto-Select'}}</small></h1>
+    <header class="bg-slate-900 shadow p-4 flex justify-between items-center text-white">
+        <h1 class="text-xl text-white font-semibold">Conversation <small class="text-sm">(id: {{$conversationId}}) - Engine: {{($options != '') ? $options : 'Auto-Select'}}</small></h1>
 
         <div>
             <a href="/sidekick/playground/chat" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">New Chat</a>
@@ -26,15 +26,17 @@
                     @if(strtolower($message['role']) === 'user')
                         <div class="flex items-start">
                             <div class="bg-gray-200 p-4 rounded-lg w-3/4">
-                                <p class="text-gray-800 font-bold">&#128583; User</p>
-                                <p class="text-gray-800">{{ $message['content'] }}</p>
+                                <p class="font-bold flex items-center gap-x-1 pb-2 text-black">
+                                    @include('sidekick::sidekick-components.user') User</p>
+                                <p class="text-gray-800">{!! $message['content'] !!}</p>
                             </div>
                         </div>
                     @else
                         <div class="flex items-start justify-end">
-                            <div class="bg-blue-600 text-white p-4 rounded-lg w-3/4">
-                                <p class="font-bold">&#129302; Assistant</p>
-                                <p>{{ $message['content'] }}</p>
+                            <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
+                                <p class="font-bold flex items-center gap-x-1 pb-2">
+                                    @include('sidekick::sidekick-components.bot') Assistant</p>
+                                <p>{!! $message['content'] !!}</p>
                             </div>
                         </div>
                     @endif
@@ -50,8 +52,13 @@
             <div class="flex">
                 <input id="conversation_id" type="hidden" name="conversation_id" value="{{$conversationId}}" />
                 <input id="engine" type="hidden" name="engine" value="{{$options}}" />
-                <input id="message-input" type="text" name="message"  class="flex-1 border border-gray-300 text-black rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type your message...">
-                <input type="submit" class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700" value="Send">
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="stream" name="stream" value="" class="sr-only peer">
+                    <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                    <span class="ms-3 text-sm font-medium text-gray-900 pr-4 dark:text-gray-300">Stream</span>
+                </label>
+                <input id="message-input" type="text" name="message" required class="flex-1 border border-gray-300 text-black rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type your message...">
+                <input type="submit" class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700" value="&#x23CE;">
             </div>
         </form>
     </footer>
@@ -65,8 +72,11 @@
             const container = document.getElementById('scrollableDiv');
             const messageInput = document.getElementById('message-input');
             const engine = document.getElementById('engine');
+            const stream = document.getElementById('stream');
             const conversationId = document.getElementById('conversation_id');
             const responseContainer = document.getElementById('response-container');
+
+            container.scrollTop = container.scrollHeight;
 
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
@@ -76,15 +86,22 @@
                 const message = messageInput.value;
 
                 messageInput.value = "";
+                form.disabled = true;
+
+
+                let isStreamed = stream.checked;
 
                 responseContainer.innerHTML += `
                     <div class="flex items-start">
                         <div class="bg-gray-200 p-4 rounded-lg w-3/4">
-                            <p class="text-gray-800 font-bold">&#128583; User</p>
+                            <p class="font-bold flex items-center gap-x-1 pb-2 text-black">
+                                    @include('sidekick::sidekick-components.user') User</p>
                             <p class="text-gray-800">${message}</p>
                         </div>
                     </div>
+                `;
 
+                responseContainer.innerHTML += `
                     <div id="loader" class="flex items-center justify-center bg-slate-700 text-center text-gray-400 p-4">
                         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -96,36 +113,106 @@
 
                 container.scrollTop = container.scrollHeight;
 
-                fetch('/sidekick/playground/chat/update', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify({ message: message, conversation_id: conversationId.value, engine: engine.value })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        const loader = document.getElementById('loader');
-                        const response = data.response.messages[data.response.messages.length - 1];
+                if (isStreamed) {
+                    handleStreamedCallback();
+                } else {
+                    handleCallback()
+                }
 
-                        loader.remove();
+                async function handleStreamedCallback() {
+                    // Set random ID for appending chunked data to Assistant Message
+                    let r = (Math.random() + 1).toString(36).substring(7);
 
-                        responseContainer.innerHTML += `<div class="flex items-start justify-end">
-                            <div class="bg-blue-600 text-white p-4 rounded-lg w-3/4">
-                                <p class="font-bold">&#129302; Assistant</p>
-                                <p>${response.content}</p>
-                            </div>
-                        </div>`;
+                    // Create response container
+                    responseContainer.innerHTML += `
+                    <div class="flex items-start justify-end">
+                        <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
+                            <p class="font-bold flex items-center gap-x-1 pb-2">
+                                @include('sidekick::sidekick-components.bot') Assistant</p>
+                            <p id="response-${r}"></p>
+                        </div>
+                    </div>
+                    `;
+
+                    // Make fetch request to server
+                    fetch('/sidekick/playground/chat/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            conversation_id: conversationId.value,
+                            engine: engine.value,
+                            stream: true
+                        })
+                    }).then(async (response) => {
+                        const reader = response.body.getReader();
+                        const decoder = new TextDecoder();
+
+                        const responseBox = document.getElementById(`response-${r}`);
 
                         container.scrollTop = container.scrollHeight;
-                    })
-                    .catch(error => {
+
+                        while (true) {
+                            const {done, value} = await reader.read();
+
+                            if(done) break;
+
+                            const chunk = decoder.decode(value, {stream: true});
+
+                            responseBox.innerText += chunk;
+                            container.scrollTop = container.scrollHeight;
+                        }
+
+                        const loader = document.getElementById('loader');
+                        loader.remove();
+
+                    }).catch(error => {
+                        const loader = document.getElementById('loader');
+                        loader.remove();
                         console.error('Error:', error);
-                        //responseText.textContent = 'An error occurred while processing the request.';
-                        //responseContainer.style.display = 'block';
                     });
-            });
+                }
+
+                function handleCallback() {
+                    fetch('/sidekick/playground/chat/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            message: message,
+                            conversation_id: conversationId.value,
+                            engine: engine.value,
+                            stream: false
+                        })
+                    }).then(
+                        response => response.json()
+                    ).then(data => {
+                        const response = data.response.messages[data.response.messages.length - 1];
+
+                        const loader = document.getElementById('loader');
+                        loader.remove();
+
+                        responseContainer.innerHTML += `
+                        <div class="flex items-start justify-end">
+                            <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
+                                <p class="font-bold flex items-center gap-x-1 pb-2">
+                                        @include('sidekick::sidekick-components.bot') Assistant</p>
+                                <p>${response.content}</p>
+                            </div>
+                        </div>
+                        `;
+
+                        container.scrollTop = container.scrollHeight;
+                    }).catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            })
         });
     </script>
 @endprepend

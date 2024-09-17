@@ -12,7 +12,7 @@
             <div class="flex items-start justify-center">
                 <div class="text-gray-300 w-3/4 text-center">
                     <p class="font-bold text-3xl mb-20">&#129302; Moderate Sample</p>
-                    <p>Type a dummy comment or post into the text box below and hit <strong class="font-bold">Send</strong>. The AI will then review the content and send back a moderation response.</p>
+                    <p>Type a dummy comment or post into the text box below and hit <strong class="font-bold">&#x23CE;</strong>. The AI will then review the content and send back a moderation response.</p>
                 </div>
             </div>
 
@@ -40,7 +40,7 @@
             <div class="flex">
                 @csrf
                 <input type="text" name="text" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type some text..." >
-                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">Send</button>
+                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">&#x23CE;</button>
             </div>
         </form>
     </footer>

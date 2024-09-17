@@ -6,6 +6,7 @@ use PapaRascalDev\Sidekick\Models\Conversation;
 use \PapaRascalDev\Sidekick\Sidekick;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
 use PapaRascalDev\Sidekick\SidekickConversation;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 Route::get('/sidekick/playground', function () {
     return view('sidekick::sidekick-examples.index');
@@ -24,7 +25,8 @@ Route::post('/sidekick/playground/chat', function (Request $request) {
 
     return view('sidekick::sidekick-examples.chatroom', [
         'conversationId' => $conversation->conversation->id,
-        'options' => $options[0]
+        'options' => $options[0],
+        'conversations' => Conversation::all('id', 'model')
     ]);
 });
 
@@ -33,15 +35,20 @@ Route::post('/sidekick/playground/chat/update', function (Request $request) {
     $sidekick = new SidekickConversation(new $engine());
 
     $conversation = $sidekick->resume(
-        conversationId: $request->get('conversation_id')
+        conversationId: $request->get('conversation_id'),
     );
 
-    $response = $conversation->sendMessage($request->get('message'));
+    if($request->get('stream')) {
+        return $conversation->sendMessage($request->get('message'), true);
+    } else {
+        $response = $conversation->sendMessage($request->get('message'));
 
-    return response()->json([
-        'response' => $response,
-        'options' => $engine
-    ]);
+        return response()->json([
+            'response' => $response,
+            'options' => $engine
+        ]);
+    }
+
 });
 
 Route::get('/sidekick/playground/chat', function () {

@@ -49,9 +49,8 @@ class SidekickConversation
 
     /**
      * @param string $message
-     * @return array
      */
-    public function sendMessage(string $message) {
+    public function sendMessage(string $message, bool $streamed = false) {
 
         if($this->sidekick->listAsObject) {
             $allMessages = $this->toCustomArray($this->messages(), $this->sidekick->chatMaps);
@@ -61,32 +60,63 @@ class SidekickConversation
             ];
         }
 
-        $response = $this->sidekick->complete()->sendMessage(
-            model: $this->conversation->model,
-            systemPrompt: $this->conversation->system_prompt,
-            allMessages: $allMessages,
-            message: $message,
-            maxTokens: $this->conversation->max_tokens);
+        if($streamed) {
+            return response()->stream(function () use ($message, $allMessages) {
+                $wholeMessage = "";
+                foreach ($this->sidekick->completeStreamed()->sendMessage (
+                    model: $this->conversation->model,
+                    systemPrompt: $this->conversation->system_prompt,
+                    allMessages: $allMessages,
+                    message: $message,
+                    maxTokens: $this->conversation->max_tokens) as $chunk) {
+                    $chunk = $this->sidekick->getStreamedText($chunk);
+                    $wholeMessage .= $chunk;
+                    echo $chunk;
+                    ob_flush();
+                    flush();
+                    usleep(50);
+                }
 
-        if($this->sidekick->validate($response)) {
-            $this->conversation->messages()->create([
-                'role' => $this->sidekick->messageRoles['user'],
-                'content' => $message
-            ]);
 
-            $this->conversation->messages()->create([
-                'role' => $this->sidekick->messageRoles['assistant'],
-                'content' => $this->sidekick->getResponse($response)
-            ]);
+                if($wholeMessage > "") {
+                    $this->conversation->messages()->create([
+                        'role' => $this->sidekick->messageRoles['user'],
+                        'content' => $message
+                    ]);
 
-            return [
-                'conversation_id' => $this->conversation->id,
-                'messages' => $this->conversation->messages()->get()->toArray(),
-            ];
+                    $this->conversation->messages()->create([
+                        'role' => $this->sidekick->messageRoles['assistant'],
+                        'content' => nl2br($wholeMessage)
+                    ]);
+                }
+            }, 200, ['X-Accel-Buffering' => 'no']);
+        } else {
+            $response = $this->sidekick->complete()->sendMessage(
+                model: $this->conversation->model,
+                systemPrompt: $this->conversation->system_prompt,
+                allMessages: $allMessages,
+                message: $message,
+                maxTokens: $this->conversation->max_tokens);
+
+            if($this->sidekick->validate($response)) {
+                $this->conversation->messages()->create([
+                    'role' => $this->sidekick->messageRoles['user'],
+                    'content' => $message
+                ]);
+
+                $this->conversation->messages()->create([
+                    'role' => $this->sidekick->messageRoles['assistant'],
+                    'content' => $this->sidekick->getResponse($response)
+                ]);
+
+                return [
+                    'conversation_id' => $this->conversation->id,
+                    'messages' => $this->conversation->messages()->get()->toArray(),
+                ];
+            }
+
+            return $this->sidekick->getErrorMessage($response);
         }
-
-        return $this->sidekick->getErrorMessage($response);
-
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\Completion;
+use PapaRascalDev\Sidekick\Features\StreamedCompletion;
 
 /**
  * Supported Models:
@@ -88,6 +89,23 @@ class Claude implements Driver
         );
     }
 
+    public function completeStreamed(): StreamedCompletion
+    {
+        return new StreamedCompletion(
+            url: "{$this->baseUrl}/messages",
+            headers: $this->headers,
+            requestRules: [
+                'model' => '$model',
+                'max_tokens' => '$maxTokens',
+                'system' => '$systemPrompt ?? null',
+                'messages' => [
+                    '$allMessages ? $allMessages : null',
+                    '["role" => "user", "content" => $message]',
+                ]
+            ]
+        );
+    }
+
     /**
      * @param $response
      * @return mixed
@@ -95,6 +113,11 @@ class Claude implements Driver
     public function getResponse($response)
     {
         return $response['content'][0]['text'];
+    }
+
+    public function getStreamedText($response)
+    {
+        return $response['delta']['text'] ?? "";
     }
 
     /**

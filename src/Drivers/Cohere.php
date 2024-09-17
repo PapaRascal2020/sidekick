@@ -3,6 +3,7 @@
 namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\Completion;
+use PapaRascalDev\Sidekick\Features\StreamedCompletion;
 
 /**
  * Unlike other AI's passing no model sets a defaults
@@ -92,13 +93,31 @@ class Cohere implements Driver
         );
     }
 
+    public function completeStreamed(): StreamedCompletion
+    {
+        return new StreamedCompletion(
+            url: "{$this->baseUrl}/chat",
+            headers: $this->headers,
+            requestRules: [
+                'chat_history' => '$allMessages ? $allMessages : null',
+                'message' => '$message'
+            ]
+        );
+    }
+
+
     /**
      * @param $response
      * @return mixed
      */
     public function getResponse($response)
     {
-        return $response['text'];
+        return $response['text'] ?? "";
+    }
+
+    public function getStreamedText($response)
+    {
+        return $response['text'] ?? "";
     }
 
     /**

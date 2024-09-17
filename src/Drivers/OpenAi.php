@@ -2,7 +2,7 @@
 
 namespace PapaRascalDev\Sidekick\Drivers;
 
-use PapaRascalDev\Sidekick\Features\{Completion, Audio, Transcribe, Image, Embedding, Moderate};
+use PapaRascalDev\Sidekick\Features\{Completion, Audio, StreamedCompletion, Transcribe, Image, Embedding, Moderate};
 
 /**
  * Supported Models:
@@ -119,8 +119,25 @@ class OpenAi implements Driver
                     '$systemPrompt ? ["role" => "system", "content" => $systemPrompt] : null',
                     '$allMessages ? $allMessages : null',
                     '["role" => "user", "content" => $message]',
-                    ]
                 ]
+            ]
+        );
+    }
+
+    public function completeStreamed(): StreamedCompletion
+    {
+        return new StreamedCompletion(
+            url: "{$this->baseUrl}/chat/completions",
+            headers: $this->headers,
+            requestRules: [
+                'model' => '$model',
+                'max_tokens' => '$maxTokens',
+                'messages' => [
+                    '$systemPrompt ? ["role" => "system", "content" => $systemPrompt] : null',
+                    '$allMessages ? $allMessages : null',
+                    '["role" => "user", "content" => $message]',
+                ]
+            ]
         );
     }
 
@@ -143,6 +160,11 @@ class OpenAi implements Driver
     public function getResponse($response)
     {
         return $response['choices'][0]['message']['content'];
+    }
+
+    public function getStreamedText($response)
+    {
+        return $response['choices'][0]['delta']['content'] ?? "";
     }
 
     public function getErrorMessage($response)
