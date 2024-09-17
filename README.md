@@ -6,7 +6,7 @@
 </td>
 <td valign="top" style="border: none;">
 <h2> Sidekick for Laravel</h2>
-Say hello to Sidekick! A Laravel plugin that provides a common syntax for using Claude, Mistral, Cohere and OpenAi APIs.
+Say hello to Sidekick! A Laravel plugin that provides a common syntax for using Claude, Mistral, Cohere and OpenAi APIs (now with StreamedResponses).
 </td>
 </tr>
 <tr style="border: none;">
@@ -25,8 +25,7 @@ This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mi
 <br/>
 <br>
 
-
-https://github.com/user-attachments/assets/54ce8f4d-e483-4900-b3e0-5a87cd8b0117
+https://github.com/user-attachments/assets/6a098833-e7dc-4ac0-b1a6-cf18b5005880
 
 
 ### Installation Guide
@@ -173,6 +172,18 @@ An example of the formatted response can be found below:
     }
   ]
 }
+```
+
+#### Streamed Conversations
+
+The difference in non streamed and streamed responses is a flag. This flag is passed in the sendMessage function like so:
+
+```PHP
+// Send a new message
+return $conversation->sendMessage($request->get('message'));
+
+// Send a new message (streamed)
+return $conversation->sendMessage($request->get('message'), true);
 ```
 
 #### Managing Sidekick Conversations
