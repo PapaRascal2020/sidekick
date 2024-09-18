@@ -1,7 +1,7 @@
-@extends('sidekick::sidekick-shared.layout')
+@extends('sidekick::Blade.Shared.layout')
 
 @section('title')
-    Audio Generation Sample
+    Image Generation Sample
 @endsection
 
 @section('content')
@@ -11,15 +11,10 @@
         <div class="space-y-4">
             <div class="flex items-start justify-center">
                 <div class="text-gray-300 w-3/4 text-center">
-                    <p class="font-bold text-3xl mb-20">&#129302; Audio Generation Sample</p>
-                    <p>Enter text below and click <b class="font-bold">&#x23CE;</b> to generate an audio file.</p>
-
-                    @if(isset($audio))
-                        <div class="m-auto text-center w-1/3 pt-4">
-                            <audio id="audioPlayer" controls>
-                                <source src="data:audio/mpeg;base64,{!! $audio !!}" type="audio/mpeg" />
-                            </audio>
-                        </div>
+                    <p class="font-bold text-3xl mb-20">&#129302; Image Generation Sample</p>
+                    <p>Describe the image you want in the text box below and click <b class="font-bold">&#x23CE;</b> to generate an image.</p>
+                    @if(isset($image))
+                        <img src="{!! $image !!}" alt="generated image" class="w-full pt-20"/>
                     @endif
                 </div>
             </div>
@@ -28,7 +23,7 @@
 
     <!-- Input Area -->
     <footer class="bg-slate-900 p-4">
-        <form method="POST" action="/sidekick/playground/audio">
+        <form method="POST" action="/sidekick/playground/image">
             <div class="flex">
                 @csrf
                 <input type="text" name="text_to_convert" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type your message...">

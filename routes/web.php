@@ -25,7 +25,7 @@ Route::post('/sidekick/playground/chat', function (Request $request) {
     );
 
     // Redirect the user to the main page for the conversation
-    return view('sidekick::sidekick-examples.chatroom', [
+    return view('sidekick::Blade.Pages.chatroom', [
         'conversationId' => $conversation->conversation->id,
         'options' => $options[0],
         'conversations' => Conversation::all('id', 'model')
@@ -55,7 +55,7 @@ Route::get('/sidekick/playground/chat/{id}', function (string $id) {
     $conversation = Conversation::findOrFail($id);
 
     // Return the conversation to the browser
-    return view('sidekick::sidekick-examples.chatroom', [
+    return view('sidekick::Blade.Pages.chatroom', [
         'conversationId' => $conversation->id,
         'options' => $conversation->class,
         'messages' => $conversation->messages
@@ -74,7 +74,7 @@ Route::get('/sidekick/playground/chat/delete/{id}', function (string $id) {
 });
 
 Route::get('/sidekick/playground/completion', function () {
-    return view('sidekick::sidekick-examples.completion');
+    return view('sidekick::Blade.Pages.completion');
 });
 
 Route::post('/sidekick/playground/completion', function (Request $request) {
@@ -94,7 +94,7 @@ Route::post('/sidekick/playground/completion', function (Request $request) {
 });
 
 Route::get('/sidekick/playground/audio', function () {
-    return view('sidekick::sidekick-examples.audio');
+    return view('sidekick::Blade.Pages.audio');
 });
 
 Route::post('/sidekick/playground/audio', function (Request $request) {
@@ -108,7 +108,7 @@ Route::post('/sidekick/playground/audio', function (Request $request) {
     );
 
     // Return the base64 encoded audio file to the front end
-    return view('sidekick::sidekick-examples.audio', ['audio' => base64_encode($audio)]);
+    return view('sidekick::Blade.Pages.audio', ['audio' => base64_encode($audio)]);
 });
 
 Route::post('/sidekick/playground/image', function (Request $request) {
@@ -120,7 +120,7 @@ Route::post('/sidekick/playground/image', function (Request $request) {
         height:'1024'
     );
 
-    return view('sidekick::sidekick-examples.image', ['image' => $image['data'][0]['url']]);
+    return view('sidekick::Blade.Pages.image', ['image' => $image['data'][0]['url']]);
 });
 
 Route::post('/sidekick/playground/transcribe', function (Request $request) {
@@ -129,7 +129,7 @@ Route::post('/sidekick/playground/transcribe', function (Request $request) {
         model:'whisper-1',
         filePath:$request->get('audio')
     );
-    return view('sidekick::sidekick-examples.transcribe', ['response' => $response]);
+    return view('sidekick::Blade.Pages.transcribe', ['response' => $response]);
 });
 
 Route::post('/sidekick/playground/embedding', function (Request $request) {
@@ -138,11 +138,11 @@ Route::post('/sidekick/playground/embedding', function (Request $request) {
         model:'text-embedding-3-large',
         input: $request->get('text'),
     );
-    return view('sidekick::sidekick-examples.embedding', ['response' => $response]);
+    return view('sidekick::Blade.Pages.embedding', ['response' => $response]);
 });
 
 Route::get('/sidekick/playground/moderate', function () {
-    return view('sidekick::sidekick-examples.moderate');
+    return view('sidekick::Blade.Pages.moderate');
 });
 
 Route::post('/sidekick/playground/moderate', function (Request $request) {
@@ -151,26 +151,26 @@ Route::post('/sidekick/playground/moderate', function (Request $request) {
         model:'text-moderation-latest',
         content: $request->get('text')
     );
-    return view('sidekick::sidekick-examples.moderate', ['response' => $response]);
+    return view('sidekick::Blade.Pages.moderate', ['response' => $response]);
 });
 
 Route::get('/sidekick/playground/image', function () {
-    return view('sidekick::sidekick-examples.image');
+    return view('sidekick::Blade.Pages.image');
 });
 
 Route::get('/sidekick/playground/transcribe', function () {
-    return view('sidekick::sidekick-examples.transcribe');
+    return view('sidekick::Blade.Pages.transcribe');
 });
 
 Route::get('/sidekick/playground/embedding', function () {
-    return view('sidekick::sidekick-examples.embedding');
+    return view('sidekick::Blade.Pages.embedding');
 });
 
 Route::get('/sidekick/playground/chat', function () {
-    return view('sidekick::sidekick-examples.chat');
+    return view('sidekick::Blade.Pages.chat');
 });
 
 Route::get('/sidekick/playground', function () {
-    return view('sidekick::sidekick-examples.index');
+    return view('sidekick::Blade.Pages.index');
 });
 

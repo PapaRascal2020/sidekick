@@ -1,4 +1,4 @@
-@extends('sidekick::sidekick-shared.layout')
+@extends('sidekick::Blade.Shared.layout')
 
 @section('title')
     Transcription Generation Sample
