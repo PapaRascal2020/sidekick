@@ -25,8 +25,7 @@ This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mi
 <br/>
 <br>
 
-https://github.com/user-attachments/assets/6a098833-e7dc-4ac0-b1a6-cf18b5005880
-
+https://github.com/user-attachments/assets/7c2d2c61-a645-41cb-b59f-d821a63bb7d3
 
 ### Installation Guide
 The easiest way to install the package in your laravel app is to run the following command from within your projects directory:
