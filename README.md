@@ -72,18 +72,21 @@ Run your migrations using the command below:
     php artisan migrate
 ```
 
+After the `.env` is updated you can start testing the plugin.
+
 ### The Sidekick Playground
 
-After the `.env` is updated you can start testing the plugin. I have added some routes with example calls for you to try out or learn from. 
+In order to see some examples of Sidekick in action I have created a playground.
+This is not available by default because some may not wish to use it.
 
-You can also publish these to your `routes` and `views` directory to directly modify with the following commands:
+If you would like to use it run the following artisan command to install the playground:
 
+```bash
+  php artisan sidekick:install
 ```
-    php artisan vendor:publish --tag=views
-    php artisan vendor:publish --tag=routes
-```
+This will install the routes and views into your application.
 
-To access the playground head to: 
+After the install you can access the playground at: 
 
 ```
 /sidekick/playground
