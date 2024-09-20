@@ -1,4 +1,4 @@
-@extends('sidekick::Blade.Shared.layout')
+@extends('Shared.layout')
 
 @section('title')
     Talk to Sidekick!

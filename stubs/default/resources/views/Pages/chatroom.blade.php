@@ -1,4 +1,4 @@
-@extends('sidekick::Blade.Shared.layout')
+@extends('Shared.layout')
 
 @section('title')
     Talk to Sidekick! - Chat
@@ -27,7 +27,7 @@
                         <div class="flex items-start">
                             <div class="bg-gray-200 p-4 rounded-lg w-3/4">
                                 <p class="font-bold flex items-center gap-x-1 pb-2 text-black">
-                                    @include('sidekick::Blade.Components.user') User</p>
+                                    @include('Components.user') User</p>
                                 <p class="text-gray-800">{!! $message['content'] !!}</p>
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                         <div class="flex items-start justify-end">
                             <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
                                 <p class="font-bold flex items-center gap-x-1 pb-2">
-                                    @include('sidekick::Blade.Components.bot') Assistant</p>
+                                    @include('Components.bot') Assistant</p>
                                 <p>{!! $message['content'] !!}</p>
                             </div>
                         </div>
@@ -95,7 +95,7 @@
                     <div class="flex items-start">
                         <div class="bg-gray-200 p-4 rounded-lg w-3/4">
                             <p class="font-bold flex items-center gap-x-1 pb-2 text-black">
-                                    @include('sidekick::Blade.Components.user') User</p>
+                                    @include('Components.user') User</p>
                             <p class="text-gray-800">${message}</p>
                         </div>
                     </div>
@@ -128,7 +128,7 @@
                     <div class="flex items-start justify-end">
                         <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
                             <p class="font-bold flex items-center gap-x-1 pb-2">
-                                @include('sidekick::Blade.Components.bot') Assistant</p>
+                                @include('Components.bot') Assistant</p>
                             <p id="response-${r}"></p>
                         </div>
                     </div>
@@ -201,7 +201,7 @@
                         <div class="flex items-start justify-end">
                             <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
                                 <p class="font-bold flex items-center gap-x-1 pb-2">
-                                        @include('sidekick::Blade.Components.bot') Assistant</p>
+                                        @include('Components.bot') Assistant</p>
                                 <p>${response.content}</p>
                             </div>
                         </div>

@@ -25,7 +25,7 @@ Route::post('/sidekick/playground/chat', function (Request $request) {
     );
 
     // Redirect the user to the main page for the conversation
-    return view('sidekick::Blade.Pages.chatroom', [
+    return view('Pages.chatroom', [
         'conversationId' => $conversation->conversation->id,
         'options' => $options[0],
         'conversations' => Conversation::all('id', 'model')
@@ -55,7 +55,7 @@ Route::get('/sidekick/playground/chat/{id}', function (string $id) {
     $conversation = Conversation::findOrFail($id);
 
     // Return the conversation to the browser
-    return view('sidekick::Blade.Pages.chatroom', [
+    return view('Pages.chatroom', [
         'conversationId' => $conversation->id,
         'options' => $conversation->class,
         'messages' => $conversation->messages
@@ -74,12 +74,12 @@ Route::get('/sidekick/playground/chat/delete/{id}', function (string $id) {
 });
 
 Route::get('/sidekick/playground/completion', function () {
-    return view('sidekick::Blade.Pages.completion');
+    return view('Pages.completion');
 });
 
 Route::post('/sidekick/playground/completion', function (Request $request) {
     // Loads a new instance of Sidekick with OpenAI
-    $sidekick = Sidekick::create(new OpenAi());
+    $sidekick = create(new OpenAi());
 
     // Send message
     $response = $sidekick->complete()->sendMessage(
@@ -94,12 +94,12 @@ Route::post('/sidekick/playground/completion', function (Request $request) {
 });
 
 Route::get('/sidekick/playground/audio', function () {
-    return view('sidekick::Blade.Pages.audio');
+    return view('Pages.audio');
 });
 
 Route::post('/sidekick/playground/audio', function (Request $request) {
     // Loads a new instance of Sidekick with OpenAI
-    $sidekick = Sidekick::create(new OpenAi());
+    $sidekick = create(new OpenAi());
 
     // Send text to be converted by Sidekick to audio
     $audio = $sidekick->audio()->fromText(
@@ -108,11 +108,11 @@ Route::post('/sidekick/playground/audio', function (Request $request) {
     );
 
     // Return the base64 encoded audio file to the front end
-    return view('sidekick::Blade.Pages.audio', ['audio' => base64_encode($audio)]);
+    return view('Pages.audio', ['audio' => base64_encode($audio)]);
 });
 
 Route::post('/sidekick/playground/image', function (Request $request) {
-    $sidekick = Sidekick::create(new OpenAi());
+    $sidekick = create(new OpenAi());
     $image =  $sidekick->image()->make(
         model:'dall-e-3',
         prompt: $request->get('text_to_convert'),
@@ -120,57 +120,57 @@ Route::post('/sidekick/playground/image', function (Request $request) {
         height:'1024'
     );
 
-    return view('sidekick::Blade.Pages.image', ['image' => $image['data'][0]['url']]);
+    return view('Pages.image', ['image' => $image['data'][0]['url']]);
 });
 
 Route::post('/sidekick/playground/transcribe', function (Request $request) {
-    $sidekick = Sidekick::create(new OpenAi());
+    $sidekick = create(new OpenAi());
     $response =  $sidekick->transcribe()->audioFile(
         model:'whisper-1',
         filePath:$request->get('audio')
     );
-    return view('sidekick::Blade.Pages.transcribe', ['response' => $response]);
+    return view('Pages.transcribe', ['response' => $response]);
 });
 
 Route::post('/sidekick/playground/embedding', function (Request $request) {
-    $sidekick = Sidekick::create(new OpenAi());
+    $sidekick = create(new OpenAi());
     $response = $sidekick->embedding()->make(
         model:'text-embedding-3-large',
         input: $request->get('text'),
     );
-    return view('sidekick::Blade.Pages.embedding', ['response' => $response]);
+    return view('Pages.embedding', ['response' => $response]);
 });
 
 Route::get('/sidekick/playground/moderate', function () {
-    return view('sidekick::Blade.Pages.moderate');
+    return view('Pages.moderate');
 });
 
 Route::post('/sidekick/playground/moderate', function (Request $request) {
-    $sidekick = Sidekick::create(new OpenAi());
+    $sidekick = create(new OpenAi());
     $response = $sidekick->moderate()->text(
         model:'text-moderation-latest',
         content: $request->get('text')
     );
-    return view('sidekick::Blade.Pages.moderate', ['response' => $response]);
+    return view('Pages.moderate', ['response' => $response]);
 });
 
 Route::get('/sidekick/playground/image', function () {
-    return view('sidekick::Blade.Pages.image');
+    return view('Pages.image');
 });
 
 Route::get('/sidekick/playground/transcribe', function () {
-    return view('sidekick::Blade.Pages.transcribe');
+    return view('Pages.transcribe');
 });
 
 Route::get('/sidekick/playground/embedding', function () {
-    return view('sidekick::Blade.Pages.embedding');
+    return view('Pages.embedding');
 });
 
 Route::get('/sidekick/playground/chat', function () {
-    return view('sidekick::Blade.Pages.chat');
+    return view('Pages.chat');
 });
 
 Route::get('/sidekick/playground', function () {
-    return view('sidekick::Blade.Pages.index');
+    return view('Pages.index');
 });
 

@@ -4,6 +4,7 @@ namespace PapaRascalDev\Sidekick;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use PapaRascalDev\Sidekick\Console\InstallCommand;
 use PapaRascalDev\Sidekick\Models\Conversation;
 
 class SidekickServiceProvider extends ServiceProvider
@@ -14,14 +15,12 @@ class SidekickServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
+        $this->commands([
+            InstallCommand::class,
+        ]);
+
         $this->initializeMigrations();
         $this->initializeMigrationPublishing();
-
-        $this->initializeRoutes();
-        $this->initializeRoutesPublishing();
-
-        $this->initializeViews();
-        $this->initializeViewsPublishing();
 
         View::share('conversations', Conversation::all('id', 'model'));
     }
@@ -58,41 +57,4 @@ class SidekickServiceProvider extends ServiceProvider
     public function register(): void
     {
     }
-
-    /**
-     * @return void
-     */
-    private function initializeRoutes(): void
-    {
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-    }
-
-    /**
-     * @return void
-     */
-    private function initializeRoutesPublishing(): void
-    {
-        $this->publishes([
-            __DIR__ . '/../routes/web.php' => base_path('routes/sidekick.php'),
-        ], 'routes');
-    }
-
-    /**
-     * @return void
-     */
-    private function initializeViews(): void
-    {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'sidekick');
-    }
-
-    /**
-     * @return void
-     */
-    private function initializeViewsPublishing(): void
-    {
-        $this->publishes([
-            __DIR__ . '/../resources/views' => resource_path('views/vendor/sidekick'),
-        ], 'views');
-    }
-
 }
