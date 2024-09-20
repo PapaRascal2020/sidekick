@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use PapaRascalDev\Sidekick\Helpers\FileHelper;
 use \PapaRascalDev\Sidekick\Sidekick;
 use Illuminate\Support\Facades\Route;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
@@ -79,7 +80,7 @@ Route::get('/sidekick/playground/completion', function () {
 
 Route::post('/sidekick/playground/completion', function (Request $request) {
     // Loads a new instance of Sidekick with OpenAI
-    $sidekick = create(new OpenAi());
+    $sidekick = Sidekick::create(new OpenAi());
 
     // Send message
     $response = $sidekick->complete()->sendMessage(
@@ -99,7 +100,7 @@ Route::get('/sidekick/playground/audio', function () {
 
 Route::post('/sidekick/playground/audio', function (Request $request) {
     // Loads a new instance of Sidekick with OpenAI
-    $sidekick = create(new OpenAi());
+    $sidekick = Sidekick::create(new OpenAi());
 
     // Send text to be converted by Sidekick to audio
     $audio = $sidekick->audio()->fromText(
@@ -107,12 +108,14 @@ Route::post('/sidekick/playground/audio', function (Request $request) {
         text: $request->get('text_to_convert')
     );
 
+    $savedFile = (new FileHelper())->store($audio, 'audio/mpeg');
+
     // Return the base64 encoded audio file to the front end
-    return view('Pages.audio', ['audio' => base64_encode($audio)]);
+    return view('Pages.audio', ['audio' => base64_encode($audio), 'savedFile' => $savedFile]);
 });
 
 Route::post('/sidekick/playground/image', function (Request $request) {
-    $sidekick = create(new OpenAi());
+    $sidekick = Sidekick::create(new OpenAi());
     $image =  $sidekick->image()->make(
         model:'dall-e-3',
         prompt: $request->get('text_to_convert'),
@@ -120,11 +123,13 @@ Route::post('/sidekick/playground/image', function (Request $request) {
         height:'1024'
     );
 
-    return view('Pages.image', ['image' => $image['data'][0]['url']]);
+    $savedFile = (new FileHelper())->store($image['data'][0]['url'], 'image/png');
+
+    return view('Pages.image', ['image' => $image['data'][0]['url'], 'savedFile' => $savedFile]);
 });
 
 Route::post('/sidekick/playground/transcribe', function (Request $request) {
-    $sidekick = create(new OpenAi());
+    $sidekick = Sidekick::create(new OpenAi());
     $response =  $sidekick->transcribe()->audioFile(
         model:'whisper-1',
         filePath:$request->get('audio')
@@ -133,7 +138,7 @@ Route::post('/sidekick/playground/transcribe', function (Request $request) {
 });
 
 Route::post('/sidekick/playground/embedding', function (Request $request) {
-    $sidekick = create(new OpenAi());
+    $sidekick = Sidekick::create(new OpenAi());
     $response = $sidekick->embedding()->make(
         model:'text-embedding-3-large',
         input: $request->get('text'),
@@ -146,7 +151,7 @@ Route::get('/sidekick/playground/moderate', function () {
 });
 
 Route::post('/sidekick/playground/moderate', function (Request $request) {
-    $sidekick = create(new OpenAi());
+    $sidekick = Sidekick::create(new OpenAi());
     $response = $sidekick->moderate()->text(
         model:'text-moderation-latest',
         content: $request->get('text')
