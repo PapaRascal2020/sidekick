@@ -342,23 +342,23 @@ Utilities are quick ways of performing some actions using AI. The functions and 
 
 ```PHP
 // Summarises the content passed. Good for blurbs
-$sidekick->utilities()->summarise()  
+$sidekick->utilities()->summarise(); 
 
 
 // Extracts a number of keywords from a given string and returns a string of keywords (comma separated)       
-$sidekick->utilities()->extractKeywords()  
+$sidekick->utilities()->extractKeywords();
 
 // Translates the given text to the language specified
-$sidekick->utilities()->translateText()
+$sidekick->utilities()->translateText();
 
 // Generates content from a short description of what it should be about      
-$sidekick->utilities()->generateContent()
+$sidekick->utilities()->generateContent();
 
 // [OpenAI ONLY] Moderates content and returns a boolean of whether the content is flagged or not
-$sidekick->utilities()->isContentFlagged()  
+$sidekick->utilities()->isContentFlagged();  
 
 // [OpenAI ONLY] this method can store images and audio created by the AI.  
-$sidekick->utilities()->store()             
+$sidekick->utilities()->store();             
 ```
 
 
