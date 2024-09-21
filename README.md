@@ -336,11 +336,6 @@ return $sidekick->moderate()->text(
   ]}
 ```
 
-
-> [!NOTE]  
-> Quick note on error handling. Currently, if there is an error it is printed as the AI responds. I will be updating
-> this over the next few days to be uniformed so that all errors are presented in tha same way regardless of AI driver/model
-
 ### Ways to Contribute
 
 I want this composer package for Laravel to be as useful as possible, so with that in mind here are the ways you can contribute:
