@@ -4,6 +4,7 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\Completion;
 use PapaRascalDev\Sidekick\Features\StreamedCompletion;
+use PapaRascalDev\Sidekick\Utilities\Utilities;
 
 /**
  * Supported Models:
@@ -46,6 +47,11 @@ class Claude implements Driver
         'user' => 'user',
         'assistant' => 'assistant'
     ];
+
+    /**
+     * @var string
+     */
+    public string $defaultCompleteModel = "claude-3-sonnet-20240229";
 
 
     /**
@@ -107,6 +113,14 @@ class Claude implements Driver
                 ]
             ]
         );
+    }
+
+    /**
+     * @return Utilities
+     */
+    public function utilities(): Utilities
+    {
+        return new Utilities($this);
     }
 
     /**

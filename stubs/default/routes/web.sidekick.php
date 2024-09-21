@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-use PapaRascalDev\Sidekick\Helpers\FileHelper;
 use \PapaRascalDev\Sidekick\Sidekick;
 use Illuminate\Support\Facades\Route;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
@@ -108,7 +107,7 @@ Route::post('/sidekick/playground/audio', function (Request $request) {
         text: $request->get('text_to_convert')
     );
 
-    $savedFile = (new FileHelper())->store($audio, 'audio/mpeg');
+    $savedFile = $sidekick->utilities()->store($audio, 'audio/mpeg');
 
     // Return the base64 encoded audio file to the front end
     return view('Pages.audio', ['audio' => base64_encode($audio), 'savedFile' => $savedFile]);
@@ -123,7 +122,7 @@ Route::post('/sidekick/playground/image', function (Request $request) {
         height:'1024'
     );
 
-    $savedFile = (new FileHelper())->store($image['data'][0]['url'], 'image/png');
+    $savedFile = $sidekick->utilities()->store($image['data'][0]['url'], 'image/png');
 
     return view('Pages.image', ['image' => $image['data'][0]['url'], 'savedFile' => $savedFile]);
 });
@@ -172,7 +171,7 @@ Route::get('/sidekick/playground/embedding', function () {
 });
 
 Route::get('/sidekick/playground/chat', function () {
-    return view('Pages.chat');
+    return view('Pages.chat', 'conversations', $conversations);
 });
 
 Route::get('/sidekick/playground', function () {

@@ -3,6 +3,7 @@
 namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\{Completion, Audio, StreamedCompletion, Transcribe, Image, Embedding, Moderate};
+use PapaRascalDev\Sidekick\Utilities\GptUtilities;
 
 /**
  * Supported Models:
@@ -60,6 +61,11 @@ class OpenAi implements Driver
         'user' => 'user',
         'assistant' => 'assistant'
     ];
+
+    /**
+     * @var string
+     */
+    public string $defaultCompleteModel = "gpt-3.5-turbo";
 
     /**
      * List As Object
@@ -176,6 +182,14 @@ class OpenAi implements Driver
             url: "{$this->baseUrl}/moderations",
             headers: $this->headers
         );
+    }
+
+    /**
+     * @return GptUtilities
+     */
+    public function utilities(): GptUtilities
+    {
+        return new GptUtilities($this);
     }
 
     /**

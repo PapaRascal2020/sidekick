@@ -3,6 +3,8 @@
 namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\{Completion, Embedding, StreamedCompletion};
+use PapaRascalDev\Sidekick\Utilities\MistralHelper;
+use PapaRascalDev\Sidekick\Utilities\Utilities;
 
 /**
  * Supported Models:
@@ -47,6 +49,11 @@ class Mistral implements Driver
         'user' => 'user',
         'assistant' => 'assistant'
     ];
+
+    /**
+     * @var string
+     */
+    public string $defaultCompleteModel = "open-mistral-7b";
 
     /**
      * List As Object
@@ -118,6 +125,14 @@ class Mistral implements Driver
             url: "{$this->baseUrl}/embeddings",
             headers: $this->headers
         );
+    }
+
+    /**
+     * @return Utilities
+     */
+    public function utilities(): Utilities
+    {
+        return new Utilities($this);
     }
 
     public function getResponse($response)

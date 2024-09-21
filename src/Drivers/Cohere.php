@@ -4,6 +4,7 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 use PapaRascalDev\Sidekick\Features\Completion;
 use PapaRascalDev\Sidekick\Features\StreamedCompletion;
+use PapaRascalDev\Sidekick\Utilities\Utilities;
 
 /**
  * Unlike other AI's passing no model sets a defaults
@@ -49,6 +50,11 @@ class Cohere implements Driver
         'user' => 'USER',
         'assistant' => 'CHATBOT'
     ];
+
+    /**
+     * @var string
+     */
+    public string $defaultCompleteModel = "command-r-plus-08-2024";
 
     /**
      * List As Object
@@ -106,6 +112,14 @@ class Cohere implements Driver
                 'message' => '$message'
             ]
         );
+    }
+
+    /**
+     * @return Utilities
+     */
+    public function utilities(): Utilities
+    {
+        return new Utilities($this);
     }
 
 

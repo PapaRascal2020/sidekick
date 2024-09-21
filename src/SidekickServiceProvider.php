@@ -22,7 +22,7 @@ class SidekickServiceProvider extends ServiceProvider
         $this->initializeMigrations();
         $this->initializeMigrationPublishing();
 
-        View::share('conversations', Conversation::all('id', 'model'));
+        View::share('conversations', Conversation::all('id', 'model', 'created_at'));
     }
 
     /**
