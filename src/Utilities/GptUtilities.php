@@ -30,9 +30,9 @@ class GptUtilities extends Utilities
     {
         $response = $this->sidekick->moderate()->text(model: $model, content: $content);
 
-        if(!isset($response['response']['categories'])) return false;
+        if(!isset($response['results']['categories'])) return false;
 
-        foreach($response['response']['categories'] as $category => $bool) {
+        foreach($response['results']['categories'] as $category => $bool) {
             if (!in_array($category, $exclusions) && $bool) return true;
         }
 
