@@ -278,7 +278,7 @@ return $sidekick->transcribe()->audioFile(
     filePath: 'http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3'
 );
 ```
-#### Example Response
+** Example Response **
 ```json
 {
   "text":"The stale smell of old beer lingers. It takes heat to bring out the odor. A cold dip restores health and zest. A salt pickle tastes fine with ham. Tacos al pastor are my favorite. A zestful food is the hot cross bun."
@@ -297,7 +297,7 @@ return $sidekick->moderate()->text(
     content: 'Have a great day.',
 );
 ```
-#### Example Response
+** Example Response **
 
 ```json
 {
@@ -335,6 +335,32 @@ return $sidekick->moderate()->text(
     }
   ]}
 ```
+
+#### Utilities
+
+Utilities are quick ways of performing some actions using AI. The functions and there descriptions are below:
+
+```PHP
+// Summarises the content passed. Good for blurbs
+$sidekick->utilities()->summarise(); 
+
+
+// Extracts a number of keywords from a given string and returns a string of keywords (comma separated)       
+$sidekick->utilities()->extractKeywords();
+
+// Translates the given text to the language specified
+$sidekick->utilities()->translateText();
+
+// Generates content from a short description of what it should be about      
+$sidekick->utilities()->generateContent();
+
+// [OpenAI ONLY] Moderates content and returns a boolean of whether the content is flagged or not
+$sidekick->utilities()->isContentFlagged();  
+
+// [OpenAI ONLY] this method can store images and audio created by the AI.  
+$sidekick->utilities()->store();             
+```
+
 
 ### Ways to Contribute
 
