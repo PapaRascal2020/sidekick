@@ -7,7 +7,7 @@ use PapaRascalDev\Sidekick\Models\Conversation;
 
 class SidekickConversation
 {
-    protected Driver $sidekick;
+    public Driver $sidekick;
     public Conversation $conversation;
 
     /**

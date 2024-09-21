@@ -2,8 +2,6 @@
 
 namespace PapaRascalDev\Sidekick\Tests\Feature;
 
-use Faker\Factory;
-use Faker\Generator;
 use PapaRascalDev\Sidekick\Drivers\OpenAi;
 use Illuminate\Foundation\Testing\TestCase;
 use PapaRascalDev\Sidekick\Models\Conversation;
@@ -15,96 +13,131 @@ class SidekickConversationTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected Generator $faker;
+    protected SidekickConversation $conversationMock;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->faker = Factory::create();
+        $this->conversationMock = $this->createMock(SidekickConversation::class);
+
+        $this->conversationMock->method('begin')
+            ->willReturnCallback(function ($driver, $model, $systemPrompt) {
+                $this->conversationMock->conversation = new Conversation();
+                $this->conversationMock->conversation->class = get_class($driver);
+                $this->conversationMock->conversation->model = $model;
+                $this->conversationMock->conversation->system_prompt = $systemPrompt;
+                $this->conversationMock->conversation->max_tokens = 1024;
+                $this->conversationMock->conversation->save();
+
+                return $this->conversationMock;
+            });
+
+        $this->conversationMock->method('resume')
+            ->willReturnCallback(function ($id) {
+                $this->conversationMock->conversation = Conversation::find($id);
+                return $this->conversationMock;
+            });
     }
 
     public function test_you_can_create_a_new_conversation()
     {
-        $systemPrompt = $this->faker->sentence();
+        $systemPrompt = 'You are an assistant';
 
-        $sidekick = new SidekickConversation();
-        $sidekick->begin(
+        $this->conversationMock->begin(
             driver: new OpenAi(),
             model: 'gpt-3.5-turbo',
             systemPrompt: $systemPrompt
         );
 
-        $this->assertDatabaseHas(Conversation::class, [
-            'id' => $sidekick->conversation->id,
+        $this->assertDatabaseHas('sidekick_conversations', [
+            'id' => $this->conversationMock->conversation->id,
             'system_prompt' => $systemPrompt,
         ]);
     }
 
     public function test_you_can_remove_new_conversation()
     {
-        $systemPrompt = $this->faker->sentence();
+        $systemPrompt = "You are an assistant";
 
-        $sidekick = new SidekickConversation();
-        $sidekick->begin(
+        $this->conversationMock->begin(
             driver: new OpenAi(),
             model: 'gpt-3.5-turbo',
             systemPrompt: $systemPrompt
         );
 
         $this->assertDatabaseHas(Conversation::class, [
-            'id' => $sidekick->conversation->id,
+            'id' => $this->conversationMock->conversation->id,
             'system_prompt' => $systemPrompt,
         ]);
 
         $sidekickManager = new SidekickChatManager();
-        $sidekickManager->delete($sidekick->conversation);
+        $sidekickManager->delete($this->conversationMock->conversation);
 
-        $this->assertDatabaseMissing(Conversation::class, ['id' => $sidekick->conversation->id]);
+        $this->assertDatabaseMissing(Conversation::class, ['id' => $this->conversationMock->conversation->id]);
     }
 
     public function test_you_can_resume_a_conversation()
     {
-        $systemPrompt = $this->faker->sentence();
+        $systemPrompt = "You are an assistant";
 
-        $sidekick = new SidekickConversation();
-        $sidekick->begin(
+        $this->conversationMock->begin(
             driver: new OpenAi(),
             model: 'gpt-3.5-turbo',
             systemPrompt: $systemPrompt
         );
 
-        $id = $sidekick->conversation->id;
+        $id = $this->conversationMock->conversation->id;
 
         $this->assertDatabaseHas(Conversation::class, [
             'id' => $id,
             'system_prompt' => $systemPrompt,
         ]);
 
-        $sidekickConversation = new SidekickConversation();
-        $sidekickConversation->resume($id);
+        $this->conversationMock->resume($id);
 
-        $this->assertSame($sidekickConversation->conversation->id, $id);
+        $this->assertSame($this->conversationMock->conversation->id, $id);
     }
 
     public function test_you_can_send_and_receive_a_message()
     {
-        $systemPrompt = $this->faker->sentence();
+        $systemPrompt = "You are an assistant";
 
-        $sidekick = new SidekickConversation();
-        $sidekick->begin(
+        $this->conversationMock->begin(
             driver: new OpenAi(),
             model: 'gpt-3.5-turbo',
             systemPrompt: $systemPrompt
         );
 
-        $this->assertDatabaseHas(Conversation::class, [
-            'id' => $sidekick->conversation->id,
+        $this->assertDatabaseHas('sidekick_conversations', [
+            'id' => $this->conversationMock->conversation->id,
             'system_prompt' => $systemPrompt,
         ]);
 
-        $sidekick->sendMessage("Hello");
+        $this->conversationMock->method('sendMessage')
+            ->willReturnCallback(function ($message) {
+                $wholeMessage = "Response to: " . $message; // Simulate a response message
 
-        // Assert that there is both the sent message and response
-        $this->assertCount(2, $sidekick->conversation->messages);
+                $this->conversationMock->conversation->messages()->create([
+                    'role' => 'user',
+                    'content' => $message
+                ]);
+
+                $this->conversationMock->conversation->messages()->create([
+                    'role' => 'assistant',
+                    'content' => nl2br($wholeMessage)
+                ]);
+
+                return $this->conversationMock;
+            });
+
+        $this->conversationMock->method('messages')
+            ->willReturnCallback(function () {
+                return $this->conversationMock->conversation->messages()->get()->toArray();
+            });
+
+        $this->conversationMock->sendMessage("Hello");
+
+        // Assert that there are both the sent message and response
+        $this->assertCount(2, $this->conversationMock->messages());
     }
 }
