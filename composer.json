@@ -4,6 +4,9 @@
     "type": "laravel-plugin",
     "license": "GPL-2.0-or-later",
     "autoload": {
+        "files": [
+            "src/Helpers/Sidekick.php"
+        ],
         "psr-4": {
             "PapaRascalDev\\Sidekick\\": "src/"
         }

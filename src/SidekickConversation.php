@@ -2,153 +2,126 @@
 
 namespace PapaRascalDev\Sidekick;
 
-use PapaRascalDev\Sidekick\Drivers\Driver;
-use PapaRascalDev\Sidekick\Models\Conversation;
+use Illuminate\Database\Eloquent\Model;
+use PapaRascalDev\Sidekick\Models\SidekickConversation as SidekickConversationModel;
+
 
 class SidekickConversation
 {
-    public Driver $sidekick;
-    public Conversation $conversation;
 
-    /**
-     * @param string $conversationId
-     * @return $this
-     */
-    public function resume(string $conversationId): static
+    public SidekickDriverInterface $driver;
+    public SidekickConversationModel $model;
+
+    public function begin ( SidekickDriverInterface $driver,
+                            string  $model,
+                            string  $systemPrompt   = '',
+                            int     $maxTokens      = 1024 ): SidekickConversation
     {
-        $this->conversation = Conversation::findOrFail($conversationId);
-        $this->sidekick = Sidekick::create(new $this->conversation->class());
-        return $this;
-    }
+        $this->model = SidekickConversationModel::create( [
+            'model'         => $model,
+            'class'         => get_class($driver),
+            'system_prompt' => $systemPrompt,
+            'max_tokens'    => $maxTokens,
+        ] );
 
-    /**
-     * @param Driver $driver
-     * @param string $model
-     * @param string $systemPrompt
-     * @param int $maxTokens
-     * @return $this
-     */
-    public function begin(
-        Driver $driver,
-        string $model,
-        string $systemPrompt = '',
-        int $maxTokens = 1024
-    ): static
-    {
-        $this->sidekick = Sidekick::create($driver);
-
-        $this->conversation = new Conversation();
-        $this->conversation->model = $model;
-        $this->conversation->class = get_class($this->sidekick);
-        $this->conversation->system_prompt = $systemPrompt;
-        $this->conversation->max_tokens = $maxTokens;
-        $this->conversation->save();
+        $this->driver = new $driver();
 
         return $this;
     }
 
-    /**
-     * @param string $message
-     */
-    public function sendMessage(string $message, bool $streamed = false) {
+    public function resume ( string $sidekickConversationId ): SidekickConversation
+    {
+        $this->model = SidekickConversationModel::find( $sidekickConversationId );
+        $this->driver = new $this->model->class();
 
-        if($this->sidekick->listAsObject) {
-            $allMessages = $this->toCustomArray($this->messages(), $this->sidekick->chatMaps);
-        } else {
-            $allMessages = [
-                ...$this->toCustomArray($this->messages(), $this->sidekick->chatMaps),
-            ];
-        }
-
-        if($streamed) {
-            return response()->stream(function () use ($message, $allMessages) {
-                $wholeMessage = "";
-                foreach ($this->sidekick->completeStreamed()->sendMessage (
-                    model: $this->conversation->model,
-                    systemPrompt: $this->conversation->system_prompt,
-                    allMessages: $allMessages,
-                    message: $message,
-                    maxTokens: $this->conversation->max_tokens) as $chunk) {
-                    $chunk = $this->sidekick->getStreamedText($chunk);
-                    $wholeMessage .= $chunk;
-                    echo $chunk;
-                    ob_flush();
-                    flush();
-                    usleep(50);
-                }
-
-
-                if($wholeMessage > "") {
-                    $this->conversation->messages()->create([
-                        'role' => $this->sidekick->messageRoles['user'],
-                        'content' => $message
-                    ]);
-
-                    $this->conversation->messages()->create([
-                        'role' => $this->sidekick->messageRoles['assistant'],
-                        'content' => nl2br($wholeMessage)
-                    ]);
-                }
-            }, 200, ['X-Accel-Buffering' => 'no']);
-        } else {
-            $response = $this->sidekick->complete()->sendMessage(
-                model: $this->conversation->model,
-                systemPrompt: $this->conversation->system_prompt,
-                allMessages: $allMessages,
-                message: $message,
-                maxTokens: $this->conversation->max_tokens);
-
-            if($this->sidekick->validate($response)) {
-                $this->conversation->messages()->create([
-                    'role' => $this->sidekick->messageRoles['user'],
-                    'content' => $message
-                ]);
-
-                $this->conversation->messages()->create([
-                    'role' => $this->sidekick->messageRoles['assistant'],
-                    'content' => $this->sidekick->getResponse($response)
-                ]);
-
-                return response()->json([
-                    'response' => [
-                        'conversation_id' => $this->conversation->id,
-                        'messages' => $this->conversation->messages()->get()->toArray()
-                    ],
-                    'options' => get_class($this->sidekick)
-                ]);
-            }
-
-            return $this->sidekick->getErrorMessage($response);
-        }
+        return $this;
     }
 
-    /**
-     * @param array $messages
-     * @param array $mappings
-     * @return array
-     */
-    public function toCustomArray(
-        array $messages,
-        array $mappings = [],
-    ): array
+    public function delete ( string $sidekickConversationId )
+    {
+        $conversation = SidekickConversationModel::find( $sidekickConversationId );
+
+        if ( $conversation ) $conversation->delete();
+    }
+
+    public function sendMessage ( string $message,
+                                  bool $streamed = false ): array | string
+    {
+        return ( $streamed ) ? $this->getStreamedResponse( $message, $this->getMessages() ) : $this->getResponse( $message, $this->getMessages() );
+    }
+
+    public function database(): Model
+    {
+        return new SidekickConversationModel();
+    }
+
+    private function getStreamedResponse ( string $message,
+                                           object|array $allMessages )
+    {
+        $response =  $this->driver->complete(
+            model: $this->model->model,
+            systemPrompt: $this->model->system_prompt,
+            message: $message,
+            allMessages: $allMessages,
+            maxTokens: $this->model->max_tokens,
+            stream: true
+        );
+
+        $this->model->messages()->create([
+            'role' => $this->driver->messageRoles['user'],
+            'content' => $message
+        ]);
+
+        $this->model->messages()->create([
+            'role' => $this->driver->messageRoles['assistant'],
+            'content' => $response
+        ]);
+
+        return $response;
+    }
+
+    private function getResponse( string $message,
+                                  object|array $allMessages ) : string
+    {
+        $response = $this->driver->complete(
+            model: $this->model->model,
+            systemPrompt: $this->model->system_prompt,
+            message: $message,
+            allMessages: $allMessages,
+            maxTokens: $this->model->max_tokens,
+            stream: false
+        );
+
+        if(isset($response['error'])) dd($response);
+
+        $this->model->messages()->create([
+            'role' => $this->driver->messageRoles['user'],
+            'content' => $message
+        ]);
+
+        $this->model->messages()->create([
+            'role' => $this->driver->messageRoles['assistant'],
+            'content' => $response
+        ]);
+
+        return $response;
+    }
+
+    private function getMessages ()
     {
         $mappedMessages = [];
-        foreach($messages as $message) {
-            foreach ($mappings as $oldKey => $newKey) {
+        foreach($this->model->messages() as $message) {
+            foreach ($this->driver->chatMaps as $oldKey => $newKey) {
                 $message[$newKey] = $message[$oldKey];
                 unset($message[$oldKey]);
             }
             $mappedMessages[] = $message;
         }
 
-        return $mappedMessages;
-    }
+        if ( $this->driver->listAsObject ) return $mappedMessages;
 
-    /**
-     * @return void
-     */
-    public function messages(): array
-    {
-        return $this->conversation->messages()->get()->toArray();
+        return [
+            ...$mappedMessages,
+        ];
     }
 }

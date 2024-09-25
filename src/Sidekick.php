@@ -2,20 +2,23 @@
 
 namespace PapaRascalDev\Sidekick;
 
-use PapaRascalDev\Sidekick\Drivers\Driver;
-
+/**
+ * Sidekick
+ *
+ * Loads and returns the specified driver
+ */
 
 class Sidekick
 {
-    protected Driver $driver;
+    protected SidekickDriverInterface $sidekickDriver;
 
     /**
-     * @param Driver $driver
-     * @return Driver
+     * @param SidekickDriverInterface $sidekickDriver
+     * @return SidekickDriverInterface
      */
-    public static function create(Driver $driver): Driver
+    public static function create(SidekickDriverInterface $sidekickDriver): SidekickDriverInterface
     {
-        return new $driver();
+        return new $sidekickDriver();
     }
 
 }

@@ -5,7 +5,11 @@ namespace PapaRascalDev\Sidekick;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use PapaRascalDev\Sidekick\Console\InstallCommand;
-use PapaRascalDev\Sidekick\Models\Conversation;
+use PapaRascalDev\Sidekick\Models\SidekickConversation as SidekickConversationModel;
+
+/**
+ * Sidekick Service Provider
+ */
 
 class SidekickServiceProvider extends ServiceProvider
 {
@@ -22,7 +26,8 @@ class SidekickServiceProvider extends ServiceProvider
         $this->initializeMigrations();
         $this->initializeMigrationPublishing();
 
-        View::share('conversations', Conversation::all('id', 'model', 'created_at'));
+        // Remove when I make a better playground but is important for now for the sidebar
+        View::share('conversations', (new SidekickConversation())->database()->all('id', 'model', 'created_at'));
     }
 
     /**

@@ -2,8 +2,10 @@
 
 namespace PapaRascalDev\Sidekick\Drivers;
 
+use Generator;
 use PapaRascalDev\Sidekick\Features\Completion;
 use PapaRascalDev\Sidekick\Features\StreamedCompletion;
+use PapaRascalDev\Sidekick\SidekickDriverInterface;
 use PapaRascalDev\Sidekick\Utilities\Utilities;
 
 /**
@@ -19,7 +21,7 @@ use PapaRascalDev\Sidekick\Utilities\Utilities;
  * - Completions
  */
 
-class Cohere implements Driver
+class Cohere implements SidekickDriverInterface
 {
 
     /**
@@ -84,34 +86,44 @@ class Cohere implements Driver
         ];
     }
 
-    /**
-     * @return Completion
-     */
-    public function complete(): Completion
+    public function complete ( string $model,
+                               string $systemPrompt,
+                               string $message,
+                               array | object $allMessages = [],
+                               int $maxTokens = 1024,
+                               bool $stream = false)
     {
-        return new Completion(
-            url: "{$this->baseUrl}/chat",
-            headers: $this->headers,
-            requestRules: [
-                'chat_history' => '$allMessages ? $allMessages : null',
-                'message' => '$message'
-            ]
-        );
-    }
 
-    /**
-     * @return StreamedCompletion
-     */
-    public function completeStreamed(): StreamedCompletion
-    {
-        return new StreamedCompletion(
+        $completion = (new Completion(
             url: "{$this->baseUrl}/chat",
             headers: $this->headers,
             requestRules: [
                 'chat_history' => '$allMessages ? $allMessages : null',
                 'message' => '$message'
             ]
-        );
+        ));
+
+        if ( $stream )
+        {
+            return $this->getResponseStreamed($completion->sendMessage(
+                model: $model,
+                systemPrompt: $systemPrompt,
+                message: $message,
+                allMessages: $allMessages,
+                maxTokens: $maxTokens,
+                stream: true
+            ));
+        } else {
+            $response =  $completion->sendMessage(
+                model: $model,
+                systemPrompt: $systemPrompt,
+                message: $message,
+                allMessages: $allMessages,
+                maxTokens: $maxTokens
+            );
+
+            return $this->getResponse($response);
+        }
     }
 
     /**
@@ -129,16 +141,38 @@ class Cohere implements Driver
      */
     public function getResponse($response)
     {
+        if( isset($response['message']) ) return $this->getErrorMessage( $response );
         return $response['text'] ?? "";
     }
 
-    /**
-     * @param $response
-     * @return string
-     */
-    public function getStreamedText($response)
+    private function getResponseStreamed($response)
     {
-        return $response['text'] ?? "";
+        // Set the headers for a streamed response
+        header('HTTP/1.0 200 OK');
+        header('Cache-Control: no-cache, private');
+        header('Date: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('X-Accel-Buffering: no');
+
+        // Flush the headers to the client
+        ob_flush();
+        flush();
+
+        // Stream the response content
+        if ($response instanceof Generator) {
+            $message = "";
+            foreach ($response as $chunk) {
+                $message .= $chunk['text'] ?? "";
+                echo $chunk['text'] ?? "";
+                ob_flush();
+                flush();
+            }
+        }
+
+        // Ensure all output is sent to the client
+        ob_flush();
+        flush();
+
+        return $message;
     }
 
     /**

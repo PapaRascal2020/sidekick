@@ -1,15 +1,15 @@
 <?php
 namespace PapaRascalDev\Sidekick\Tests\Unit;
 
-use PapaRascalDev\Sidekick\Drivers\Driver;
 use PapaRascalDev\Sidekick\Drivers\OpenAi;
+use PapaRascalDev\Sidekick\Features\Completion;
+use PapaRascalDev\Sidekick\SidekickDriverInterface;
 use PapaRascalDev\Sidekick\Utilities\GptUtilities;
 use PHPUnit\Framework\TestCase;
-use PapaRascalDev\Sidekick\Features\Completion;
 
 class UtilitiesTest extends TestCase
 {
-    protected Driver $sidekickMock;
+    protected SidekickDriverInterface $sidekickMock;
     protected Completion $completionMock;
 
     protected function setUp(): void

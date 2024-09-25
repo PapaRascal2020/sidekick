@@ -2,8 +2,11 @@
 
 namespace PapaRascalDev\Sidekick\Drivers;
 
-use PapaRascalDev\Sidekick\Features\{Completion, Audio, StreamedCompletion, Transcribe, Image, Embedding, Moderate};
+use Generator;
+use PapaRascalDev\Sidekick\Features\{Audio, Completion, Embedding, Image, Moderate, StreamedCompletion, Transcribe};
+use PapaRascalDev\Sidekick\SidekickDriverInterface;
 use PapaRascalDev\Sidekick\Utilities\GptUtilities;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Supported Models:
@@ -30,7 +33,7 @@ use PapaRascalDev\Sidekick\Utilities\GptUtilities;
  * - Moderate
  */
 
-class OpenAi implements Driver
+class OpenAi implements SidekickDriverInterface
 {
 
     /**
@@ -122,32 +125,15 @@ class OpenAi implements Driver
         );
     }
 
-    /**
-     * @return Completion
-     */
-    public function complete(): Completion
+    public function complete ( string $model,
+                               string $systemPrompt,
+                               string $message,
+                               array | object $allMessages = [],
+                               int $maxTokens = 1024,
+                               bool $stream = false)
     {
-        return new Completion(
-            url: "{$this->baseUrl}/chat/completions",
-            headers: $this->headers,
-            requestRules: [
-                'model' => '$model',
-                'max_tokens' => '$maxTokens',
-                'messages' => [
-                    '$systemPrompt ? ["role" => "system", "content" => $systemPrompt] : null',
-                    '$allMessages ? $allMessages : null',
-                    '["role" => "user", "content" => $message]',
-                ]
-            ]
-        );
-    }
 
-    /**
-     * @return StreamedCompletion
-     */
-    public function completeStreamed(): StreamedCompletion
-    {
-        return new StreamedCompletion(
+        $completion = (new Completion(
             url: "{$this->baseUrl}/chat/completions",
             headers: $this->headers,
             requestRules: [
@@ -159,7 +145,29 @@ class OpenAi implements Driver
                     '["role" => "user", "content" => $message]',
                 ]
             ]
-        );
+        ));
+
+        if ( $stream )
+        {
+            return $this->getResponseStreamed($completion->sendMessage(
+                model: $model,
+                systemPrompt: $systemPrompt,
+                message: $message,
+                allMessages: $allMessages,
+                maxTokens: $maxTokens,
+                stream: true
+            ));
+        } else {
+            $response =  $completion->sendMessage(
+                    model: $model,
+                    systemPrompt: $systemPrompt,
+                    message: $message,
+                    allMessages: $allMessages,
+                    maxTokens: $maxTokens
+            );
+
+            return $this->getResponse($response);
+        }
     }
 
     /**
@@ -196,18 +204,40 @@ class OpenAi implements Driver
      * @param $response
      * @return mixed
      */
-    public function getResponse($response)
+    private function getResponse($response)
     {
+        if( isset( $response['error'] ) ) return $this->getErrorMessage( $response );
         return $response['choices'][0]['message']['content'];
     }
 
-    /**
-     * @param $response
-     * @return string
-     */
-    public function getStreamedText($response)
+    private function getResponseStreamed($response)
     {
-        return $response['choices'][0]['delta']['content'] ?? "";
+        // Set the headers for a streamed response
+        header('HTTP/1.0 200 OK');
+        header('Cache-Control: no-cache, private');
+        header('Date: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('X-Accel-Buffering: no');
+
+        // Flush the headers to the client
+        ob_flush();
+        flush();
+
+        // Stream the response content
+        if ($response instanceof Generator) {
+            $message = "";
+            foreach ($response as $chunk) {
+                $message .= $chunk['choices'][0]['delta']['content'] ?? "";
+                echo $chunk['choices'][0]['delta']['content'] ?? "";
+                ob_flush();
+                flush();
+            }
+        }
+
+        // Ensure all output is sent to the client
+        ob_flush();
+        flush();
+
+        return $message;
     }
 
     /**

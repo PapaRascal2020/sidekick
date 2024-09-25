@@ -6,16 +6,15 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Conversation extends Model
+class SidekickConversation extends Model
 {
     use HasUuids;
 
     protected $guarded = ['id'];
-    protected $table = 'sidekick_conversations';
 
     public function messages(): HasMany
     {
-        return $this->hasMany(ConversationMessage::class);
+        return $this->hasMany(SidekickConversationMessage::class, 'conversation_id');
     }
 
     public function toCustomArray(

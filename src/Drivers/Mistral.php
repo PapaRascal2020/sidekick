@@ -2,8 +2,9 @@
 
 namespace PapaRascalDev\Sidekick\Drivers;
 
-use PapaRascalDev\Sidekick\Features\{Completion, Embedding, StreamedCompletion};
-use PapaRascalDev\Sidekick\Utilities\MistralHelper;
+use PapaRascalDev\Sidekick\Features\{Completion, Embedding};
+use Generator;
+use PapaRascalDev\Sidekick\SidekickDriverInterface;
 use PapaRascalDev\Sidekick\Utilities\Utilities;
 
 /**
@@ -18,7 +19,7 @@ use PapaRascalDev\Sidekick\Utilities\Utilities;
  * - Embed
  */
 
-class Mistral implements Driver
+class Mistral implements SidekickDriverInterface
 {
 
     /**
@@ -79,29 +80,16 @@ class Mistral implements Driver
         ];
     }
 
-    /**
-     * @return Completion
-     */
-    public function complete(): Completion
-    {
-        return new Completion(
-            url: "{$this->baseUrl}/chat/completions",
-            headers: $this->headers,
-            requestRules: [
-                'model' => '$model',
-                'max_tokens' => '$maxTokens',
-                'messages' => [
-                    '$systemPrompt ? ["role" => "system", "content" => $systemPrompt] : null',
-                    '$allMessages ? $allMessages : null',
-                    '["role" => "user", "content" => $message]',
-                ]
-            ]
-        );
-    }
 
-    public function completeStreamed(): StreamedCompletion
+    public function complete ( string $model,
+                               string $systemPrompt,
+                               string $message,
+                               array | object $allMessages = [],
+                               int $maxTokens = 1024,
+                               bool $stream = false)
     {
-        return new StreamedCompletion (
+
+        $completion = (new Completion(
             url: "{$this->baseUrl}/chat/completions",
             headers: $this->headers,
             requestRules: [
@@ -113,7 +101,29 @@ class Mistral implements Driver
                     '["role" => "user", "content" => $message]',
                 ]
             ]
-        );
+        ));
+
+        if ( $stream )
+        {
+            return $this->getResponseStreamed($completion->sendMessage(
+                model: $model,
+                systemPrompt: $systemPrompt,
+                message: $message,
+                allMessages: $allMessages,
+                maxTokens: $maxTokens,
+                stream: true
+            ));
+        } else {
+            $response =  $completion->sendMessage(
+                model: $model,
+                systemPrompt: $systemPrompt,
+                message: $message,
+                allMessages: $allMessages,
+                maxTokens: $maxTokens
+            );
+
+            return $this->getResponse($response);
+        }
     }
 
     /**
@@ -135,18 +145,40 @@ class Mistral implements Driver
         return new Utilities($this);
     }
 
-    public function getResponse($response)
+    private function getResponse($response)
     {
+        if( $response['object'] == "error" ) return $this->getErrorMessage( $response );
         return $response['choices'][0]['message']['content'];
     }
 
-    /**
-     * @param $response
-     * @return string
-     */
-    public function getStreamedText($response)
+    private function getResponseStreamed($response)
     {
-        return $response['choices'][0]['delta']['content'] ?? "";
+        // Set the headers for a streamed response
+        header('HTTP/1.0 200 OK');
+        header('Cache-Control: no-cache, private');
+        header('Date: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('X-Accel-Buffering: no');
+
+        // Flush the headers to the client
+        ob_flush();
+        flush();
+
+        // Stream the response content
+        if ($response instanceof Generator) {
+            $message = "";
+            foreach ($response as $chunk) {
+                $message .= $chunk['choices'][0]['delta']['content'] ?? "";
+                echo $chunk['choices'][0]['delta']['content'] ?? "";
+                ob_flush();
+                flush();
+            }
+        }
+
+        // Ensure all output is sent to the client
+        ob_flush();
+        flush();
+
+        return $message;
     }
 
     /**
@@ -163,14 +195,5 @@ class Mistral implements Driver
                 'message' => $response['message']
             ]
         ];
-    }
-
-    /**
-     * @param $response
-     * @return bool
-     */
-    public function validate($response): bool
-    {
-        return !($response['object'] == "error");
     }
 }

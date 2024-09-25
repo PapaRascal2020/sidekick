@@ -2,12 +2,12 @@
 
 namespace PapaRascalDev\Sidekick\Tests\Feature;
 
+use Illuminate\Http\JsonResponse;
 use PapaRascalDev\Sidekick\Drivers\OpenAi;
 use Illuminate\Foundation\Testing\TestCase;
-use PapaRascalDev\Sidekick\Models\Conversation;
-use PapaRascalDev\Sidekick\SidekickChatManager;
 use PapaRascalDev\Sidekick\SidekickConversation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PapaRascalDev\Sidekick\Models\SidekickConversation as SidekickConversationModel;
 
 class SidekickConversationTest extends TestCase
 {
@@ -22,19 +22,19 @@ class SidekickConversationTest extends TestCase
 
         $this->conversationMock->method('begin')
             ->willReturnCallback(function ($driver, $model, $systemPrompt) {
-                $this->conversationMock->conversation = new Conversation();
-                $this->conversationMock->conversation->class = get_class($driver);
-                $this->conversationMock->conversation->model = $model;
-                $this->conversationMock->conversation->system_prompt = $systemPrompt;
-                $this->conversationMock->conversation->max_tokens = 1024;
-                $this->conversationMock->conversation->save();
+                $this->conversationMock->model = new SidekickConversationModel();
+                $this->conversationMock->model->class = get_class($driver);
+                $this->conversationMock->model->model = $model;
+                $this->conversationMock->model->system_prompt = $systemPrompt;
+                $this->conversationMock->model->max_tokens = 1024;
+                $this->conversationMock->model->save();
 
                 return $this->conversationMock;
             });
 
         $this->conversationMock->method('resume')
             ->willReturnCallback(function ($id) {
-                $this->conversationMock->conversation = Conversation::find($id);
+                $this->conversationMock->model = SidekickConversationModel::find($id);
                 return $this->conversationMock;
             });
     }
@@ -50,7 +50,7 @@ class SidekickConversationTest extends TestCase
         );
 
         $this->assertDatabaseHas('sidekick_conversations', [
-            'id' => $this->conversationMock->conversation->id,
+            'id' => $this->conversationMock->model->id,
             'system_prompt' => $systemPrompt,
         ]);
     }
@@ -65,15 +65,19 @@ class SidekickConversationTest extends TestCase
             systemPrompt: $systemPrompt
         );
 
-        $this->assertDatabaseHas(Conversation::class, [
-            'id' => $this->conversationMock->conversation->id,
-            'system_prompt' => $systemPrompt,
-        ]);
+        $this->assertDatabaseHas(
+            table: SidekickConversationModel::class,
+            data: [
+                'id' => $this->conversationMock->model->id,
+                'system_prompt' => $systemPrompt,
+                ]
+        );
 
-        $sidekickManager = new SidekickChatManager();
-        $sidekickManager->delete($this->conversationMock->conversation);
+        $conversation = new SidekickConversation();
+        $conversation->delete( $this->conversationMock->model->id );
 
-        $this->assertDatabaseMissing(Conversation::class, ['id' => $this->conversationMock->conversation->id]);
+        $this->assertDatabaseMissing(SidekickConversationModel::class,
+            ['id' => $this->conversationMock->model->id] );
     }
 
     public function test_you_can_resume_a_conversation()
@@ -86,16 +90,16 @@ class SidekickConversationTest extends TestCase
             systemPrompt: $systemPrompt
         );
 
-        $id = $this->conversationMock->conversation->id;
+        $id = $this->conversationMock->model->id;
 
-        $this->assertDatabaseHas(Conversation::class, [
+        $this->assertDatabaseHas(SidekickConversationModel::class, [
             'id' => $id,
             'system_prompt' => $systemPrompt,
         ]);
 
         $this->conversationMock->resume($id);
 
-        $this->assertSame($this->conversationMock->conversation->id, $id);
+        $this->assertSame($this->conversationMock->model->id, $id);
     }
 
     public function test_you_can_send_and_receive_a_message()
@@ -109,7 +113,7 @@ class SidekickConversationTest extends TestCase
         );
 
         $this->assertDatabaseHas('sidekick_conversations', [
-            'id' => $this->conversationMock->conversation->id,
+            'id' => $this->conversationMock->model->id,
             'system_prompt' => $systemPrompt,
         ]);
 
@@ -117,27 +121,24 @@ class SidekickConversationTest extends TestCase
             ->willReturnCallback(function ($message) {
                 $wholeMessage = "Response to: " . $message; // Simulate a response message
 
-                $this->conversationMock->conversation->messages()->create([
+                $this->conversationMock->model->messages()->create([
                     'role' => 'user',
                     'content' => $message
                 ]);
 
-                $this->conversationMock->conversation->messages()->create([
+                $this->conversationMock->model->messages()->create([
                     'role' => 'assistant',
                     'content' => nl2br($wholeMessage)
                 ]);
 
-                return $this->conversationMock;
-            });
-
-        $this->conversationMock->method('messages')
-            ->willReturnCallback(function () {
-                return $this->conversationMock->conversation->messages()->get()->toArray();
+                return new JsonResponse(['message' => $wholeMessage]);
             });
 
         $this->conversationMock->sendMessage("Hello");
 
+        $databaseRec = (new SidekickConversation())->database()->find($this->conversationMock->model->id);
+
         // Assert that there are both the sent message and response
-        $this->assertCount(2, $this->conversationMock->messages());
+        $this->assertCount(2, $databaseRec->messages->toArray());
     }
 }

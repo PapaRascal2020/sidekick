@@ -2,9 +2,8 @@
 
 namespace PapaRascalDev\Sidekick\Utilities;
 
-use PapaRascalDev\Sidekick\Drivers\Claude;
-use PapaRascalDev\Sidekick\Drivers\Driver;
 use PapaRascalDev\Sidekick\Sidekick;
+use PapaRascalDev\Sidekick\SidekickDriverInterface;
 
 /****************************************************************
  *                                                              *
@@ -18,7 +17,7 @@ use PapaRascalDev\Sidekick\Sidekick;
 class Utilities
 {
     protected $sidekick;
-    public function __construct(Driver $driver) {
+    public function __construct(SidekickDriverInterface $driver) {
         $this->sidekick = Sidekick::create(new $driver());
     }
 

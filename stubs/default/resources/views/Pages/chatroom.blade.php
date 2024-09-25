@@ -36,7 +36,7 @@
                             <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
                                 <p class="font-bold flex items-center gap-x-1 pb-2">
                                     @include('Components.bot') Assistant</p>
-                                <p>{!! $message['content'] !!}</p>
+                                <p>{!! nl2br($message['content']) !!}</p>
                             </div>
                         </div>
                     @endif
@@ -114,8 +114,10 @@
                 container.scrollTop = container.scrollHeight;
 
                 if (isStreamed) {
+                    console.log('streamed');
                     handleStreamedCallback();
                 } else {
+                    console.log('not streamed');
                     handleCallback()
                 }
 
@@ -161,6 +163,7 @@
                             if(done) break;
 
                             const chunk = decoder.decode(value, {stream: true});
+                            console.log(chunk);
 
                             responseBox.innerText += chunk;
                             container.scrollTop = container.scrollHeight;
@@ -189,11 +192,7 @@
                             engine: engine.value,
                             stream: false
                         })
-                    }).then(
-                        response => response.json()
-                    ).then(data => {
-                        const response = data.response.messages[data.response.messages.length - 1];
-
+                    }).then(promise => promise.text()).then(response => {
                         const loader = document.getElementById('loader');
                         loader.remove();
 
@@ -202,7 +201,7 @@
                             <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
                                 <p class="font-bold flex items-center gap-x-1 pb-2">
                                         @include('Components.bot') Assistant</p>
-                                <p>${response.content}</p>
+                                <p>${response}</p>
                             </div>
                         </div>
                         `;
