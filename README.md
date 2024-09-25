@@ -10,12 +10,31 @@
 <p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guid](https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/3">Contributung</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
 <br>
 
-![sidekickforlaravel](https://github.com/user-attachments/assets/27dfb981-e183-4b85-870e-24aab419bb6a)
+<p align="center">
+<img src="https://github.com/user-attachments/assets/27dfb981-e183-4b85-870e-24aab419bb6a" alt="" />
+</p>
 
 ### Description
 This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mistral APIs for Laravel. The goal is to simplify switching between different AI models and APIs, making it as seamless as possible.
-<br/>
-<br>
+
+#### Features
+- Open AI, Mistral, Claude & Cohers
+    - Conversation => Quickly prototype/build a chatbot (with history via DB)
+    - Completion => Complete or respond to a given prompt
+- Open AI, Mistral (ONLY)
+    - Embedding => Create a vector representation from text
+- Open AI (ONLY)    
+    - Audio => Create an Audio file from a text prompt
+    - Image => Create an Image from a text prompt
+    - Moderation => Moderate text and flag for unwanted content (great for moderating comments)
+    - Transcription => Transcribe an audio file
+ - Quick Utilities (supported by all models)
+    - Summarize => Summarizes the given input
+    - extractKeywords => Extracts Keywords from a given input
+    - translateText => Translates the given input into another language
+    - generateContent => Generates content ideas from a given topic 
+ 
+
 
 ### Installation Guide
 The easiest way to install the package in your laravel app is to run the following command from within your projects directory:
