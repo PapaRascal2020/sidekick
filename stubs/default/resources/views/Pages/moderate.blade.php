@@ -17,19 +17,22 @@
             </div>
 
             <div class="flex items-start justify-center">
-                @if(isset($response))
-                    <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4">
-                        <p class="text-gray-800 font-bold">Response</p>
-                        <p class="text-gray-800 pt-4">{</p>
-                        <p class="text-gray-800 pl-4">flagged: {{ $response['results'][0]['flagged'] ? 'true' : 'false' }}</p>
-                        <p class="text-gray-800 pl-4">categories: [</p>
-                        @foreach($response['results'][0]['categories'] as $key => $value)
-                            <p class="text-gray-800 pl-8">{{ $key }}: {{ $value ? 'true' : 'false' }}</p>
-                        @endforeach
-                        <p class="text-gray-800 pl-4">]</p>
-                        <p class="text-gray-800">}</p>
-                    </div>
-                @endif
+                <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4 text-black">
+                    @if(isset($response))
+                        @if (!$response['results'][0]['flagged'])
+                            <p>The content is fine</p>
+                        @else
+                            <p>This content has been flagged due to the following categories:</p>
+                            <ul>
+                                @foreach($response['results'][0]['categories'] as $category => $value)
+                                    @if($value)
+                                        <li class="font-bold">{{ $category }}</li>
+                                    @endif
+                                @endforeach
+                            </ul>
+                        @endif
+                    @endif
+                </div>
             </div>
         </div>
     </div>
