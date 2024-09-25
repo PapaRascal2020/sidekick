@@ -6,7 +6,9 @@
     <img alt="Stability" src="https://img.shields.io/badge/Stability-beta-yellow"/> &nbsp;&nbsp;&nbsp;
     <a href="https://packagist.org/packages/paparascaldev/sidekick"><img alt="Status" src="https://img.shields.io/badge/Packagist-F28D1A?logo=Packagist&logoColor=white"/></a>
 </p>
-
+<br>
+<p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guid](https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/3">Contributung</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
+<br>
 
 ![sidekickforlaravel](https://github.com/user-attachments/assets/27dfb981-e183-4b85-870e-24aab419bb6a)
 
