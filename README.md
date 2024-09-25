@@ -20,8 +20,6 @@ Say hello to Sidekick! A Laravel plugin that provides a common syntax for using 
 </tr>
 </table>
 
-[![Stargazers repo roster for @PapaRascal2020/sidekick](https://reporoster.com/stars/dark/notext/PapaRascal2020/sidekick)](https://github.com/PapaRascal2020/sidekick/stargazers)
-
 ### Description
 This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mistral APIs for Laravel. The goal is to simplify switching between different AI models and APIs, making it as seamless as possible.
 <br/>
@@ -385,3 +383,9 @@ I have tested the package using the following models:
 ```claude-3-opus-20240229, claude-3-sonnet-20240229, claude-3-haiku-20240307```
 #### Cohere AI
 ```command-r-08-2024 command-r-plus-08-2024```
+
+### Stargazers
+A big shoutout to those who star the repository!
+
+[![Stargazers repo roster for @PapaRascal2020/sidekick](https://reporoster.com/stars/dark/notext/PapaRascal2020/sidekick)](https://github.com/PapaRascal2020/sidekick/stargazers)
+
