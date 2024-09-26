@@ -19,8 +19,8 @@ This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mi
 
  <img src="https://github.com/user-attachments/assets/3f7d016b-735d-4f3a-a059-064d15f16040" alt="" height="25" /> <a href="https://www.youtube.com/watch?v=Gmx4C7piVFE"> **Watch a short video trailer showcasing some of the features** </a>
  
-#### Features
-- Open AI, Mistral, Claude & Cohers
+#### ![image](https://github.com/user-attachments/assets/5595c5d1-60c8-4693-aa54-47dffa6f4d10) Features
+- Open AI, Mistral, Claude & Cohere
     - Conversation => Quickly prototype/build a chatbot (with history via DB)
     - Completion => Complete or respond to a given prompt
 - Open AI, Mistral (ONLY)
@@ -46,7 +46,7 @@ The easiest way to install the package in your laravel app is to run the followi
 
 After you have updated the file run:
 ```bash
-    composer upadte
+    composer update
 ```
 
 ### Configuring the `.env`
