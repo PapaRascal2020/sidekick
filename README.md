@@ -46,7 +46,7 @@ The easiest way to install the package in your laravel app is to run the followi
 
 After you have updated the file run:
 ```bash
-    composer upadte
+    composer update
 ```
 
 ### Configuring the `.env`
