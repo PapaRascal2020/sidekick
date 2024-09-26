@@ -23,10 +23,10 @@ class UtilitiesTest extends TestCase
         $content = 'Some long content';
         $expectedResponse = 'summary text';
 
-        $gptUtilitiesMock = $this->createMock(OpenAi::class);
-        $gptUtilitiesMock->method('summarize')->willReturn($expectedResponse);
+        $utilitiesMock = $this->createMock(OpenAiExtras::class);
+        $utilitiesMock->method('summarize')->willReturn($expectedResponse);
 
-        $this->sidekickMock->method('utilities')->willReturn($gptUtilitiesMock);
+        $this->sidekickMock->method('utilities')->willReturn($utilitiesMock);
 
         $result = $this->sidekickMock->utilities()->summarize($content);
 
@@ -38,10 +38,10 @@ class UtilitiesTest extends TestCase
         $text = "This is a text with important keywords.";
         $expectedResponse = "text, important, keywords";
 
-        $gptUtilitiesMock = $this->createMock(OpenAi::class);
-        $gptUtilitiesMock->method('extractKeywords')->willReturn($expectedResponse);
+        $utilitiesMock = $this->createMock(OpenAiExtras::class);
+        $utilitiesMock->method('extractKeywords')->willReturn($expectedResponse);
 
-        $this->sidekickMock->method('utilities')->willReturn($gptUtilitiesMock);
+        $this->sidekickMock->method('utilities')->willReturn($utilitiesMock);
 
         $result = $this->sidekickMock->utilities()->extractKeywords($text);
         $this->assertEquals($expectedResponse, $result);
@@ -53,10 +53,10 @@ class UtilitiesTest extends TestCase
         $targetLanguage = "Spanish";
         $expectedResponse = "Hola, mundo!";
 
-        $gptUtilitiesMock = $this->createMock(OpenAi::class);
-        $gptUtilitiesMock->method('translateText')->willReturn($expectedResponse);
+        $utilitiesMock = $this->createMock(OpenAiExtras::class);
+        $utilitiesMock->method('translateText')->willReturn($expectedResponse);
 
-        $this->sidekickMock->method('utilities')->willReturn($gptUtilitiesMock);
+        $this->sidekickMock->method('utilities')->willReturn($utilitiesMock);
 
         $result = $this->sidekickMock->utilities()->translateText($text, $targetLanguage);
         $this->assertEquals($expectedResponse, $result);
@@ -67,10 +67,10 @@ class UtilitiesTest extends TestCase
         $prompt = "Write a story about a brave knight.";
         $expectedResponse = "Once upon a time, there was a brave knight...";
 
-        $gptUtilitiesMock = $this->createMock(OpenAi::class);
-        $gptUtilitiesMock->method('generateContent')->willReturn($expectedResponse);
+        $utilitiesMock = $this->createMock(OpenAiExtras::class);
+        $utilitiesMock->method('generateContent')->willReturn($expectedResponse);
 
-        $this->sidekickMock->method('utilities')->willReturn($gptUtilitiesMock);
+        $this->sidekickMock->method('utilities')->willReturn($utilitiesMock);
 
         $result = $this->sidekickMock->utilities()->generateContent($prompt);
         $this->assertEquals($expectedResponse, $result);
