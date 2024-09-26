@@ -67,6 +67,8 @@ class SidekickConversation
             stream: true
         );
 
+        if(isset($response['error'])) return json_encode($response);
+
         $this->model->messages()->create([
             'role' => $this->driver->messageRoles['user'],
             'content' => $message
@@ -92,7 +94,7 @@ class SidekickConversation
             stream: false
         );
 
-        if(isset($response['error'])) dd($response);
+        if(isset($response['error'])) return json_encode($response);
 
         $this->model->messages()->create([
             'role' => $this->driver->messageRoles['user'],
