@@ -7,7 +7,7 @@
     <a href="https://packagist.org/packages/paparascaldev/sidekick"><img alt="Status" src="https://img.shields.io/badge/Packagist-F28D1A?logo=Packagist&logoColor=white"/></a>
 </p>
 <br>
-<p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/3">Contributung</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
+<p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation-(pre-v0.2.2)">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/3">Contributung</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
 <br>
 
 <p align="center">
@@ -98,7 +98,7 @@ After the install you can access the playground at:
 
 ### Documentation
 
-Please refer to the wiki documentation that can be found here: https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation
+Please refer to the wiki documentation that can be found here: [Documentation](https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation-(pre-v0.2.2))
 
 
 ### Ways to Contribute
