@@ -131,7 +131,7 @@ class SidekickConversationTest extends TestCase
                     'content' => nl2br($wholeMessage)
                 ]);
 
-                return new JsonResponse(['message' => $wholeMessage]);
+                return $wholeMessage;
             });
 
         $this->conversationMock->sendMessage("Hello");
