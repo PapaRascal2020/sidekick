@@ -4,7 +4,7 @@ namespace PapaRascalDev\Sidekick\Tests\Unit;
 use PapaRascalDev\Sidekick\Drivers\OpenAi;
 use PapaRascalDev\Sidekick\Features\Completion;
 use PapaRascalDev\Sidekick\SidekickDriverInterface;
-use PapaRascalDev\Sidekick\Utilities\GptUtilities;
+use PapaRascalDev\Sidekick\Utilities\OpenAiExtras;
 use PHPUnit\Framework\TestCase;
 
 class UtilitiesTest extends TestCase
@@ -23,7 +23,7 @@ class UtilitiesTest extends TestCase
         $content = 'Some long content';
         $expectedResponse = 'summary text';
 
-        $gptUtilitiesMock = $this->createMock(GptUtilities::class);
+        $gptUtilitiesMock = $this->createMock(OpenAi::class);
         $gptUtilitiesMock->method('summarize')->willReturn($expectedResponse);
 
         $this->sidekickMock->method('utilities')->willReturn($gptUtilitiesMock);
@@ -38,7 +38,7 @@ class UtilitiesTest extends TestCase
         $text = "This is a text with important keywords.";
         $expectedResponse = "text, important, keywords";
 
-        $gptUtilitiesMock = $this->createMock(GptUtilities::class);
+        $gptUtilitiesMock = $this->createMock(OpenAi::class);
         $gptUtilitiesMock->method('extractKeywords')->willReturn($expectedResponse);
 
         $this->sidekickMock->method('utilities')->willReturn($gptUtilitiesMock);
@@ -53,7 +53,7 @@ class UtilitiesTest extends TestCase
         $targetLanguage = "Spanish";
         $expectedResponse = "Hola, mundo!";
 
-        $gptUtilitiesMock = $this->createMock(GptUtilities::class);
+        $gptUtilitiesMock = $this->createMock(OpenAi::class);
         $gptUtilitiesMock->method('translateText')->willReturn($expectedResponse);
 
         $this->sidekickMock->method('utilities')->willReturn($gptUtilitiesMock);
@@ -67,7 +67,7 @@ class UtilitiesTest extends TestCase
         $prompt = "Write a story about a brave knight.";
         $expectedResponse = "Once upon a time, there was a brave knight...";
 
-        $gptUtilitiesMock = $this->createMock(GptUtilities::class);
+        $gptUtilitiesMock = $this->createMock(OpenAi::class);
         $gptUtilitiesMock->method('generateContent')->willReturn($expectedResponse);
 
         $this->sidekickMock->method('utilities')->willReturn($gptUtilitiesMock);

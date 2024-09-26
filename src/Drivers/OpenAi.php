@@ -3,10 +3,9 @@
 namespace PapaRascalDev\Sidekick\Drivers;
 
 use Generator;
-use PapaRascalDev\Sidekick\Features\{Audio, Completion, Embedding, Image, Moderate, StreamedCompletion, Transcribe};
+use PapaRascalDev\Sidekick\Features\{Audio, Completion, Embedding, Image, Moderate, Transcribe};
 use PapaRascalDev\Sidekick\SidekickDriverInterface;
-use PapaRascalDev\Sidekick\Utilities\GptUtilities;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use PapaRascalDev\Sidekick\Utilities\OpenAiExtras;
 
 /**
  * Supported Models:
@@ -193,11 +192,11 @@ class OpenAi implements SidekickDriverInterface
     }
 
     /**
-     * @return GptUtilities
+     * @return OpenAiExtras
      */
-    public function utilities(): GptUtilities
+    public function utilities(): OpenAiExtras
     {
-        return new GptUtilities($this);
+        return new OpenAiExtras($this);
     }
 
     /**
