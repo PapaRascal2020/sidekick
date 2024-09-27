@@ -7,15 +7,15 @@ use \PapaRascalDev\Sidekick\Drivers\OpenAi;
 Route::post('/sidekick/chat', function (Request $request) {
 
     // These are the settings from the drop down on the front end.
-    $config = json_decode($request->get('config'));
+    $config = json_decode($request->get('config'), true);
 
     // This is the system prompt the user wants the AI to use
     $systemPrompt = $request->get('prompt');
 
     // Call sidekick and send the first message
     $conversation = sidekickConversation()->begin(
-        driver: new $config->engine(),
-        model: $config->model,
+        driver: new $config['engine'](),
+        model: $config['model'],
         systemPrompt: $systemPrompt
     );
 
@@ -43,7 +43,8 @@ Route::get('/sidekick/chat/{id}', function (string $id) {
     return view('Pages.chatroom', [
         'conversationId' => $conversation->model->id,
         'config' => [
-            'model' => $conversation->model->class,
+            'engine' => $conversation->model->class,
+            'model' => $conversation->model->model,
         ],
         'messages' => $conversation->model->messages,
         'conversations' => sidekickConversation()->database()->all('id', 'model')

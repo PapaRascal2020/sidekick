@@ -27,7 +27,7 @@
             <a href="/sidekick/chat" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Chats</a>
             @if(isset($conversations))
                 @foreach($conversations as $conversation)
-                    <a href="/sidekick/playground/chat/{{$conversation->id}}"
+                    <a href="/sidekick/chat/{{$conversation->id}}"
                        class="block text-white text-xs hover:bg-gray-600 px-6 py-2 rounded">
                         {{($conversation->model != '') ? $conversation->model : 'Auto-Select'}} : {{explode('-', $conversation->id)[0]}}
                     </a>
