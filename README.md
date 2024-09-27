@@ -94,7 +94,7 @@ This will install the routes and views into your application.
 After the install you can access the playground at: 
 
 ```
-/sidekick/playground
+/sidekick
 ```
 
 ### Documentation
