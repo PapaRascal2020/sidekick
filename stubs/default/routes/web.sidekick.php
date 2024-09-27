@@ -3,9 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
-use PapaRascalDev\Sidekick\Models\Conversation;
-use PapaRascalDev\Sidekick\SidekickConversation;
-use PapaRascalDev\Sidekick\Facades\Sidekick;
 
 Route::post('/sidekick/playground/chat', function (Request $request) {
 
@@ -68,7 +65,7 @@ Route::post('/sidekick/playground/completion', function (Request $request) {
     return sidekick(new OpenAi)->complete(
         model: 'gpt-3.5-turbo',
         systemPrompt: 'You are a knowledge base, please answer there questions',
-        message: $request->get('message')
+        message: $request->get('prompt')
     );
 });
 
@@ -81,7 +78,7 @@ Route::post('/sidekick/playground/audio', function (Request $request) {
     // Send text to be converted by Sidekick to audio
     $audio = sidekick(new OpenAi)->audio()->fromText(
         model:'tts-1',
-        text: $request->get('text_to_convert')
+        text: $request->get('prompt')
     );
 
     $savedFile = sidekick(new OpenAi)->utilities()->store($audio, 'audio/mpeg');
@@ -93,7 +90,7 @@ Route::post('/sidekick/playground/audio', function (Request $request) {
 Route::post('/sidekick/playground/image', function (Request $request) {
     $image =  sidekick(new OpenAi)->image()->make(
         model:'dall-e-3',
-        prompt: $request->get('text_to_convert'),
+        prompt: $request->get('prompt'),
         width:'1024',
         height:'1024'
     );
@@ -106,7 +103,7 @@ Route::post('/sidekick/playground/image', function (Request $request) {
 Route::post('/sidekick/playground/transcribe', function (Request $request) {
     $response =  sidekick(new OpenAi)->transcribe()->audioFile(
         model:'whisper-1',
-        filePath:$request->get('audio')
+        filePath:$request->get('prompt')
     );
     return view('Pages.transcribe', ['response' => $response]);
 });
@@ -114,7 +111,7 @@ Route::post('/sidekick/playground/transcribe', function (Request $request) {
 Route::post('/sidekick/playground/embedding', function (Request $request) {
     $response = sidekick(new OpenAi)->embedding()->make(
         model:'text-embedding-3-large',
-        input: $request->get('text'),
+        input: $request->get('prompt'),
     );
     return view('Pages.embedding', ['response' => $response]);
 });
@@ -126,7 +123,7 @@ Route::get('/sidekick/playground/moderate', function () {
 Route::post('/sidekick/playground/moderate', function (Request $request) {
     $response = sidekick(new OpenAi)->moderate()->text(
         model:'text-moderation-latest',
-        content: $request->get('text')
+        content: $request->get('prompt')
     );
     return view('Pages.moderate', ['response' => $response]);
 });

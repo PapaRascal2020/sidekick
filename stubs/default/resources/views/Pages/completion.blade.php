@@ -26,22 +26,15 @@
     </div>
 
     <!-- Input Area -->
-    <footer class="bg-slate-900 p-4">
-        <form id="completion-form">
-            <div class="flex">
-                <input type="text" name="message" id="message-input" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type some text...">
-                <input type="submit" class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700" value="&#x23CE;">
-            </div>
-        </form>
-    </footer>
+    <x-sidekick-form url="/sidekick/playground/completion" />
 
 @endsection
 
 @prepend('page-scripts')
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('completion-form');
-            const messageInput = document.getElementById('message-input');
+            const form = document.getElementById('sidekick-form');
+            const messageInput = document.getElementById('prompt');
             const responseContainer = document.getElementById('response-container');
             const responseText = document.getElementById('response-text');
 
@@ -60,7 +53,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
                     },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({ prompt: message })
                 })
                     .then(response => response.text())
                     .then(data => {

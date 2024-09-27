@@ -46,31 +46,24 @@
         </div>
     </div>
 
-    <!-- Input Area -->
-    <footer class="bg-slate-900 p-4">
-        <form method="POST" id="completion-form">
-            <div class="flex">
-                <input id="conversation_id" type="hidden" name="conversation_id" value="{{$conversationId}}" />
-                <input id="engine" type="hidden" name="engine" value="{{$options}}" />
-                <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="stream" name="stream" value="" class="sr-only peer">
-                    <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                    <span class="ms-3 text-sm font-medium text-gray-900 pr-4 dark:text-gray-300">Stream</span>
-                </label>
-                <input id="message-input" type="text" name="message" required class="flex-1 border border-gray-300 text-black rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type your message...">
-                <input type="submit" class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700" value="&#x23CE;">
-            </div>
-        </form>
-    </footer>
+    <x-sidekick-form url="/sidekick/playground/chat/update">
+        <input id="conversation_id" type="hidden" name="conversation_id" value="{{$conversationId}}" />
+        <input id="engine" type="hidden" name="engine" value="{{$options}}" />
+        <label class="inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="stream" name="stream" value="" class="sr-only peer">
+            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            <span class="ms-3 text-sm font-medium text-gray-900 pr-4 dark:text-gray-300">Stream</span>
+        </label>
+    </x-sidekick-form>
 @endsection
 
 @prepend('page-scripts')
     <script type="text/javascript">
 
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('completion-form');
+            const form = document.getElementById('sidekick-form');
             const container = document.getElementById('scrollableDiv');
-            const messageInput = document.getElementById('message-input');
+            const messageInput = document.getElementById('prompt');
             const engine = document.getElementById('engine');
             const stream = document.getElementById('stream');
             const conversationId = document.getElementById('conversation_id');

@@ -17,8 +17,8 @@
             </div>
 
             <div class="flex items-start justify-center">
-                <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4 text-black">
-                    @if(isset($response))
+                @if(isset($response))
+                    <div class="bg-gray-200 p-4 mt-20 rounded-lg w-3/4 text-black">
                         @if (!$response['results'][0]['flagged'])
                             <p>The content is fine</p>
                         @else
@@ -31,22 +31,14 @@
                                 @endforeach
                             </ul>
                         @endif
-                    @endif
-                </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 
     <!-- Input Area -->
-    <footer class="bg-slate-900 p-4">
-        <form method="POST" action="/sidekick/playground/moderate">
-            <div class="flex">
-                @csrf
-                <input type="text" name="text" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type some text..." >
-                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">&#x23CE;</button>
-            </div>
-        </form>
-    </footer>
+    <x-sidekick-form url="/sidekick/playground/moderate" />
 
 @endsection
 

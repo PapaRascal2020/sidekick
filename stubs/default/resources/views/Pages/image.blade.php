@@ -22,14 +22,6 @@
     </div>
 
     <!-- Input Area -->
-    <footer class="bg-slate-900 p-4">
-        <form method="POST" action="/sidekick/playground/image">
-            <div class="flex">
-                @csrf
-                <input type="text" name="text_to_convert" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="Type your message...">
-                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">&#x23CE;</button>
-            </div>
-        </form>
-    </footer>
+    <x-sidekick-form url="/sidekick/playground/image" />
 
 @endsection

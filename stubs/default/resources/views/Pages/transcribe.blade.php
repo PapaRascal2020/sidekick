@@ -29,15 +29,7 @@
     </div>
 
     <!-- Input Area -->
-    <footer class="bg-slate-900 p-4">
-        <form method="POST" action="/sidekick/playground/transcribe">
-            <div class="flex">
-                @csrf
-                <input type="text" name="audio" class="flex-1 text-black border border-gray-300 rounded-md p-2 focus:outline-none focus:border-blue-600" placeholder="" value="http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3">
-                <button class="bg-blue-600 text-white px-4 py-2 ml-2 rounded-md hover:bg-blue-700">&#x23CE;</button>
-            </div>
-        </form>
-    </footer>
+    <x-sidekick-form url="/sidekick/playground/transcribe" value="http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3" />
 
 @endsection
 
