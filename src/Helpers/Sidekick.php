@@ -29,3 +29,18 @@ if( !function_exists('sidekickConversation') )
     }
 
 }
+
+if( !function_exists('sidekickUtilities') )
+{
+    /**
+    * Creates a new instance of Sidekick
+    *
+    * @param SidekickDriverInterface $driver
+    */
+    function sidekickUtilities(SidekickDriverInterface $driver)
+    {
+        $sidekick = Sidekick::create($driver);
+        return $sidekick->utilities();
+    }
+
+}
