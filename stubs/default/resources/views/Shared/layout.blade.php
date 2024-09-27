@@ -25,12 +25,6 @@
         </div>
         <nav class="space-y-4">
             <a href="/sidekick/playground/chat" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Chats</a>
-            @foreach((new SidekickConversation())->database()->all('id', 'model', 'created_at') as $conversation)
-                <a href="/sidekick/playground/chat/{{$conversation->id}}"
-                   class="block text-white text-xs hover:bg-gray-600 px-6 py-2 rounded">
-                    {{($conversation->model != '') ? $conversation->model : 'Auto-Select'}} : {{explode('-', $conversation->id)[0]}}
-                </a>
-            @endforeach
             <a href="/sidekick/playground/completion" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Completion</a>
             <a href="/sidekick/playground/image" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Image Generation</a>
             <a href="/sidekick/playground/audio" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Audio Generation</a>
