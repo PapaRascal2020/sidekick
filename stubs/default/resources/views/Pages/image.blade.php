@@ -22,6 +22,6 @@
     </div>
 
     <!-- Input Area -->
-    <x-sidekick-form url="/sidekick/playground/image" />
+    <x-sidekick-form url="/sidekick/image" />
 
 @endsection

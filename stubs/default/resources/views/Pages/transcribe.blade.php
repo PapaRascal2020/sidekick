@@ -29,7 +29,7 @@
     </div>
 
     <!-- Input Area -->
-    <x-sidekick-form url="/sidekick/playground/transcribe" value="http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3" />
+    <x-sidekick-form url="/sidekick/transcribe" value="http://english.voiceoversamples.com/ENG_UK_M_PeterB.mp3" />
 
 @endsection
 

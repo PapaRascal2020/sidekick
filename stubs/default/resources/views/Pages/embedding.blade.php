@@ -28,6 +28,6 @@
     </div>
 
     <!-- Input Area -->
-    <x-sidekick-form url="/sidekick/playground/embedding" />
+    <x-sidekick-form url="/sidekick/embedding" />
 
 @endsection

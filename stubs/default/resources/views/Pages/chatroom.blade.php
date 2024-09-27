@@ -7,11 +7,11 @@
 @section('content')
     <!-- Header -->
     <header class="bg-slate-900 shadow p-4 flex justify-between items-center text-white">
-        <h1 class="text-xl text-white font-semibold">Conversation <small class="text-sm">(id: {{$conversationId}}) - Engine: {{($options != '') ? $options : 'Auto-Select'}}</small></h1>
+        <h1 class="text-xl text-white font-semibold">Conversation <small class="text-sm">(id: {{$conversationId}}) - Engine: {{($config->model != '') ? $config->model : 'Auto-Select'}}</small></h1>
 
         <div>
-            <a href="/sidekick/playground/chat" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">New Chat</a>
-            <a href="/sidekick/playground/chat/delete/{{$conversationId}}" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">X</a>
+            <a href="/sidekick/chat" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">New Chat</a>
+            <a href="/sidekick/chat/delete/{{$conversationId}}" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">X</a>
         </div>
     </header>
 
@@ -38,9 +38,9 @@
         </div>
     </div>
 
-    <x-sidekick-form url="/sidekick/playground/chat/update">
+    <x-sidekick-form url="/sidekick/chat/update">
         <input id="conversation_id" type="hidden" name="conversation_id" value="{{$conversationId}}" />
-        <input id="engine" type="hidden" name="engine" value="{{$options}}" />
+        <input id="engine" type="hidden" name="engine" value="{{$config->model}}" />
         <label class="inline-flex items-center cursor-pointer">
             <input type="checkbox" id="stream" name="stream" value="" class="sr-only peer">
             <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
@@ -112,7 +112,7 @@
                     `;
 
                     // Make fetch request to server
-                    fetch('/sidekick/playground/chat/update', {
+                    fetch('/sidekick/chat/update', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -138,11 +138,15 @@
                             if(done) break;
 
                             const chunk = decoder.decode(value, {stream: true});
-                            console.log(chunk);
 
-                            responseBox.innerText += chunk;
+                            // Needs to be fixed once I have some time.
+                            if(responseBox.innerText != chunk)
+                                responseBox.innerText += chunk;
+
                             container.scrollTop = container.scrollHeight;
                         }
+
+
 
                         const loader = document.getElementById('loader');
                         loader.remove();
@@ -157,7 +161,7 @@
                 function handleCallback() {
                     let r = (Math.random() + 1).toString(36).substring(7);
 
-                    fetch('/sidekick/playground/chat/update', {
+                    fetch('/sidekick/chat/update', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

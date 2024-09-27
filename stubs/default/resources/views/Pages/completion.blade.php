@@ -26,7 +26,7 @@
     </div>
 
     <!-- Input Area -->
-    <x-sidekick-form url="/sidekick/playground/completion" />
+    <x-sidekick-form url="/sidekick/completion" />
 
 @endsection
 
@@ -47,7 +47,7 @@
                 responseContainer.style.display = 'none';
                 responseText.textContent = '';
 
-                fetch('/sidekick/playground/completion', {
+                fetch('/sidekick/completion', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

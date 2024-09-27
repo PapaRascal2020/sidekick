@@ -4,30 +4,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
 
-Route::post('/sidekick/playground/chat', function (Request $request) {
+Route::post('/sidekick/chat', function (Request $request) {
 
     // These are the settings from the drop down on the front end.
-    $options = explode("|", $request->get('engine'));
+    $config = json_decode($request->get('config'));
 
     // This is the system prompt the user wants the AI to use
     $systemPrompt = $request->get('prompt');
 
     // Call sidekick and send the first message
     $conversation = sidekickConversation()->begin(
-        driver: new $options[0](),
-        model: $options[1],
+        driver: new $config->engine(),
+        model: $config->model,
         systemPrompt: $systemPrompt
     );
 
     // Redirect the user to the main page for the conversation
     return view('Pages.chatroom', [
         'conversationId' => $conversation->model->id,
-        'options' => $options[0],
+        'config' => $config,
         'conversations' => sidekickConversation()->database()->all('id', 'model')
     ]);
 });
 
-Route::post('/sidekick/playground/chat/update', function (Request $request) {
+Route::post('/sidekick/chat/update', function (Request $request) {
 
     // Load the instance of Sidekick Conversations and sendMessage
     return sidekickConversation()
@@ -35,7 +35,7 @@ Route::post('/sidekick/playground/chat/update', function (Request $request) {
             ->sendMessage($request->get('message'), $request->get('stream'));
 });
 
-Route::get('/sidekick/playground/chat/{id}', function (string $id) {
+Route::get('/sidekick/chat/{id}', function (string $id) {
     // load the conversation
     $conversation = sidekickConversation()->resume($id);
 
@@ -47,19 +47,19 @@ Route::get('/sidekick/playground/chat/{id}', function (string $id) {
     ]);
 });
 
-Route::get('/sidekick/playground/chat/delete/{id}', function (string $id) {
+Route::get('/sidekick/chat/delete/{id}', function (string $id) {
     // Find and delete the conversation in the database
     sidekickConversation()->delete($id);
 
     // Redirect to the main chat page.
-    return redirect('/sidekick/playground/chat');
+    return redirect('/sidekick/chat');
 });
 
-Route::get('/sidekick/playground/completion', function () {
+Route::get('/sidekick/completion', function () {
     return view('Pages.completion');
 });
 
-Route::post('/sidekick/playground/completion', function (Request $request) {
+Route::post('/sidekick/completion', function (Request $request) {
 
     // Send message for a response
     return sidekick(new OpenAi)->complete(
@@ -69,11 +69,11 @@ Route::post('/sidekick/playground/completion', function (Request $request) {
     );
 });
 
-Route::get('/sidekick/playground/audio', function () {
+Route::get('/sidekick/audio', function () {
     return view('Pages.audio');
 });
 
-Route::post('/sidekick/playground/audio', function (Request $request) {
+Route::post('/sidekick/audio', function (Request $request) {
 
     // Send text to be converted by Sidekick to audio
     $audio = sidekick(new OpenAi)->audio()->fromText(
@@ -87,7 +87,7 @@ Route::post('/sidekick/playground/audio', function (Request $request) {
     return view('Pages.audio', ['audio' => base64_encode($audio), 'savedFile' => $savedFile]);
 });
 
-Route::post('/sidekick/playground/image', function (Request $request) {
+Route::post('/sidekick/image', function (Request $request) {
     $image =  sidekick(new OpenAi)->image()->make(
         model:'dall-e-3',
         prompt: $request->get('prompt'),
@@ -100,7 +100,7 @@ Route::post('/sidekick/playground/image', function (Request $request) {
     return view('Pages.image', ['image' => $image['data'][0]['url'], 'savedFile' => $savedFile]);
 });
 
-Route::post('/sidekick/playground/transcribe', function (Request $request) {
+Route::post('/sidekick/transcribe', function (Request $request) {
     $response =  sidekick(new OpenAi)->transcribe()->audioFile(
         model:'whisper-1',
         filePath:$request->get('prompt')
@@ -108,7 +108,7 @@ Route::post('/sidekick/playground/transcribe', function (Request $request) {
     return view('Pages.transcribe', ['response' => $response]);
 });
 
-Route::post('/sidekick/playground/embedding', function (Request $request) {
+Route::post('/sidekick/embedding', function (Request $request) {
     $response = sidekick(new OpenAi)->embedding()->make(
         model:'text-embedding-3-large',
         input: $request->get('prompt'),
@@ -116,11 +116,11 @@ Route::post('/sidekick/playground/embedding', function (Request $request) {
     return view('Pages.embedding', ['response' => $response]);
 });
 
-Route::get('/sidekick/playground/moderate', function () {
+Route::get('/sidekick/moderate', function () {
     return view('Pages.moderate');
 });
 
-Route::post('/sidekick/playground/moderate', function (Request $request) {
+Route::post('/sidekick/moderate', function (Request $request) {
     $response = sidekick(new OpenAi)->moderate()->text(
         model:'text-moderation-latest',
         content: $request->get('prompt')
@@ -128,23 +128,23 @@ Route::post('/sidekick/playground/moderate', function (Request $request) {
     return view('Pages.moderate', ['response' => $response]);
 });
 
-Route::get('/sidekick/playground/image', function () {
+Route::get('/sidekick/image', function () {
     return view('Pages.image');
 });
 
-Route::get('/sidekick/playground/transcribe', function () {
+Route::get('/sidekick/transcribe', function () {
     return view('Pages.transcribe');
 });
 
-Route::get('/sidekick/playground/embedding', function () {
+Route::get('/sidekick/embedding', function () {
     return view('Pages.embedding');
 });
 
-Route::get('/sidekick/playground/chat', function () {
+Route::get('/sidekick/chat', function () {
     return view('Pages.chat');
 });
 
-Route::get('/sidekick/playground', function () {
+Route::get('/sidekick', function () {
     return view('Pages.index');
 });
 

@@ -19,32 +19,23 @@
     </div>
 
     <!-- Input form -->
-    <x-sidekick-form url="/sidekick/playground/chat">
-        <select name="engine" class="text-black">
-            <option value="\PapaRascalDev\Sidekick\Drivers\OpenAi|gpt-3.5-turbo">Open AI : GPT 3.5 Turbo
-            </option>
-            <option value="\PapaRascalDev\Sidekick\Drivers\OpenAi|gpt-4">Open AI : GPT 4</option>
+    <x-sidekick-form url="/sidekick/chat">
+        <select name="config" class="text-black">
+            <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\OpenAi", "model": "gpt-3.5-turbo"}'>Open AI : GPT 3.5 Turbo</option>
+            <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\OpenAi", "model": "gpt-4"}'>Open AI : GPT 4</option>
             @if(getenv('SIDEKICK_MISTRAL_TOKEN'))
-                <option value="\PapaRascalDev\Sidekick\Drivers\Mistral|mistral-small-latest">Mistral : Small
-                </option>
-                <option value="\PapaRascalDev\Sidekick\Drivers\Mistral|mistral-medium-latest">Mistral : Medium
-                </option>
-                <option value="\PapaRascalDev\Sidekick\Drivers\Mistral|mistral-large-latest">Mistral : Large
-                </option>
-                <option value="\PapaRascalDev\Sidekick\Drivers\Mistral|open-mistral-7b">Mistral : Open Mistral
-                    7B
-                </option>
+                <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\\\Mistral", "model": "mistral-small-latest"}'>Mistral : Small</option>
+                <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\\\Mistral", "model": "mistral-medium-latest"}'>Mistral : Medium</option>
+                <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\\\Mistral", "model": "mistral-large-latest"}'>Mistral : Large</option>
+                <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\\\Mistral", "model": "open-mistral-7b"}'>Mistral : Open Mistral 7B</option>
             @endif
             @if(getenv('SIDEKICK_CLAUDE_TOKEN'))
-                <option value="\PapaRascalDev\Sidekick\Drivers\Claude|claude-3-opus-20240229">Claude : Opus
-                </option>
-                <option value="\PapaRascalDev\Sidekick\Drivers\Claude|claude-3-sonnet-20240229">Claude: Sonnet
-                </option>
-                <option value="\PapaRascalDev\Sidekick\Drivers\Claude|claude-3-haiku-20240307">Claude: Haiku
-                </option>
+                <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\Claude", "model": "claude-3-opus-20240229"}'>Claude : Opus</option>
+                <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\Claude", "model": "claude-3-sonnet-20240229"}'>Claude: Sonnet</option>
+                <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\Claude", "model": "claude-3-haiku-20240307"}'>Claude: Haiku</option>
             @endif
             @if(getenv('SIDEKICK_CLAUDE_TOKEN'))
-                <option value="\PapaRascalDev\Sidekick\Drivers\Cohere|">Cohere : Auto-Select</option>
+                <option value='{"engine": "\\PapaRascalDev\\Sidekick\\Drivers\\Cohere", "model": ""}'>Cohere : Auto-Select</option>
             @endif
         </select>
     </x-sidekick-form>

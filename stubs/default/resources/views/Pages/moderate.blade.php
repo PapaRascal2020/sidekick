@@ -38,7 +38,7 @@
     </div>
 
     <!-- Input Area -->
-    <x-sidekick-form url="/sidekick/playground/moderate" />
+    <x-sidekick-form url="/sidekick/moderate" />
 
 @endsection
 

@@ -24,13 +24,13 @@
             </div>
         </div>
         <nav class="space-y-4">
-            <a href="/sidekick/playground/chat" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Chats</a>
-            <a href="/sidekick/playground/completion" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Completion</a>
-            <a href="/sidekick/playground/image" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Image Generation</a>
-            <a href="/sidekick/playground/audio" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Audio Generation</a>
-            <a href="/sidekick/playground/moderate" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Moderation</a>
-            <a href="/sidekick/playground/transcribe" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Transcription</a>
-            <a href="/sidekick/playground/embedding" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Embedding</a>
+            <a href="/sidekick/chat" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Chats</a>
+            <a href="/sidekick/completion" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Completion</a>
+            <a href="/sidekick/image" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Image Generation</a>
+            <a href="/sidekick/audio" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Audio Generation</a>
+            <a href="/sidekick/moderate" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Moderation</a>
+            <a href="/sidekick/transcribe" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Transcription</a>
+            <a href="/sidekick/embedding" class="block text-white hover:bg-gray-600 px-4 py-2 rounded">Embedding</a>
         </nav>
     </aside>
 

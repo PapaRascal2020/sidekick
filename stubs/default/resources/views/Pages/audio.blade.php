@@ -27,6 +27,6 @@
     </div>
 
     <!-- Input Area -->
-    <x-sidekick-form url="/sidekick/playground/audio" />
+    <x-sidekick-form url="/sidekick/audio" />
 
 @endsection
