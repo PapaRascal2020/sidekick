@@ -42,8 +42,11 @@ Route::get('/sidekick/chat/{id}', function (string $id) {
     // Return the conversation to the browser
     return view('Pages.chatroom', [
         'conversationId' => $conversation->model->id,
-        'options' => $conversation->model->class,
-        'messages' => $conversation->model->messages
+        'config' => [
+            'model' => $conversation->model->class,
+        ],
+        'messages' => $conversation->model->messages,
+        'conversations' => sidekickConversation()->database()->all('id', 'model')
     ]);
 });
 
@@ -56,7 +59,7 @@ Route::get('/sidekick/chat/delete/{id}', function (string $id) {
 });
 
 Route::get('/sidekick/completion', function () {
-    return view('Pages.completion');
+    return view('Pages.completion', ['conversations' => sidekickConversation()->database()->all('id', 'model')]);
 });
 
 Route::post('/sidekick/completion', function (Request $request) {
@@ -70,7 +73,7 @@ Route::post('/sidekick/completion', function (Request $request) {
 });
 
 Route::get('/sidekick/audio', function () {
-    return view('Pages.audio');
+    return view('Pages.audio', ['conversations' => sidekickConversation()->database()->all('id', 'model')]);
 });
 
 Route::post('/sidekick/audio', function (Request $request) {
@@ -84,7 +87,11 @@ Route::post('/sidekick/audio', function (Request $request) {
     $savedFile = sidekick(new OpenAi)->utilities()->store($audio, 'audio/mpeg');
 
     // Return the base64 encoded audio file to the front end
-    return view('Pages.audio', ['audio' => base64_encode($audio), 'savedFile' => $savedFile]);
+    return view('Pages.audio', [
+        'audio' => base64_encode($audio),
+        'savedFile' => $savedFile,
+        'conversations' => sidekickConversation()->database()->all('id', 'model')
+    ]);
 });
 
 Route::post('/sidekick/image', function (Request $request) {
@@ -97,7 +104,11 @@ Route::post('/sidekick/image', function (Request $request) {
 
     $savedFile = sidekick(new OpenAi)->utilities()->store($image['data'][0]['url'], 'image/png');
 
-    return view('Pages.image', ['image' => $image['data'][0]['url'], 'savedFile' => $savedFile]);
+    return view('Pages.image', [
+        'image' => $image['data'][0]['url'],
+        'savedFile' => $savedFile,
+        'conversations' => sidekickConversation()->database()->all('id', 'model')
+    ]);
 });
 
 Route::post('/sidekick/transcribe', function (Request $request) {
@@ -105,7 +116,10 @@ Route::post('/sidekick/transcribe', function (Request $request) {
         model:'whisper-1',
         filePath:$request->get('prompt')
     );
-    return view('Pages.transcribe', ['response' => $response]);
+    return view('Pages.transcribe', [
+        'response' => $response,
+        'conversations' => sidekickConversation()->database()->all('id', 'model')
+    ]);
 });
 
 Route::post('/sidekick/embedding', function (Request $request) {
@@ -113,11 +127,14 @@ Route::post('/sidekick/embedding', function (Request $request) {
         model:'text-embedding-3-large',
         input: $request->get('prompt'),
     );
-    return view('Pages.embedding', ['response' => $response]);
+    return view('Pages.embedding', [
+        'response' => $response,
+        'conversations' => sidekickConversation()->database()->all('id', 'model')
+    ]);
 });
 
 Route::get('/sidekick/moderate', function () {
-    return view('Pages.moderate');
+    return view('Pages.moderate', ['conversations' => sidekickConversation()->database()->all('id', 'model')]);
 });
 
 Route::post('/sidekick/moderate', function (Request $request) {
@@ -125,26 +142,29 @@ Route::post('/sidekick/moderate', function (Request $request) {
         model:'text-moderation-latest',
         content: $request->get('prompt')
     );
-    return view('Pages.moderate', ['response' => $response]);
+    return view('Pages.moderate', [
+        'response' => $response,
+        'conversations' => sidekickConversation()->database()->all('id', 'model')
+    ]);
 });
 
 Route::get('/sidekick/image', function () {
-    return view('Pages.image');
+    return view('Pages.image', ['conversations' => sidekickConversation()->database()->all('id', 'model')]);
 });
 
 Route::get('/sidekick/transcribe', function () {
-    return view('Pages.transcribe');
+    return view('Pages.transcribe', ['conversations' => sidekickConversation()->database()->all('id', 'model')]);
 });
 
 Route::get('/sidekick/embedding', function () {
-    return view('Pages.embedding');
+    return view('Pages.embedding', ['conversations' => sidekickConversation()->database()->all('id', 'model')]);
 });
 
 Route::get('/sidekick/chat', function () {
-    return view('Pages.chat');
+    return view('Pages.chat', ['conversations' => sidekickConversation()->database()->all('id', 'model')]);
 });
 
 Route::get('/sidekick', function () {
-    return view('Pages.index');
+    return view('Pages.index', ['conversations' => sidekickConversation()->database()->all('id', 'model')]);
 });
 
