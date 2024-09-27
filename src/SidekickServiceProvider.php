@@ -25,9 +25,6 @@ class SidekickServiceProvider extends ServiceProvider
 
         $this->initializeMigrations();
         $this->initializeMigrationPublishing();
-
-        // Remove when I make a better playground but is important for now for the sidebar
-        View::share('conversations', (new SidekickConversation())->database()->all('id', 'model', 'created_at'));
     }
 
     /**

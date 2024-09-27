@@ -2,7 +2,12 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use \PapaRascalDev\Sidekick\Drivers\OpenAi;
+use PapaRascalDev\Sidekick\SidekickConversation;
+
+// Remove when I make a better playground but is important for now for the sidebar
+View::share('conversations', (new SidekickConversation())->database()->all('id', 'model', 'created_at'));
 
 Route::post('/sidekick/playground/chat', function (Request $request) {
 
