@@ -24,21 +24,13 @@
             @if(isset($messages))
                 @foreach($messages as $message)
                     @if(strtolower($message['role']) === 'user')
-                        <div class="flex items-start">
-                            <div class="bg-gray-200 p-4 rounded-lg w-3/4">
-                                <p class="font-bold flex items-center gap-x-1 pb-2 text-black">
-                                    @include('Components.user') User</p>
-                                <p class="text-gray-800">{!! $message['content'] !!}</p>
-                            </div>
-                        </div>
+                        <x-sidekick-user-message>
+                            {!! $message['content'] !!}
+                        </x-sidekick-user-message>
                     @else
-                        <div class="flex items-start justify-end">
-                            <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
-                                <p class="font-bold flex items-center gap-x-1 pb-2">
-                                    @include('Components.bot') Assistant</p>
-                                <p>{!! nl2br($message['content']) !!}</p>
-                            </div>
-                        </div>
+                        <x-sidekick-bot-message r="{{ $message->id }}">
+                            {!! nl2br($message['content']) !!}
+                        </x-sidekick-bot-message>
                     @endif
                 @endforeach
             @endif
@@ -85,13 +77,9 @@
                 let isStreamed = stream.checked;
 
                 responseContainer.innerHTML += `
-                    <div class="flex items-start">
-                        <div class="bg-gray-200 p-4 rounded-lg w-3/4">
-                            <p class="font-bold flex items-center gap-x-1 pb-2 text-black">
-                                    @include('Components.user') User</p>
-                            <p class="text-gray-800">${message}</p>
-                        </div>
-                    </div>
+                    <x-sidekick-user-message>
+                        ${message}
+                    </x-sidekick-user-message>
                 `;
 
                 responseContainer.innerHTML += `
@@ -120,13 +108,7 @@
 
                     // Create response container
                     responseContainer.innerHTML += `
-                    <div class="flex items-start justify-end">
-                        <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
-                            <p class="font-bold flex items-center gap-x-1 pb-2">
-                                @include('Components.bot') Assistant</p>
-                            <p id="response-${r}"></p>
-                        </div>
-                    </div>
+                        <x-sidekick-bot-message r="${r}" />
                     `;
 
                     // Make fetch request to server
@@ -173,6 +155,8 @@
                 }
 
                 function handleCallback() {
+                    let r = (Math.random() + 1).toString(36).substring(7);
+
                     fetch('/sidekick/playground/chat/update', {
                         method: 'POST',
                         headers: {
@@ -190,13 +174,9 @@
                         loader.remove();
 
                         responseContainer.innerHTML += `
-                        <div class="flex items-start justify-end">
-                            <div class="bg-blue-800 text-white p-4 rounded-lg w-3/4">
-                                <p class="font-bold flex items-center gap-x-1 pb-2">
-                                        @include('Components.bot') Assistant</p>
-                                <p>${response}</p>
-                            </div>
-                        </div>
+                        <x-sidekick-bot-message r="${r}">
+                            ${response}
+                        </x-sidekick-bot-message>
                         `;
 
                         container.scrollTop = container.scrollHeight;
