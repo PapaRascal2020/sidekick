@@ -17,7 +17,7 @@
 ### Description
 This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mistral APIs for Laravel. The goal is to simplify switching between different AI models and APIs, making it as seamless as possible.
 
- <img src="https://github.com/user-attachments/assets/3f7d016b-735d-4f3a-a059-064d15f16040" alt="" height="25" /> <a href="https://www.youtube.com/watch?v=rfhhsQYpq6c"> **Watch a short video on how to get set up in under 5 minutes. </a>
+ <img src="https://github.com/user-attachments/assets/3f7d016b-735d-4f3a-a059-064d15f16040" alt="" height="25" /> <a href="https://www.youtube.com/watch?v=rfhhsQYpq6c"> **Watch a short video on how to get set up in under 5 minutes.** </a>
  
 #### ![image](https://github.com/user-attachments/assets/5595c5d1-60c8-4693-aa54-47dffa6f4d10) Features
 - Open AI, Mistral, Claude & Cohere
