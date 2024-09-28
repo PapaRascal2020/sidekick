@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  laravel-tests:
+  sidekick-tests:
     runs-on: ubuntu-latest
 
     steps:
