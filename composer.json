@@ -29,5 +29,12 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5.13"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "\\PapaRascalDev\\Sidekick\\SidekickServiceProvider"
+            ]
+        }
     }
 }
