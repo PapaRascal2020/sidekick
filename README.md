@@ -12,7 +12,7 @@
 <br>
 
 <p align="center">
-<img src="https://github.com/user-attachments/assets/27dfb981-e183-4b85-870e-24aab419bb6a" alt="" />
+<img src="https://hopeful-mist.lon1.cdn.digitaloceanspaces.com/sidekick_new.png" alt="" />
 </p>
 
 ### Description
