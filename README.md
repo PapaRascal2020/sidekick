@@ -8,7 +8,7 @@
     <img alt="Tests" src="https://github.com/PapaRascal2020/sidekick/actions/workflows/laravel.yml/badge.svg" />
 </p>
 <br>
-<p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation-(pre-v0.2.2)">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/calling-all-laravel-devs-lets-collaborate-on-sidekick">Contributung</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
+<p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/4.-Documentation-(post-v0.2.1)">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/calling-all-laravel-devs-lets-collaborate-on-sidekick">Contributung</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
 <br>
 
 <p align="center">
@@ -94,7 +94,7 @@ After the install you can access the playground at:
 
 ### Documentation
 
-Please refer to the wiki documentation that can be found here: [Documentation](https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation-(pre-v0.2.2))
+Please refer to the wiki documentation that can be found here: [Documentation](https://github.com/PapaRascal2020/sidekick/wiki/4.-Documentation-(post-v0.2.1))
 
 
 ### Ways to Contribute
