@@ -1,0 +1,60 @@
+name: Sidekick Package Test
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up PHP environment
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2' # Change this based on the PHP version your package requires
+          extensions: mbstring, xml, json, pdo, mysql
+          coverage: none
+
+      # Step 3: Install Composer
+      - name: Install Composer dependencies
+        run: composer install
+
+      # Step 4: Install fresh Laravel project
+      - name: Install fresh Laravel project
+        run: |
+          composer create-project --prefer-dist laravel/laravel laravel-app
+          cd laravel-app
+
+      # Step 5: Require your package
+      - name: Require your package
+        run: |
+          cd laravel-app
+          composer require paparascaldev/sidekick:dev-main
+
+      # Step 6: Run artisan command and confirm prompt
+      - name: Run artisan command with prompt
+        run: |
+          cd laravel-app
+          echo "yes" | php artisan sidekick:install
+
+      # Step 7: Run Laravel tests
+      - name: Run Laravel tests
+        run: |
+          cd laravel-app
+          php artisan test
+
+      # Step 8: Run another artisan command
+      - name: Run another artisan command
+        run: |
+          cd laravel-app
+          php artisan sidekick:remove
