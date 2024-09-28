@@ -44,12 +44,6 @@ The easiest way to install the package in your laravel app is to run the followi
     composer require paparascaldev/sidekick
 ```
 
-The add the following to the `bootstrap/providers.php`
-
-```PHP
-   \PapaRascalDev\Sidekick\SidekickServiceProvider::class,
-```
-
 ### Configuring the `.env`
 Once Sidekick is installed you need to update your `.env` file with your access tokens.
 
