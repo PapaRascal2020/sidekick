@@ -1,4 +1,4 @@
-name: Sidekick Package Test
+name: Sidekick Tests
 
 on: 
   push:
