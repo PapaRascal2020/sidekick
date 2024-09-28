@@ -4,8 +4,8 @@
     <img alt="Status" src="https://img.shields.io/badge/Project%20Status-Active-green"/> &nbsp;&nbsp;&nbsp;
     <img alt="Latest Version" src="https://img.shields.io/packagist/v/paparascaldev/sidekick?label=Latest%20Release"/> &nbsp;&nbsp;
     <img alt="Stability" src="https://img.shields.io/badge/Stability-beta-yellow"/> &nbsp;&nbsp;&nbsp;
-    <a href="https://packagist.org/packages/paparascaldev/sidekick"><img alt="Status" src="https://img.shields.io/badge/Packagist-F28D1A?logo=Packagist&logoColor=white"/></a>
-    <img src="https://github.com/github/docs/actions/workflows/main.yml/badge.svg" alt="" />
+    <a href="https://packagist.org/packages/paparascaldev/sidekick"><img alt="Status" src="https://img.shields.io/badge/Packagist-F28D1A?logo=Packagist&logoColor=white"/></a>&nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/github/docs/actions/workflows/laravel/badge.svg" alt="" /> 
 </p>
 <br>
 <p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/3.-Documentation-(pre-v0.2.2)">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/calling-all-laravel-devs-lets-collaborate-on-sidekick">Contributung</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
