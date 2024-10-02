@@ -4,7 +4,7 @@ namespace PapaRascalDev\Sidekick\Tests\Unit;
 use PapaRascalDev\Sidekick\Drivers\OpenAi;
 use PapaRascalDev\Sidekick\Features\Completion;
 use PapaRascalDev\Sidekick\SidekickDriverInterface;
-use PapaRascalDev\Sidekick\Utilities\OpenAiExtras;
+use PapaRascalDev\Sidekick\Utilities\Utilities;
 use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
@@ -66,7 +66,7 @@ class UtilitiesTest extends TestCase
         $targetLanguage = "Spanish";
         $expectedResponse = "Hola, mundo!";
 
-        $utilitiesMock = $this->createMock(OpenAiExtras::class);
+        $utilitiesMock = $this->createMock(Utilities::class);
         $utilitiesMock->method('translateText')->willReturn($expectedResponse);
 
         $this->sidekickMock->method('utilities')->willReturn($utilitiesMock);
