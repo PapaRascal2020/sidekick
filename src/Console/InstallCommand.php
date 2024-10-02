@@ -70,6 +70,6 @@ class InstallCommand extends Command
 
         $this->components->success("Successfully installed Sidekick Playground");
 
-        return 1;
+        return 0;
     }
 }

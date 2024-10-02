@@ -73,7 +73,7 @@ class RemoveCommand extends Command
 
         $this->components->success("Successfully removed Sidekick Playground");
 
-        return 1;
+        return 0;
     }
 
     /**
