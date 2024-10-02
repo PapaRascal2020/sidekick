@@ -30,7 +30,7 @@ class UtilitiesTest extends TestCase
         $content = 'Some long content';
         $expectedResponse = 'summary text';
 
-        $utilitiesMock = $this->createMock(OpenAiExtras::class);
+        $utilitiesMock = $this->createMock(Utilities::class);
         $utilitiesMock->method('summarize')->willReturn($expectedResponse);
 
         $this->sidekickMock->method('utilities')->willReturn($utilitiesMock);
@@ -48,7 +48,7 @@ class UtilitiesTest extends TestCase
         $text = "This is a text with important keywords.";
         $expectedResponse = "text, important, keywords";
 
-        $utilitiesMock = $this->createMock(OpenAiExtras::class);
+        $utilitiesMock = $this->createMock(Utilities::class);
         $utilitiesMock->method('extractKeywords')->willReturn($expectedResponse);
 
         $this->sidekickMock->method('utilities')->willReturn($utilitiesMock);
@@ -84,7 +84,7 @@ class UtilitiesTest extends TestCase
         $prompt = "Write a story about a brave knight.";
         $expectedResponse = "Once upon a time, there was a brave knight...";
 
-        $utilitiesMock = $this->createMock(OpenAiExtras::class);
+        $utilitiesMock = $this->createMock(Utilities::class);
         $utilitiesMock->method('generateContent')->willReturn($expectedResponse);
 
         $this->sidekickMock->method('utilities')->willReturn($utilitiesMock);
