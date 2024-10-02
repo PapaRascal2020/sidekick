@@ -129,7 +129,7 @@ class Utilities
         file_put_contents($filePath, $data);
 
         // Return the local path of the stored file
-        return $filePath;
+        return asset('uploads/' . $filename);
     }
 
     /**

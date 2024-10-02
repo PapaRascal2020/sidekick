@@ -186,7 +186,7 @@ class OpenAi implements SidekickDriverInterface
     public function moderate(): Moderate
     {
         return new Moderate(
-            url: "{$this->baseUrl}/moderation's",
+            url: "{$this->baseUrl}/moderations",
             headers: $this->headers
         );
     }
