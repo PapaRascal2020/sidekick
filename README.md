@@ -8,7 +8,7 @@
     <img alt="Tests" src="https://github.com/PapaRascal2020/sidekick/actions/workflows/laravel.yml/badge.svg" />
 </p>
 <br>
-<p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/4.-Documentation-(post-v0.2.1)">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/calling-all-laravel-devs-lets-collaborate-on-sidekick">Contributung</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
+<p align="center"><a href="https://github.com/PapaRascal2020/sidekick/wiki/2.-Install-Guide">Installation Guide</a> | <a href="https://github.com/PapaRascal2020/sidekick/wiki/4.-Documentation-(post-v0.2.1)">Documentation</a> | <a href="https://ashleyjohnson.co.uk/journal/calling-all-laravel-devs-lets-collaborate-on-sidekick">Contributing</a> | <a href="https://github.com/PapaRascal2020/sidekick?tab=GPL-3.0-1-ov-file">License</a></p>
 <br>
 
 <p align="center">
@@ -40,7 +40,7 @@ This project provides a unified wrapper around the OpenAI, Claude, Cohere and Mi
 
 
 ### Installation Guide
-The easiest way to install the package in your laravel app is to run the following command from within your projects directory:
+The easiest way to install the package in your laravel app is to run the following command from within your project directory:
 ```bash
     composer require paparascaldev/sidekick
 ```
@@ -48,13 +48,13 @@ The easiest way to install the package in your laravel app is to run the followi
 ### Configuring the `.env`
 Once Sidekick is installed you need to update your `.env` file with your access tokens.
 
-You only need to specify the token for the provider(s) you will use. 
+You only need to specify the token for the provider(s) you will use.
 
 ```dotenv
-SIDEKICK_OPENAI_TOKEN={API_KEY_HERE} (Recommended)
-SIDEKICK_MISTRAL_TOKEN={API_KEY_HERE} (Optional)
-SIDEKICK_CLAUDE_TOKEN={API_KEY_HERE} (Optional)
-SIDEKICK_COHERE_TOKEN={API_KEY_HERE} (Optional)
+SIDEKICK_OPENAI_TOKEN='{API_KEY_HERE} (Recommended)'
+SIDEKICK_MISTRAL_TOKEN='{API_KEY_HERE} (Optional)'
+SIDEKICK_CLAUDE_TOKEN='{API_KEY_HERE} (Optional)'
+SIDEKICK_COHERE_TOKEN='{API_KEY_HERE} (Optional)'
 ```
 
 #### Where can I get an API key?
@@ -86,7 +86,7 @@ If you would like to use it run the following artisan command to install the pla
 ```
 This will install the routes and views into your application.
 
-After the install you can access the playground at: 
+On completion, you can access the playground at: 
 
 ```
 /sidekick
@@ -117,7 +117,7 @@ I have tested the package using the following models:
 ```command-r-08-2024 command-r-plus-08-2024```
 
 ### Stargazers
-A big shoutout to those who star the repository!
+Thank you to everyone who stars this repository.
 
 [![Stargazers repo roster for @PapaRascal2020/sidekick](https://reporoster.com/stars/dark/notext/PapaRascal2020/sidekick)](https://github.com/PapaRascal2020/sidekick/stargazers)
 
