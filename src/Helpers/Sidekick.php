@@ -10,6 +10,7 @@ if( !function_exists('sidekick') )
      * Creates a new instance of Sidekick
      *
      * @param SidekickDriverInterface $driver
+     * @return SidekickDriverInterface
      */
     function sidekick(SidekickDriverInterface $driver): SidekickDriverInterface
     {
@@ -33,11 +34,12 @@ if( !function_exists('sidekickConversation') )
 if( !function_exists('sidekickUtilities') )
 {
     /**
-    * Creates a new instance of Sidekick
-    *
-    * @param SidekickDriverInterface $driver
-    */
-    function sidekickUtilities(SidekickDriverInterface $driver)
+     * Creates a new instance of Sidekick
+     *
+     * @param SidekickDriverInterface $driver
+     * @return mixed
+     */
+    function sidekickUtilities(SidekickDriverInterface $driver): mixed
     {
         $sidekick = Sidekick::create($driver);
         return $sidekick->utilities();

@@ -2,10 +2,6 @@
 
 namespace PapaRascalDev\Sidekick\Utilities;
 
-use Illuminate\Http\Client\ConnectionException;
-use PapaRascalDev\Sidekick\Drivers\OpenAi;
-use PapaRascalDev\Sidekick\Sidekick;
-
 /****************************************************************
  *                                                              *
  *  OpenAi Helper                                               *

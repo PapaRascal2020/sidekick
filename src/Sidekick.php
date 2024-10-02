@@ -10,7 +10,6 @@ namespace PapaRascalDev\Sidekick;
 
 class Sidekick
 {
-    protected SidekickDriverInterface $sidekickDriver;
 
     /**
      * @param SidekickDriverInterface $sidekickDriver

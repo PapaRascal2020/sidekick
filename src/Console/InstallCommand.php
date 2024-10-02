@@ -28,7 +28,7 @@ class InstallCommand extends Command
      *
      * @return int|null
      */
-    public function handle()
+    public function handle(): ?int
     {
         $fileSystem = new Filesystem();
 
@@ -69,5 +69,7 @@ class InstallCommand extends Command
         $fileSystem->append($webRoutesPath, $routeLink);
 
         $this->components->success("Successfully installed Sidekick Playground");
+
+        return 1;
     }
 }

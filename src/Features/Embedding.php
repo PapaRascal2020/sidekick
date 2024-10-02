@@ -2,6 +2,7 @@
 
 namespace PapaRascalDev\Sidekick\Features;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class Embedding
@@ -22,6 +23,7 @@ class Embedding
      * @param string $model
      * @param string $input
      * @return array
+     * @throws ConnectionException
      */
     public function make(
         string $model,
@@ -39,18 +41,17 @@ class Embedding
      * @param string $model
      * @param string $input
      * @return array
+     * @throws ConnectionException
      */
     public function generate(
         string $model,
         string $input
     ): array
     {
-        $response = Http::withHeaders($this->headers)
+        return Http::withHeaders($this->headers)
             ->post($this->url, [
                 'model' => $model,
                 'input' => $input
             ])->json();
-
-        return $response;
     }
 }

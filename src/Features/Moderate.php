@@ -58,7 +58,7 @@ class Moderate
      * @return array|mixed
      * @throws ConnectionException
      */
-    public function textAndImages (string $text, array $images )
+    public function textAndImages (string $text, array $images ): mixed
     {
         return Http::withHeaders($this->headers)
             ->post($this->url, [

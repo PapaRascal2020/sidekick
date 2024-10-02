@@ -37,7 +37,7 @@ class SidekickConversation
         return $this;
     }
 
-    public function delete ( string $sidekickConversationId )
+    public function delete ( string $sidekickConversationId ): void
     {
         $conversation = SidekickConversationModel::find( $sidekickConversationId );
 
@@ -56,7 +56,7 @@ class SidekickConversation
     }
 
     private function getStreamedResponse ( string $message,
-                                           object|array $allMessages )
+                                           object|array $allMessages ): false|string
     {
         $response =  $this->driver->complete(
             model: $this->model->model,

@@ -4,7 +4,6 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 use Generator;
 use PapaRascalDev\Sidekick\Features\Completion;
-use PapaRascalDev\Sidekick\Features\StreamedCompletion;
 use PapaRascalDev\Sidekick\SidekickDriverInterface;
 use PapaRascalDev\Sidekick\Utilities\Utilities;
 
@@ -43,7 +42,7 @@ class Cohere implements SidekickDriverInterface
      * Message Roles
      *
      * Some AI tools have different naming for
-     * user and bot roles so added this so it
+     * user and bot roles so added this, so it
      * can be specified.
      *
      * @array $messageRoles
@@ -139,13 +138,13 @@ class Cohere implements SidekickDriverInterface
      * @param $response
      * @return mixed
      */
-    public function getResponse($response)
+    public function getResponse($response): mixed
     {
         if( isset($response['message']) ) return $this->getErrorMessage( $response );
         return $response['text'] ?? "";
     }
 
-    private function getResponseStreamed($response)
+    private function getResponseStreamed($response): string
     {
         // Set the headers for a streamed response
         header('HTTP/1.0 200 OK');
@@ -179,7 +178,7 @@ class Cohere implements SidekickDriverInterface
      * @param $response
      * @return array
      */
-    public function getErrorMessage($response)
+    public function getErrorMessage($response): array
     {
         return [
             'driver' => 'Cohere',

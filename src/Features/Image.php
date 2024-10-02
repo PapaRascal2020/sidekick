@@ -2,6 +2,7 @@
 
 namespace PapaRascalDev\Sidekick\Features;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 class Image
@@ -25,6 +26,7 @@ class Image
      * @param int $height
      * @param string $quality
      * @return array
+     * @throws ConnectionException
      */
     public function make(
         string $model,
@@ -47,6 +49,7 @@ class Image
      * @param int $height
      * @param string $quality
      * @return array
+     * @throws ConnectionException
      */
 
     public function generate(

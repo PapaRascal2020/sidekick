@@ -17,7 +17,7 @@ class Audio
     /**
      * Audio()->fromText
      *
-     * Returns audio from a given inpur.
+     * Returns audio from a given input.
      *
      * @param string $model
      * @param string $text

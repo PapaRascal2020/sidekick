@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @method static create(array $array)
+ * @method static find(string $sidekickConversationId)
+ * @property mixed $class
+ * @property mixed $model
+ * @property mixed $system_prompt
+ * @property mixed $max_tokens
+ */
 class SidekickConversation extends Model
 {
     use HasUuids;

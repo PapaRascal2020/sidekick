@@ -4,7 +4,6 @@ namespace PapaRascalDev\Sidekick\Drivers;
 
 use Generator;
 use PapaRascalDev\Sidekick\Features\Completion;
-use PapaRascalDev\Sidekick\Features\StreamedCompletion;
 use PapaRascalDev\Sidekick\SidekickDriverInterface;
 use PapaRascalDev\Sidekick\Utilities\Utilities;
 
@@ -40,7 +39,7 @@ class Claude implements SidekickDriverInterface
      * Message Roles
      *
      * Some AI tools have different naming for
-     * user and bot roles so added this so it
+     * user and bot roles so added this, so it
      * can be specified.
      *
      * @array $messageRoles
@@ -83,7 +82,7 @@ class Claude implements SidekickDriverInterface
                                string $message,
                                array | object $allMessages = [],
                                int $maxTokens = 1024,
-                               bool $stream = false)
+                               bool $stream = false): array|string
     {
 
         $completion = (new Completion(
@@ -133,15 +132,15 @@ class Claude implements SidekickDriverInterface
 
     /**
      * @param $response
-     * @return mixed
+     * @return array|string
      */
-    public function getResponse($response)
+    public function getResponse($response): array|string
     {
         if( $response['type'] === "error" ) return $this->getErrorMessage( $response );
         return $response['content'][0]['text'];
     }
 
-    private function getResponseStreamed($response)
+    private function getResponseStreamed($response): string
     {
         // Set the headers for a streamed response
         header('HTTP/1.0 200 OK');
@@ -175,7 +174,7 @@ class Claude implements SidekickDriverInterface
      * @param $response
      * @return array
      */
-    public function getErrorMessage($response)
+    public function getErrorMessage($response): array
     {
         return [
             'driver' => 'Claude',

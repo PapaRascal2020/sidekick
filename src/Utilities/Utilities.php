@@ -2,6 +2,7 @@
 
 namespace PapaRascalDev\Sidekick\Utilities;
 
+use Exception;
 use PapaRascalDev\Sidekick\Sidekick;
 use PapaRascalDev\Sidekick\SidekickDriverInterface;
 
@@ -16,17 +17,15 @@ use PapaRascalDev\Sidekick\SidekickDriverInterface;
 
 class Utilities
 {
-    protected $sidekick;
+    protected SidekickDriverInterface $sidekick;
     public function __construct(SidekickDriverInterface $driver) {
         $this->sidekick = Sidekick::create(new $driver());
     }
 
     /**
      * @param string $content
-     * @param string $model
      * @param int $maxCharLength
      * @return string
-     * @throws \Exception
      */
     public function summarize (
         string $content,
@@ -44,15 +43,13 @@ class Utilities
 
     /**
      * @param string $text
-     * @param string $model
-     * @return array
-     * @throws \Exception
+     * @return string
      */
     public function extractKeywords(
         string $text,
     ): string {
 
-        return $this->sidekick->complete()->sendMessage(
+        return $this->sidekick->complete(
             model: $this->sidekick->defaultCompleteModel,
             systemPrompt: "Extract important keywords from the following text and separate them by commas:",
             message: $text
@@ -64,7 +61,6 @@ class Utilities
      * @param string $text
      * @param string $targetLanguage
      * @return string
-     * @throws \Exception
      */
     public function translateText(
         string $text,
@@ -83,7 +79,7 @@ class Utilities
      * @param string $prompt
      * @param int $maxTokens
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function generateContent(
         string $prompt,
@@ -102,7 +98,7 @@ class Utilities
      * @param string $data
      * @param string|null $mimeType
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     public function store(string $data, string $mimeType = null): string
     {
@@ -113,7 +109,7 @@ class Utilities
             $data = file_get_contents($data);
         } else {
             if (!$this->isBinary($data)) {
-                throw new \Exception("Cannot create file. Invalid data passed.");
+                throw new Exception("Cannot create file. Invalid data passed.");
             }
         }
 
@@ -169,7 +165,7 @@ class Utilities
     /**
      * @param $mimeType
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     private function getExtensionFromMimeType($mimeType): string
     {
@@ -181,6 +177,6 @@ class Utilities
             'audio/mpeg' => 'mp3'
         ];
 
-        return $mimeTypes[$mimeType] ?? throw new \Exception("Mime-type $mimeType is not supported");
+        return $mimeTypes[$mimeType] ?? throw new Exception("Mime-type $mimeType is not supported");
     }
 }

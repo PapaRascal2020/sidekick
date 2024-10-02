@@ -1,17 +1,20 @@
 <?php
 
+namespace PapaRascalDev\Sidekick\Tests\Unit;
+
+use Illuminate\Http\Client\ConnectionException;
 use PapaRascalDev\Sidekick\Features\Audio;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 class AudioTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
 
+    /**
+     * @throws Exception
+     * @throws ConnectionException
+     */
     public function test_you_can_generate_audio_from_text()
     {
         $model = 'tts-1';

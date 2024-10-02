@@ -54,7 +54,7 @@ class OpenAi implements SidekickDriverInterface
      * Message Roles
      *
      * Some AI tools have different naming for
-     * user and bot roles so added this so it
+     * user and bot roles so added this, so it
      * can be specified.
      *
      * @array $messageRoles
@@ -129,7 +129,7 @@ class OpenAi implements SidekickDriverInterface
                                string $message,
                                array | object $allMessages = [],
                                int $maxTokens = 1024,
-                               bool $stream = false)
+                               bool $stream = false): array|string
     {
 
         $completion = (new Completion(
@@ -186,7 +186,7 @@ class OpenAi implements SidekickDriverInterface
     public function moderate(): Moderate
     {
         return new Moderate(
-            url: "{$this->baseUrl}/moderations",
+            url: "{$this->baseUrl}/moderation's",
             headers: $this->headers
         );
     }
@@ -201,15 +201,15 @@ class OpenAi implements SidekickDriverInterface
 
     /**
      * @param $response
-     * @return mixed
+     * @return string|array
      */
-    private function getResponse($response)
+    private function getResponse($response): string|array
     {
         if( isset( $response['error'] ) ) return $this->getErrorMessage( $response );
         return $response['choices'][0]['message']['content'];
     }
 
-    private function getResponseStreamed($response)
+    private function getResponseStreamed($response): string
     {
         // Set the headers for a streamed response
         header('HTTP/1.0 200 OK');
@@ -243,7 +243,7 @@ class OpenAi implements SidekickDriverInterface
      * @param $response
      * @return array
      */
-    public function getErrorMessage($response)
+    public function getErrorMessage($response): array
     {
         return [
             'driver' => 'OpenAi',

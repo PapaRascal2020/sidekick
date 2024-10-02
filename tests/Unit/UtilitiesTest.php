@@ -5,6 +5,7 @@ use PapaRascalDev\Sidekick\Drivers\OpenAi;
 use PapaRascalDev\Sidekick\Features\Completion;
 use PapaRascalDev\Sidekick\SidekickDriverInterface;
 use PapaRascalDev\Sidekick\Utilities\OpenAiExtras;
+use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
 
 class UtilitiesTest extends TestCase
@@ -12,12 +13,18 @@ class UtilitiesTest extends TestCase
     protected SidekickDriverInterface $sidekickMock;
     protected Completion $completionMock;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->sidekickMock = $this->createMock(OpenAi::class);
         $this->completionMock = $this->createMock(Completion::class);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testSummarize()
     {
         $content = 'Some long content';
@@ -33,6 +40,9 @@ class UtilitiesTest extends TestCase
         $this->assertEquals($expectedResponse, $result);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testExtractKeywords()
     {
         $text = "This is a text with important keywords.";
@@ -47,6 +57,9 @@ class UtilitiesTest extends TestCase
         $this->assertEquals($expectedResponse, $result);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testTranslateText()
     {
         $text = "Hello, world!";
@@ -62,6 +75,10 @@ class UtilitiesTest extends TestCase
         $this->assertEquals($expectedResponse, $result);
     }
 
+    /**
+     * @throws Exception
+     * @throws \Exception
+     */
     public function testGenerateContent()
     {
         $prompt = "Write a story about a brave knight.";

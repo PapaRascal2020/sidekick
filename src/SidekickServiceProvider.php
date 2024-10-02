@@ -2,11 +2,9 @@
 
 namespace PapaRascalDev\Sidekick;
 
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use PapaRascalDev\Sidekick\Console\InstallCommand;
 use PapaRascalDev\Sidekick\Console\RemoveCommand;
-use PapaRascalDev\Sidekick\Models\SidekickConversation as SidekickConversationModel;
 
 /**
  * Sidekick Service Provider

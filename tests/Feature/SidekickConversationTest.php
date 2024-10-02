@@ -2,12 +2,12 @@
 
 namespace PapaRascalDev\Sidekick\Tests\Feature;
 
-use Illuminate\Http\JsonResponse;
 use PapaRascalDev\Sidekick\Drivers\OpenAi;
 use Illuminate\Foundation\Testing\TestCase;
 use PapaRascalDev\Sidekick\SidekickConversation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PapaRascalDev\Sidekick\Models\SidekickConversation as SidekickConversationModel;
+use PHPUnit\Framework\MockObject\Exception;
 
 class SidekickConversationTest extends TestCase
 {
@@ -15,6 +15,9 @@ class SidekickConversationTest extends TestCase
 
     protected SidekickConversation $conversationMock;
 
+    /**
+     * @throws Exception
+     */
     public function setUp(): void
     {
         parent::setUp();
@@ -138,7 +141,7 @@ class SidekickConversationTest extends TestCase
 
         $databaseRec = (new SidekickConversation())->database()->find($this->conversationMock->model->id);
 
-        // Assert that there are both the sent message and response
+        // Assert that we have the user message and the response
         $this->assertCount(2, $databaseRec->messages->toArray());
     }
 }

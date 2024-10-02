@@ -6,7 +6,7 @@ namespace PapaRascalDev\Sidekick;
  * Sidekick Driver interface
  *
  * This enforces the common functions we expect
- * from a AI driver.
+ * from an AI driver.
  *
  */
 

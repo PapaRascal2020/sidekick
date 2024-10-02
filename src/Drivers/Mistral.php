@@ -41,7 +41,7 @@ class Mistral implements SidekickDriverInterface
      * Message Roles
      *
      * Some AI tools have different naming for
-     * user and bot roles so added this so it
+     * user and bot roles so added this, so it
      * can be specified.
      *
      * @array $messageRoles
@@ -151,7 +151,7 @@ class Mistral implements SidekickDriverInterface
         return $response['choices'][0]['message']['content'];
     }
 
-    private function getResponseStreamed($response)
+    private function getResponseStreamed($response): string
     {
         // Set the headers for a streamed response
         header('HTTP/1.0 200 OK');
@@ -185,7 +185,7 @@ class Mistral implements SidekickDriverInterface
      * @param $response
      * @return array
      */
-    public function getErrorMessage($response)
+    public function getErrorMessage($response): array
     {
         return [
             'driver' => 'Mistral',

@@ -2,11 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use \PapaRascalDev\Sidekick\Drivers\OpenAi;
+use PapaRascalDev\Sidekick\Drivers\OpenAi;
 
 Route::post('/sidekick/chat', function (Request $request) {
 
-    // These are the settings from the drop down on the front end.
+    // These are the settings from the drop-down on the front end.
     $config = json_decode($request->get('config'), true);
 
     // This is the system prompt the user wants the AI to use

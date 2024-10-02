@@ -28,7 +28,7 @@ class RemoveCommand extends Command
      *
      * @return int|null
      */
-    public function handle()
+    public function handle(): ?int
     {
         $fileSystem = new Filesystem();
 
@@ -72,6 +72,8 @@ class RemoveCommand extends Command
         $this->components->warn('As we can\'t be sure to remove any user files, the directories remain in resources, please delete if not needed.' );
 
         $this->components->success("Successfully removed Sidekick Playground");
+
+        return 1;
     }
 
     /**
@@ -82,7 +84,7 @@ class RemoveCommand extends Command
      * @param string $viewsPath
      * @return void
      */
-    protected function removeSpecificFiles(Filesystem $fileSystem, string $stubViewsPath, string $viewsPath)
+    protected function removeSpecificFiles(Filesystem $fileSystem, string $stubViewsPath, string $viewsPath): void
     {
         $stubFiles = $fileSystem->allFiles($stubViewsPath);
 
