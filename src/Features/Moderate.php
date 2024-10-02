@@ -69,4 +69,32 @@ class Moderate
                 ]
             ])->json();
     }
+
+    /**
+     * Check Flags
+     *
+     * This will return a boolean based on provided criteria
+     *
+     * @param string $content
+     * @param string $model
+     * @param array $exclusions
+     * @return bool
+     */
+    public function checkFlags (
+        string $content,
+        string $model = 'text-moderation-latest',
+        array  $exclusions = []) : bool
+    {
+        $response = $this->sidekick->moderate()
+            ->text( model: $model,
+                content: $content);
+
+        if(!isset($response['results']['categories'])) return false;
+
+        foreach($response['results']['categories'] as $category => $bool) {
+            if (!in_array($category, $exclusions) && $bool) return true;
+        }
+
+        return false;
+    }
 }

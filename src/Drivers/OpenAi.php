@@ -5,7 +5,7 @@ namespace PapaRascalDev\Sidekick\Drivers;
 use Generator;
 use PapaRascalDev\Sidekick\Features\{Audio, Completion, Embedding, Image, Moderate, Transcribe};
 use PapaRascalDev\Sidekick\SidekickDriverInterface;
-use PapaRascalDev\Sidekick\Utilities\OpenAiExtras;
+use PapaRascalDev\Sidekick\Utilities\Utilities;
 
 /**
  * Supported Models:
@@ -192,11 +192,11 @@ class OpenAi implements SidekickDriverInterface
     }
 
     /**
-     * @return OpenAiExtras
+     * @return Utilities
      */
-    public function utilities(): OpenAiExtras
+    public function utilities(): Utilities
     {
-        return new OpenAiExtras($this);
+        return new Utilities($this);
     }
 
     /**
