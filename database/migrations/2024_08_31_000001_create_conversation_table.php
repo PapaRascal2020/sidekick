@@ -21,7 +21,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('class');
             $table->string('model');
-            $table->string('system_prompt')->nullable();
+            $table->text('system_prompt')->nullable();
             $table->bigInteger('max_tokens');
             $table->timestamps();
         });
