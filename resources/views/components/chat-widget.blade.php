@@ -17,6 +17,8 @@
     $isDark = $theme === 'dark';
 @endphp
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 <div
     x-data="sidekickChat()"
     style="position: fixed; {{ $positionClasses }} z-index: 9999; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;"
@@ -88,7 +90,12 @@
                     ? 'align-self: flex-end; background: {{ $isDark ? '#2d2d5e' : '#4f46e5' }}; color: {{ $isDark ? '#e0e0e0' : 'white' }}; padding: 8px 14px; border-radius: 16px 16px 4px 16px; max-width: 80%; word-wrap: break-word; font-size: 14px;'
                     : 'align-self: flex-start; background: {{ $isDark ? '#2a2a4a' : '#f0f0f0' }}; color: {{ $isDark ? '#e0e0e0' : '#1a1a1a' }}; padding: 8px 14px; border-radius: 16px 16px 16px 4px; max-width: 80%; word-wrap: break-word; font-size: 14px;'"
                 >
-                    <span x-text="msg.content"></span>
+                    <template x-if="msg.role === 'user'">
+                        <span x-text="msg.content"></span>
+                    </template>
+                    <template x-if="msg.role !== 'user'">
+                        <div class="sidekick-markdown" x-html="renderMarkdown(msg.content)"></div>
+                    </template>
                 </div>
             </template>
             <div x-show="loading" style="align-self: flex-start; font-size: 13px; opacity: 0.6;">Thinking...</div>
@@ -136,6 +143,24 @@
     </div>
 </div>
 
+<style>
+.sidekick-markdown { line-height: 1.5; }
+.sidekick-markdown p { margin: 0 0 0.5em 0; }
+.sidekick-markdown p:last-child { margin-bottom: 0; }
+.sidekick-markdown ul, .sidekick-markdown ol { margin: 0.25em 0 0.5em 0; padding-left: 1.25em; }
+.sidekick-markdown li { margin-bottom: 0.15em; }
+.sidekick-markdown code { font-size: 0.85em; background: rgba(0,0,0,0.08); padding: 0.1em 0.35em; border-radius: 3px; }
+.sidekick-markdown pre { margin: 0.5em 0; padding: 0.6em 0.8em; border-radius: 6px; background: rgba(0,0,0,0.08); overflow-x: auto; font-size: 0.8em; }
+.sidekick-markdown pre code { background: none; padding: 0; }
+.sidekick-markdown strong { font-weight: 600; }
+.sidekick-markdown h1, .sidekick-markdown h2, .sidekick-markdown h3 { font-weight: 600; margin: 0.5em 0 0.25em 0; }
+.sidekick-markdown h1 { font-size: 1.1em; }
+.sidekick-markdown h2 { font-size: 1.05em; }
+.sidekick-markdown h3 { font-size: 1em; }
+.sidekick-markdown a { text-decoration: underline; }
+.sidekick-markdown blockquote { border-left: 3px solid rgba(0,0,0,0.15); margin: 0.5em 0; padding-left: 0.75em; opacity: 0.85; }
+</style>
+
 <script>
 function sidekickChat() {
     return {
@@ -144,6 +169,14 @@ function sidekickChat() {
         messages: [],
         loading: false,
         conversationId: null,
+
+        renderMarkdown(text) {
+            if (!text) return '';
+            if (typeof marked !== 'undefined') {
+                return marked.parse(text, { breaks: true });
+            }
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+        },
 
         async send() {
             const text = this.input.trim();
@@ -174,8 +207,8 @@ function sidekickChat() {
 
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                let assistantMessage = { role: 'assistant', content: '' };
-                this.messages.push(assistantMessage);
+                this.messages.push({ role: 'assistant', content: '' });
+                const assistantIndex = this.messages.length - 1;
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -195,7 +228,7 @@ function sidekickChat() {
                                     this.conversationId = parsed.conversation_id;
                                 }
                                 if (parsed.text) {
-                                    assistantMessage.content += parsed.text;
+                                    this.messages[assistantIndex].content += parsed.text;
                                     this.scrollToBottom();
                                 }
                             } catch (e) {}
