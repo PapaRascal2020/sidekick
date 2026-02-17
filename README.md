@@ -344,6 +344,134 @@ $translated = Sidekick::translate('Hello', 'French');
 $keywords = Sidekick::extractKeywords('Some article text...');
 ```
 
+## Knowledge Base / RAG
+
+Sidekick includes a built-in RAG (Retrieval-Augmented Generation) system that lets you store business knowledge and ground AI responses in real data — preventing hallucinations about return policies, pricing, support hours, etc.
+
+### Setup
+
+RAG works out of the box with the default config. The `knowledge` section in `config/sidekick.php` controls embedding provider, chunk sizes, and search settings:
+
+```php
+'knowledge' => [
+    'embedding' => ['provider' => 'openai', 'model' => 'text-embedding-3-small'],
+    'chunking'  => ['chunk_size' => 2000, 'overlap' => 200],
+    'search'    => ['default_limit' => 5, 'min_score' => 0.3, 'driver' => VectorSearch::class],
+],
+```
+
+### Ingesting Content
+
+```php
+use PapaRascalDev\Sidekick\Facades\Sidekick;
+
+// Ingest text
+Sidekick::knowledge('my-kb')
+    ->ingest('Our return policy is 30 days with receipt.', 'faq');
+
+// Ingest a file
+Sidekick::knowledge('my-kb')
+    ->ingestFile('/path/to/faq.md');
+
+// Ingest multiple texts
+Sidekick::knowledge('my-kb')
+    ->ingestMany(['Text one...', 'Text two...'], 'bulk-source');
+
+// Use a different embedding provider
+Sidekick::knowledge('my-kb')
+    ->using('mistral', 'mistral-embed')
+    ->ingest('Content here...');
+```
+
+Or use the Artisan command:
+
+```bash
+# Ingest a file
+php artisan sidekick:ingest my-kb --file=/path/to/faq.md
+
+# Ingest inline text
+php artisan sidekick:ingest my-kb --text="Return policy is 30 days."
+
+# Ingest a directory of .txt/.md/.html/.csv files
+php artisan sidekick:ingest my-kb --dir=/path/to/docs
+
+# Purge and re-ingest
+php artisan sidekick:ingest my-kb --purge --dir=/path/to/docs
+```
+
+### Searching
+
+```php
+// Search for relevant chunks
+$results = Sidekick::knowledge('my-kb')->search('What is your return policy?');
+
+foreach ($results as $chunk) {
+    echo $chunk->content;       // The text content
+    echo $chunk->similarity;    // Cosine similarity score
+    echo $chunk->source;        // Source label
+}
+```
+
+### Ask (Search + Generate)
+
+```php
+// One-liner: search KB and generate a grounded answer
+$answer = Sidekick::knowledge('my-kb')->ask('What is your return policy?');
+```
+
+### Widget Integration
+
+Connect a knowledge base to the chat widget so it answers from your data:
+
+```dotenv
+SIDEKICK_WIDGET_ENABLED=true
+SIDEKICK_WIDGET_KNOWLEDGE_BASE=my-kb
+```
+
+Or in `config/sidekick.php`:
+
+```php
+'widget' => [
+    'knowledge_base'    => 'my-kb',
+    'rag_context_chunks' => 5,
+    'rag_min_score'      => 0.3,
+],
+```
+
+When configured, the widget will automatically search the knowledge base for each user message and inject relevant context into the system prompt. If RAG fails (API error, empty KB), it falls back gracefully to the original system prompt.
+
+### Custom Search Drivers
+
+The default `VectorSearch` driver computes cosine similarity in PHP. For production workloads, you can swap in a custom driver (e.g., pgvector, Pinecone):
+
+```php
+// Implement the SearchesKnowledge contract
+use PapaRascalDev\Sidekick\Contracts\SearchesKnowledge;
+
+class PgVectorSearch implements SearchesKnowledge
+{
+    public function search(KnowledgeBase $kb, array $queryEmbedding, int $limit = 5, float $minScore = 0.3): Collection
+    {
+        // Your pgvector implementation
+    }
+}
+
+// Register in config/sidekick.php
+'knowledge' => [
+    'search' => ['driver' => \App\Search\PgVectorSearch::class],
+],
+```
+
+### Managing Knowledge Bases
+
+```php
+$kb = Sidekick::knowledge('my-kb');
+
+$kb->chunkCount();           // Number of chunks stored
+$kb->purge();                // Delete all chunks
+$kb->getKnowledgeBase();     // Get the Eloquent model
+```
+
 ## Chat Widget
 
 Sidekick ships with an Alpine.js-powered chat widget you can embed in any Blade template. No Livewire required.

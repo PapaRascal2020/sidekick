@@ -100,6 +100,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Knowledge Base / RAG
+    |--------------------------------------------------------------------------
+    |
+    | Settings for the retrieval-augmented generation (RAG) knowledge base.
+    |
+    */
+
+    'knowledge' => [
+        'embedding' => [
+            'provider' => 'openai',
+            'model' => 'text-embedding-3-small',
+        ],
+        'chunking' => [
+            'chunk_size' => 2000,
+            'overlap' => 200,
+        ],
+        'search' => [
+            'default_limit' => 5,
+            'min_score' => 0.3,
+            'driver' => \PapaRascalDev\Sidekick\Knowledge\VectorSearch::class,
+        ],
+        'rag_prompt_template' => null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Chat Widget
     |--------------------------------------------------------------------------
     |
@@ -115,6 +141,9 @@ return [
         'model' => env('SIDEKICK_WIDGET_MODEL', 'gpt-4o'),
         'system_prompt' => env('SIDEKICK_WIDGET_SYSTEM_PROMPT', 'You are a helpful assistant.'),
         'max_tokens' => 1024,
+        'knowledge_base' => env('SIDEKICK_WIDGET_KNOWLEDGE_BASE', null),
+        'rag_context_chunks' => 5,
+        'rag_min_score' => 0.3,
     ],
 
     /*

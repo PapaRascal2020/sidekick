@@ -8,6 +8,7 @@ use PapaRascalDev\Sidekick\Builders\AudioBuilder;
 use PapaRascalDev\Sidekick\Builders\ConversationBuilder;
 use PapaRascalDev\Sidekick\Builders\EmbeddingBuilder;
 use PapaRascalDev\Sidekick\Builders\ImageBuilder;
+use PapaRascalDev\Sidekick\Builders\KnowledgeBuilder;
 use PapaRascalDev\Sidekick\Builders\ModerationBuilder;
 use PapaRascalDev\Sidekick\Builders\TextBuilder;
 use PapaRascalDev\Sidekick\Builders\TranscriptionBuilder;
@@ -108,6 +109,11 @@ class SidekickManager extends Manager
     public function conversation(): ConversationBuilder
     {
         return new ConversationBuilder($this);
+    }
+
+    public function knowledge(string $name): KnowledgeBuilder
+    {
+        return (new KnowledgeBuilder($this))->for($name);
     }
 
     // ----- Utility Methods -----

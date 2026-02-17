@@ -3,7 +3,9 @@
 namespace PapaRascalDev\Sidekick;
 
 use Illuminate\Support\ServiceProvider;
+use PapaRascalDev\Sidekick\Console\IngestCommand;
 use PapaRascalDev\Sidekick\Console\InstallCommand;
+use PapaRascalDev\Sidekick\Contracts\SearchesKnowledge;
 
 class SidekickServiceProvider extends ServiceProvider
 {
@@ -16,6 +18,12 @@ class SidekickServiceProvider extends ServiceProvider
         });
 
         $this->app->alias('sidekick', SidekickManager::class);
+
+        $this->app->bind(SearchesKnowledge::class, function ($app) {
+            $driver = config('sidekick.knowledge.search.driver', Knowledge\VectorSearch::class);
+
+            return new $driver;
+        });
     }
 
     public function boot(): void
@@ -31,6 +39,7 @@ class SidekickServiceProvider extends ServiceProvider
 
             $this->commands([
                 InstallCommand::class,
+                IngestCommand::class,
             ]);
         }
 
