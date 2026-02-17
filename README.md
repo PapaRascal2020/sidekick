@@ -14,6 +14,11 @@
 
 A fluent Laravel package for integrating with **OpenAI**, **Anthropic Claude**, **Mistral**, and **Cohere** AI services. Features a modern builder API, typed responses, streaming support, database-backed conversations, an embeddable chat widget, and first-class testing support.
 
+## Requirements
+
+- PHP 8.2+
+- Laravel 10, 11, or 12
+
 ## Installation
 
 ```bash
@@ -31,7 +36,7 @@ php artisan migrate
 
 ## Configuration
 
-Add your API keys to `.env`:
+Add your API keys to `.env` (only add the providers you use):
 
 ```dotenv
 SIDEKICK_OPENAI_TOKEN=your-openai-key
@@ -40,25 +45,105 @@ SIDEKICK_MISTRAL_TOKEN=your-mistral-key
 SIDEKICK_COHERE_TOKEN=your-cohere-key
 ```
 
-The config file (`config/sidekick.php`) lets you set default providers, models, HTTP timeouts, and widget settings.
+Publish and customize the config file:
+
+```bash
+php artisan vendor:publish --tag=sidekick-config
+```
+
+### Config File Overview
+
+The `config/sidekick.php` file includes:
+
+```php
+return [
+    // Default provider when none specified
+    'default' => env('SIDEKICK_DEFAULT_PROVIDER', 'openai'),
+
+    // Default provider + model per capability
+    'defaults' => [
+        'text'          => ['provider' => 'openai', 'model' => 'gpt-4o'],
+        'image'         => ['provider' => 'openai', 'model' => 'dall-e-3'],
+        'audio'         => ['provider' => 'openai', 'model' => 'tts-1'],
+        'transcription' => ['provider' => 'openai', 'model' => 'whisper-1'],
+        'embedding'     => ['provider' => 'openai', 'model' => 'text-embedding-3-small'],
+        'moderation'    => ['provider' => 'openai', 'model' => 'text-moderation-latest'],
+    ],
+
+    // Provider API keys and base URLs
+    'providers' => [
+        'openai'    => ['api_key' => env('SIDEKICK_OPENAI_TOKEN'), 'base_url' => '...'],
+        'anthropic' => ['api_key' => env('SIDEKICK_CLAUDE_TOKEN'), 'base_url' => '...'],
+        'mistral'   => ['api_key' => env('SIDEKICK_MISTRAL_TOKEN'), 'base_url' => '...'],
+        'cohere'    => ['api_key' => env('SIDEKICK_COHERE_TOKEN'), 'base_url' => '...'],
+    ],
+
+    // Register custom providers
+    'custom_providers' => [],
+
+    // Chat widget settings
+    'widget' => [
+        'enabled'       => env('SIDEKICK_WIDGET_ENABLED', false),
+        'route_prefix'  => 'sidekick',
+        'middleware'     => ['web'],
+        'provider'      => env('SIDEKICK_WIDGET_PROVIDER', 'openai'),
+        'model'         => env('SIDEKICK_WIDGET_MODEL', 'gpt-4o'),
+        'system_prompt' => env('SIDEKICK_WIDGET_SYSTEM_PROMPT', 'You are a helpful assistant.'),
+        'max_tokens'    => 1024,
+    ],
+
+    // HTTP timeout and retry settings
+    'http' => [
+        'timeout'         => env('SIDEKICK_HTTP_TIMEOUT', 30),
+        'connect_timeout' => env('SIDEKICK_HTTP_CONNECT_TIMEOUT', 10),
+        'retry'           => ['times' => 0, 'sleep' => 100],
+    ],
+];
+```
 
 ## Quick Start
 
-### Text Generation
+You can use the `Sidekick` facade or the `sidekick()` helper function:
 
 ```php
 use PapaRascalDev\Sidekick\Facades\Sidekick;
 
+// Using the facade
+$response = Sidekick::text()->withPrompt('Hello')->generate();
+
+// Using the helper function
+$response = sidekick()->text()->withPrompt('Hello')->generate();
+```
+
+### Text Generation
+
+```php
 $response = Sidekick::text()
     ->using('openai', 'gpt-4o')
     ->withSystemPrompt('You are a helpful assistant.')
     ->withPrompt('What is Laravel?')
     ->generate();
 
-echo $response->text;           // "Laravel is a PHP web framework..."
+echo $response->text;                // "Laravel is a PHP web framework..."
 echo $response->usage->totalTokens;  // 150
 echo $response->meta->latencyMs;     // 523.4
+echo $response->finishReason;        // "stop"
+echo (string) $response;             // Same as $response->text
 ```
+
+**All TextBuilder methods:**
+
+| Method | Description |
+|--------|-------------|
+| `using(string $provider, ?string $model)` | Set provider and model |
+| `withPrompt(string $prompt)` | Add a user message |
+| `withSystemPrompt(string $prompt)` | Set the system prompt |
+| `withMessages(array $messages)` | Set the full message history (array of `Message` objects or arrays) |
+| `addMessage(Role $role, string $content)` | Append a single message with a specific role |
+| `withMaxTokens(int $maxTokens)` | Set max tokens (default: 1024) |
+| `withTemperature(float $temp)` | Set temperature (default: 1.0) |
+| `generate(): TextResponse` | Execute and return a `TextResponse` |
+| `stream(): StreamResponse` | Execute and return a streamable `StreamResponse` |
 
 ### Streaming
 
@@ -73,6 +158,9 @@ foreach ($stream as $chunk) {
     echo $chunk;
 }
 
+// Get the full buffered text after iteration
+$fullText = $stream->text();
+
 // Or return as an SSE response from a controller
 return $stream->toResponse();
 ```
@@ -84,15 +172,35 @@ return $stream->toResponse();
 $convo = Sidekick::conversation()
     ->using('openai', 'gpt-4o')
     ->withSystemPrompt('You are a travel advisor.')
+    ->withMaxTokens(2048)
     ->begin();
 
 $response = $convo->send('I want to visit Japan.');
 echo $response->text;
 
+// Get the conversation ID to resume later
+$conversationId = $convo->getConversation()->id;
+
 // Resume later
 $convo = Sidekick::conversation()->resume($conversationId);
 $response = $convo->send('What about accommodation?');
+
+// Delete a conversation
+$convo->delete();
 ```
+
+**All ConversationBuilder methods:**
+
+| Method | Description |
+|--------|-------------|
+| `using(string $provider, ?string $model)` | Set provider and model |
+| `withSystemPrompt(string $prompt)` | Set the system prompt |
+| `withMaxTokens(int $maxTokens)` | Set max tokens (default: 1024) |
+| `begin(): self` | Start a new conversation (persisted to DB) |
+| `resume(string $id): self` | Resume an existing conversation by UUID |
+| `send(string $message): TextResponse` | Send a message and get a response |
+| `delete(): bool` | Delete the conversation and its messages |
+| `getConversation(): ?Conversation` | Get the underlying Eloquent model |
 
 ### Image Generation
 
@@ -101,10 +209,25 @@ $response = Sidekick::image()
     ->using('openai', 'dall-e-3')
     ->withPrompt('A sunset over mountains')
     ->withSize('1024x1024')
+    ->withQuality('hd')
+    ->count(2)
     ->generate();
 
-echo $response->url(); // First image URL
+echo $response->url();           // First image URL
+echo $response->urls;            // Array of all URLs
+echo $response->revisedPrompt;   // DALL-E's revised prompt (if any)
 ```
+
+**All ImageBuilder methods:**
+
+| Method | Description |
+|--------|-------------|
+| `using(string $provider, ?string $model)` | Set provider and model |
+| `withPrompt(string $prompt)` | Set the image prompt |
+| `withSize(string $size)` | Set dimensions (default: `1024x1024`) |
+| `withQuality(string $quality)` | Set quality: `standard` or `hd` (default: `standard`) |
+| `count(int $count)` | Number of images to generate (default: 1) |
+| `generate(): ImageResponse` | Execute and return an `ImageResponse` |
 
 ### Audio (Text-to-Speech)
 
@@ -113,10 +236,23 @@ $response = Sidekick::audio()
     ->using('openai', 'tts-1')
     ->withText('Hello, welcome to Sidekick!')
     ->withVoice('nova')
+    ->withFormat('mp3')
     ->generate();
 
-$response->save('audio/welcome.mp3');
+$response->save('audio/welcome.mp3');       // Save to default disk
+$response->save('audio/welcome.mp3', 's3'); // Save to specific disk
+echo $response->format;                     // "mp3"
 ```
+
+**All AudioBuilder methods:**
+
+| Method | Description |
+|--------|-------------|
+| `using(string $provider, ?string $model)` | Set provider and model |
+| `withText(string $text)` | Set the text to speak |
+| `withVoice(string $voice)` | Set the voice (default: `alloy`) |
+| `withFormat(string $format)` | Set audio format (default: `mp3`) |
+| `generate(): AudioResponse` | Execute and return an `AudioResponse` |
 
 ### Transcription
 
@@ -124,10 +260,23 @@ $response->save('audio/welcome.mp3');
 $response = Sidekick::transcription()
     ->using('openai', 'whisper-1')
     ->withFile('/path/to/audio.mp3')
+    ->withLanguage('en')
     ->generate();
 
-echo $response->text;
+echo $response->text;       // Transcribed text
+echo $response->language;   // "en"
+echo $response->duration;   // Duration in seconds
+echo (string) $response;    // Same as $response->text
 ```
+
+**All TranscriptionBuilder methods:**
+
+| Method | Description |
+|--------|-------------|
+| `using(string $provider, ?string $model)` | Set provider and model |
+| `withFile(string $filePath)` | Path to the audio file |
+| `withLanguage(string $language)` | Hint the language (optional) |
+| `generate(): TranscriptionResponse` | Execute and return a `TranscriptionResponse` |
 
 ### Embeddings
 
@@ -137,8 +286,18 @@ $response = Sidekick::embedding()
     ->withInput('Laravel is a great framework')
     ->generate();
 
-$vector = $response->vector(); // First embedding vector
+$vector = $response->vector();      // First embedding vector (array of floats)
+$all = $response->embeddings;       // All embedding vectors
+echo $response->usage->totalTokens; // Token usage
 ```
+
+**All EmbeddingBuilder methods:**
+
+| Method | Description |
+|--------|-------------|
+| `using(string $provider, ?string $model)` | Set provider and model |
+| `withInput(string\|array $input)` | Text or array of texts to embed |
+| `generate(): EmbeddingResponse` | Execute and return an `EmbeddingResponse` |
 
 ### Moderation
 
@@ -155,24 +314,39 @@ if ($response->isFlagged()) {
 if ($response->isFlaggedFor('violence')) {
     // Specifically flagged for violence
 }
+
+// Inspect all categories
+foreach ($response->categories as $category) {
+    echo "{$category->category}: flagged={$category->flagged}, score={$category->score}\n";
+}
 ```
+
+**All ModerationBuilder methods:**
+
+| Method | Description |
+|--------|-------------|
+| `using(string $provider, ?string $model)` | Set provider and model |
+| `withContent(string $content)` | Text to moderate |
+| `generate(): ModerationResponse` | Execute and return a `ModerationResponse` |
 
 ### Utility Methods
 
-```php
-// Summarize text
-$summary = Sidekick::summarize('Long text here...');
+Convenience methods that use the default text provider:
 
-// Translate text
+```php
+// Summarize text (returns string)
+$summary = Sidekick::summarize('Long text here...', maxLength: 500);
+
+// Translate text (returns string)
 $translated = Sidekick::translate('Hello', 'French');
 
-// Extract keywords
+// Extract keywords (returns string, comma-separated)
 $keywords = Sidekick::extractKeywords('Some article text...');
 ```
 
 ## Chat Widget
 
-Sidekick ships with an Alpine.js-powered chat widget you can embed in any Blade template.
+Sidekick ships with an Alpine.js-powered chat widget you can embed in any Blade template. No Livewire required.
 
 ### Enable the widget
 
@@ -182,6 +356,7 @@ In your `.env`:
 SIDEKICK_WIDGET_ENABLED=true
 SIDEKICK_WIDGET_PROVIDER=openai
 SIDEKICK_WIDGET_MODEL=gpt-4o
+SIDEKICK_WIDGET_SYSTEM_PROMPT="You are a helpful assistant."
 ```
 
 ### Add to a Blade template
@@ -192,8 +367,19 @@ SIDEKICK_WIDGET_MODEL=gpt-4o
     theme="dark"
     title="AI Assistant"
     placeholder="Ask me anything..."
+    button-label="Chat"
 />
 ```
+
+**Props:**
+
+| Prop | Default | Options |
+|------|---------|---------|
+| `position` | `bottom-right` | `bottom-right`, `bottom-left`, `top-right`, `top-left` |
+| `theme` | `light` | `light`, `dark` |
+| `title` | `Chat Assistant` | Any string |
+| `placeholder` | `Type a message...` | Any string |
+| `button-label` | `Chat` | Any string |
 
 Make sure your layout includes Alpine.js and a CSRF meta tag:
 
@@ -218,7 +404,7 @@ Sidekick::registerProvider('ollama', function ($app) {
 ],
 ```
 
-Custom providers should implement `ProviderContract` and the relevant capability interfaces (`ProvidesText`, `ProvidesImages`, etc.).
+Custom providers should implement `ProviderContract` and the relevant capability interfaces (`ProvidesText`, `ProvidesImages`, `ProvidesAudio`, `ProvidesTranscription`, `ProvidesEmbeddings`, `ProvidesModeration`).
 
 ## Testing
 
@@ -242,7 +428,9 @@ public function test_my_feature(): void
 
     // ... run your code that uses Sidekick ...
 
-    $fake->assertTextGenerated();
+    $fake->assertTextGenerated();       // At least one text generation
+    $fake->assertTextGenerated(2);      // Exactly 2 text generations
+    $fake->assertNothingSent();         // No API calls were made
     $fake->assertProviderUsed('openai');
     $fake->assertModelUsed('gpt-4o');
     $fake->assertPromptContains('expected text');
@@ -251,14 +439,16 @@ public function test_my_feature(): void
 
 ## Events
 
-Sidekick dispatches events you can listen to:
+Sidekick dispatches Laravel events you can listen to:
 
-| Event | When |
-|-------|------|
-| `RequestSending` | Before a request is sent to the provider |
-| `ResponseReceived` | After a successful response |
-| `StreamChunkReceived` | For each streaming chunk |
-| `RequestFailed` | When a request fails |
+| Event | Properties | When |
+|-------|-----------|------|
+| `RequestSending` | `provider`, `model`, `capability` | Before a request is sent |
+| `ResponseReceived` | `provider`, `model`, `capability`, `response` | After a successful response |
+| `StreamChunkReceived` | `provider`, `model`, `chunk` | For each streaming chunk |
+| `RequestFailed` | `provider`, `model`, `capability`, `exception` | When a request fails |
+
+All events are in the `PapaRascalDev\Sidekick\Events` namespace.
 
 ## Provider Capabilities
 
@@ -266,7 +456,7 @@ Sidekick dispatches events you can listen to:
 |-----------|--------|-----------|---------|--------|
 | Text | Yes | Yes | Yes | Yes |
 | Image | Yes | - | - | - |
-| Audio | Yes | - | - | - |
+| Audio (TTS) | Yes | - | - | - |
 | Transcription | Yes | - | - | - |
 | Embedding | Yes | - | Yes | - |
 | Moderation | Yes | - | - | - |
