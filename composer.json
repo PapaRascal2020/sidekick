@@ -1,7 +1,7 @@
 {
     "name": "paparascaldev/sidekick",
-    "description": "Laravel's AI sidekick, work with various AI services with a uniformed syntax",
-    "type": "laravel-plugin",
+    "description": "A fluent Laravel package for integrating with OpenAI, Anthropic Claude, Mistral, and Cohere AI services",
+    "type": "library",
     "license": "GPL-2.0-or-later",
     "autoload": {
         "files": [
@@ -21,20 +21,27 @@
             "name": "Ashley Johnson"
         }
     ],
-    "minimum-stability": "beta",
+    "minimum-stability": "stable",
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "ext-json": "*",
-        "laravel/framework": "^9.0|^10.0|^11.0|^12.0"
+        "laravel/framework": "^10.0|^11.0|^12.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5.13"
+        "orchestra/testbench": "^8.0|^9.0|^10.0",
+        "phpunit/phpunit": "^10.0|^11.0"
     },
     "extra": {
         "laravel": {
             "providers": [
-                "\\PapaRascalDev\\Sidekick\\SidekickServiceProvider"
-            ]
+                "PapaRascalDev\\Sidekick\\SidekickServiceProvider"
+            ],
+            "aliases": {
+                "Sidekick": "PapaRascalDev\\Sidekick\\Facades\\Sidekick"
+            }
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }
