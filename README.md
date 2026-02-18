@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-<img src="https://hopeful-mist.lon1.cdn.digitaloceanspaces.com/sidekick_new.png" alt="Sidekick" />
+<img src="sidekick.png" alt="Sidekick" width="200" />
 </p>
 
 # Sidekick v2.0
