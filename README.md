@@ -10,6 +10,10 @@
 <img src="sidekick.png" alt="Sidekick" width="200" />
 </p>
 
+<p align="center">
+<a href="https://sidekickforlaravel.com"><img alt="Full Documentation" src="https://img.shields.io/badge/Full%20Documentation-sidekickforlaravel.com-ef4444?style=for-the-badge"/></a>
+</p>
+
 # Sidekick v2.0
 
 A fluent Laravel package for integrating with **OpenAI**, **Anthropic Claude**, **Mistral**, and **Cohere** AI services. Features a modern builder API, typed responses, streaming support, database-backed conversations, an embeddable chat widget, and first-class testing support.
@@ -598,7 +602,13 @@ All events are in the `PapaRascalDev\Sidekick\Events` namespace.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+Contributions are welcome! Whether it's bug reports, feature requests, documentation improvements, or code — we'd love your help.
+
+- **Report a bug or request a feature**: [Open an issue](https://github.com/PapaRascal2020/sidekick/issues)
+- **Submit code**: Fork the repo, create a branch, and [open a pull request](https://github.com/PapaRascal2020/sidekick/pulls)
+- **Questions or ideas**: [Start a discussion](https://github.com/PapaRascal2020/sidekick/discussions)
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide (forking, branching, PR process, coding standards).
 
 ## License
 
