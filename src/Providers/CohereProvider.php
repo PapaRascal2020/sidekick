@@ -6,6 +6,7 @@ use Generator;
 use Illuminate\Http\Client\PendingRequest;
 use PapaRascalDev\Sidekick\Contracts\ProvidesText;
 use PapaRascalDev\Sidekick\Enums\Capability;
+use PapaRascalDev\Sidekick\Exceptions\SidekickException;
 use PapaRascalDev\Sidekick\Responses\TextResponse;
 use PapaRascalDev\Sidekick\ValueObjects\Message;
 use PapaRascalDev\Sidekick\ValueObjects\Meta;
@@ -37,8 +38,12 @@ class CohereProvider extends AbstractProvider implements ProvidesText
         return null;
     }
 
-    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0): TextResponse
+    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0, array $tools = []): TextResponse
     {
+        if ($tools !== []) {
+            throw new SidekickException('Tool calling is not yet supported for the Cohere provider. Use OpenAI, Anthropic, or Mistral for tools.');
+        }
+
         $payload = $this->buildPayload($model, $messages, $systemPrompt, $maxTokens, $temperature);
         $startTime = microtime(true);
 
@@ -75,6 +80,11 @@ class CohereProvider extends AbstractProvider implements ProvidesText
         $payload['stream'] = true;
 
         return $this->streamPost('/chat', $payload);
+    }
+
+    public function toolResultMessages(TextResponse $response, array $results): array
+    {
+        throw new SidekickException('Tool calling is not yet supported for the Cohere provider.');
     }
 
     private function buildPayload(string $model, array $messages, ?string $systemPrompt, int $maxTokens, float $temperature): array

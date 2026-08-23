@@ -14,6 +14,8 @@ use PapaRascalDev\Sidekick\Responses\StreamResponse;
 use PapaRascalDev\Sidekick\Responses\TextResponse;
 use PapaRascalDev\Sidekick\SidekickManager;
 use PapaRascalDev\Sidekick\ValueObjects\Message;
+use PapaRascalDev\Sidekick\ValueObjects\Tool;
+use PapaRascalDev\Sidekick\ValueObjects\ToolCall;
 
 class TextBuilder
 {
@@ -23,6 +25,11 @@ class TextBuilder
     private array $messages = [];
     private int $maxTokens = 1024;
     private float $temperature = 1.0;
+
+    /** @var Tool[] */
+    private array $tools = [];
+
+    private int $maxToolCalls = 5;
 
     public function __construct(
         private readonly SidekickManager $manager,
@@ -87,29 +94,120 @@ class TextBuilder
         return $this;
     }
 
+    /**
+     * @param  array<int, Tool|array>  $tools
+     */
+    public function withTools(array $tools): self
+    {
+        foreach ($tools as $tool) {
+            $this->tools[] = $tool instanceof Tool
+                ? $tool
+                : Tool::make(
+                    name: $tool['name'],
+                    description: $tool['description'] ?? '',
+                    parameters: $tool['parameters'] ?? [],
+                );
+        }
+
+        return $this;
+    }
+
+    public function withTool(Tool $tool): self
+    {
+        $this->tools[] = $tool;
+
+        return $this;
+    }
+
+    /**
+     * Maximum number of automatic tool-execution rounds before returning control to the caller.
+     */
+    public function withMaxToolCalls(int $maxToolCalls): self
+    {
+        $this->maxToolCalls = $maxToolCalls;
+
+        return $this;
+    }
+
     public function generate(): TextResponse
     {
         $provider = $this->resolveProvider();
 
-        event(new RequestSending($this->provider, $this->model, Capability::Text));
+        $messages = $this->messages;
+        $toolMap = $this->toolMap();
+        $steps = 0;
 
-        try {
-            $response = $provider->generateText(
-                model: $this->model,
-                messages: $this->messages,
-                systemPrompt: $this->systemPrompt,
-                maxTokens: $this->maxTokens,
-                temperature: $this->temperature,
-            );
+        while (true) {
+            event(new RequestSending($this->provider, $this->model, Capability::Text));
 
-            event(new ResponseReceived($this->provider, $this->model, Capability::Text, $response));
+            try {
+                $response = $provider->generateText(
+                    model: $this->model,
+                    messages: $messages,
+                    systemPrompt: $this->systemPrompt,
+                    maxTokens: $this->maxTokens,
+                    temperature: $this->temperature,
+                    tools: array_values($this->tools),
+                );
 
-            return $response;
-        } catch (\Throwable $e) {
-            event(new RequestFailed($this->provider, $this->model, Capability::Text, $e));
+                event(new ResponseReceived($this->provider, $this->model, Capability::Text, $response));
+            } catch (\Throwable $e) {
+                event(new RequestFailed($this->provider, $this->model, Capability::Text, $e));
 
-            throw $e;
+                throw $e;
+            }
+
+            // No tools configured, or the model returned a final answer: we are done.
+            if ($this->tools === [] || ! $response->hasToolCalls()) {
+                return $response;
+            }
+
+            // Hand control back to the caller if we hit the ceiling or a tool has no handler.
+            if ($steps >= $this->maxToolCalls || ! $this->canHandle($response->toolCalls, $toolMap)) {
+                return $response;
+            }
+
+            $results = [];
+            foreach ($response->toolCalls as $call) {
+                $results[] = [
+                    'id' => $call->id,
+                    'name' => $call->name,
+                    'output' => $toolMap[$call->name]->execute($call->arguments),
+                ];
+            }
+
+            $messages = array_merge($messages, $provider->toolResultMessages($response, $results));
+            $steps++;
         }
+    }
+
+    /**
+     * @return array<string, Tool>
+     */
+    private function toolMap(): array
+    {
+        $map = [];
+
+        foreach ($this->tools as $tool) {
+            $map[$tool->name] = $tool;
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param  ToolCall[]  $toolCalls
+     * @param  array<string, Tool>  $toolMap
+     */
+    private function canHandle(array $toolCalls, array $toolMap): bool
+    {
+        foreach ($toolCalls as $call) {
+            if (! isset($toolMap[$call->name]) || ! $toolMap[$call->name]->hasHandler()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function stream(): StreamResponse

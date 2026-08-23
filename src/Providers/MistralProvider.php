@@ -7,6 +7,7 @@ use Illuminate\Http\Client\PendingRequest;
 use PapaRascalDev\Sidekick\Contracts\ProvidesEmbeddings;
 use PapaRascalDev\Sidekick\Contracts\ProvidesText;
 use PapaRascalDev\Sidekick\Enums\Capability;
+use PapaRascalDev\Sidekick\Providers\Concerns\HandlesOpenAiTools;
 use PapaRascalDev\Sidekick\Responses\EmbeddingResponse;
 use PapaRascalDev\Sidekick\Responses\TextResponse;
 use PapaRascalDev\Sidekick\ValueObjects\Message;
@@ -15,6 +16,8 @@ use PapaRascalDev\Sidekick\ValueObjects\Usage;
 
 class MistralProvider extends AbstractProvider implements ProvidesText, ProvidesEmbeddings
 {
+    use HandlesOpenAiTools;
+
     public function name(): string
     {
         return 'mistral';
@@ -35,9 +38,14 @@ class MistralProvider extends AbstractProvider implements ProvidesText, Provides
         return $data['choices'][0]['delta']['content'] ?? null;
     }
 
-    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0): TextResponse
+    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0, array $tools = []): TextResponse
     {
         $payload = $this->buildChatPayload($model, $messages, $systemPrompt, $maxTokens, $temperature);
+
+        if ($tools !== []) {
+            $payload['tools'] = $this->formatTools($tools);
+        }
+
         $startTime = microtime(true);
 
         $data = $this->post('/chat/completions', $payload);
@@ -54,7 +62,13 @@ class MistralProvider extends AbstractProvider implements ProvidesText, Provides
                 latencyMs: $latency,
             ),
             finishReason: $data['choices'][0]['finish_reason'] ?? null,
+            toolCalls: $this->parseToolCalls($data),
         );
+    }
+
+    public function toolResultMessages(TextResponse $response, array $results): array
+    {
+        return $this->openAiToolResultMessages($response, $results, includeName: true);
     }
 
     public function streamText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0): Generator

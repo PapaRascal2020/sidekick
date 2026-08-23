@@ -7,6 +7,7 @@ use PapaRascalDev\Sidekick\Responses\StreamResponse;
 use PapaRascalDev\Sidekick\Responses\TextResponse;
 use PapaRascalDev\Sidekick\ValueObjects\Message;
 use PapaRascalDev\Sidekick\ValueObjects\Meta;
+use PapaRascalDev\Sidekick\ValueObjects\Tool;
 use PapaRascalDev\Sidekick\ValueObjects\Usage;
 
 class FakeTextBuilder
@@ -17,6 +18,8 @@ class FakeTextBuilder
     private array $messages = [];
     private int $maxTokens = 1024;
     private float $temperature = 1.0;
+    private array $tools = [];
+    private int $maxToolCalls = 5;
 
     public function __construct(
         private readonly SidekickFake $fake,
@@ -72,6 +75,35 @@ class FakeTextBuilder
         return $this;
     }
 
+    public function withTools(array $tools): self
+    {
+        foreach ($tools as $tool) {
+            $this->tools[] = $tool instanceof Tool
+                ? $tool
+                : Tool::make(
+                    name: $tool['name'],
+                    description: $tool['description'] ?? '',
+                    parameters: $tool['parameters'] ?? [],
+                );
+        }
+
+        return $this;
+    }
+
+    public function withTool(Tool $tool): self
+    {
+        $this->tools[] = $tool;
+
+        return $this;
+    }
+
+    public function withMaxToolCalls(int $maxToolCalls): self
+    {
+        $this->maxToolCalls = $maxToolCalls;
+
+        return $this;
+    }
+
     public function generate(): TextResponse
     {
         $lastMessage = end($this->messages);
@@ -84,6 +116,7 @@ class FakeTextBuilder
             'prompt' => $prompt,
             'system_prompt' => $this->systemPrompt,
             'max_tokens' => $this->maxTokens,
+            'tools' => array_map(fn (Tool $tool) => $tool->name, $this->tools),
         ]);
 
         $response = $this->fake->nextResponse();
