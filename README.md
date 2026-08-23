@@ -14,7 +14,7 @@
 <a href="https://sidekickforlaravel.com"><img alt="Full Documentation" src="https://img.shields.io/badge/Full%20Documentation-sidekickforlaravel.com-ef4444?style=for-the-badge"/></a>
 </p>
 
-# Sidekick v2.0
+# Sidekick v2.1
 
 A fluent Laravel package for integrating with **OpenAI**, **Anthropic Claude**, **Mistral**, and **Cohere** AI services. Features a modern builder API, typed responses, streaming support, tool calling, structured output, database-backed conversations, an embeddable chat widget, and first-class testing support.
 
