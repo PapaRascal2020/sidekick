@@ -10,6 +10,7 @@ use PapaRascalDev\Sidekick\Exceptions\SidekickException;
 use PapaRascalDev\Sidekick\Responses\TextResponse;
 use PapaRascalDev\Sidekick\ValueObjects\Message;
 use PapaRascalDev\Sidekick\ValueObjects\Meta;
+use PapaRascalDev\Sidekick\ValueObjects\Schema;
 use PapaRascalDev\Sidekick\ValueObjects\Usage;
 
 class CohereProvider extends AbstractProvider implements ProvidesText
@@ -38,10 +39,14 @@ class CohereProvider extends AbstractProvider implements ProvidesText
         return null;
     }
 
-    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0, array $tools = []): TextResponse
+    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0, array $tools = [], ?Schema $schema = null): TextResponse
     {
         if ($tools !== []) {
             throw new SidekickException('Tool calling is not yet supported for the Cohere provider. Use OpenAI, Anthropic, or Mistral for tools.');
+        }
+
+        if ($schema !== null) {
+            throw new SidekickException('Structured output is not yet supported for the Cohere provider. Use OpenAI, Anthropic, or Mistral for structured output.');
         }
 
         $payload = $this->buildPayload($model, $messages, $systemPrompt, $maxTokens, $temperature);

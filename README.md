@@ -16,7 +16,7 @@
 
 # Sidekick v2.0
 
-A fluent Laravel package for integrating with **OpenAI**, **Anthropic Claude**, **Mistral**, and **Cohere** AI services. Features a modern builder API, typed responses, streaming support, tool calling, database-backed conversations, an embeddable chat widget, and first-class testing support.
+A fluent Laravel package for integrating with **OpenAI**, **Anthropic Claude**, **Mistral**, and **Cohere** AI services. Features a modern builder API, typed responses, streaming support, tool calling, structured output, database-backed conversations, an embeddable chat widget, and first-class testing support.
 
 ## Requirements
 
@@ -250,6 +250,52 @@ Sidekick::text()
 | `withMaxToolCalls(int $max)` | Max automatic tool rounds (default: 5) |
 
 `Tool::make()` accepts `name`, `description`, `parameters` (a JSON Schema object), and an optional `handler` callable. Cohere does not support tool calling yet and throws a clear exception if tools are passed.
+
+### Structured Output
+
+Get typed, validated JSON back from the model instead of free text. Pass a JSON Schema and Sidekick decodes the response onto `TextResponse::$structured`.
+
+Supported on OpenAI, Anthropic, and Mistral.
+
+```php
+$response = Sidekick::text()
+    ->using('openai', 'gpt-4o')
+    ->withPrompt('Extract the person: John Doe, age 42, lives in London.')
+    ->withSchema([
+        'type' => 'object',
+        'properties' => [
+            'name' => ['type' => 'string'],
+            'age'  => ['type' => 'integer'],
+            'city' => ['type' => 'string'],
+        ],
+        'required' => ['name', 'age', 'city'],
+        'additionalProperties' => false,
+    ])
+    ->generate();
+
+$response->structured;      // ['name' => 'John Doe', 'age' => 42, 'city' => 'London']
+$response->hasStructured(); // true
+```
+
+By default Sidekick asks for a strict schema (name `response`, `strict` true). On OpenAI and Mistral, strict mode requires every object to set `additionalProperties: false` and to list all of its keys in `required`. Pass a custom name or relax strict mode when you need to:
+
+```php
+use PapaRascalDev\Sidekick\ValueObjects\Schema;
+
+// Inline
+->withSchema($schema, name: 'person', strict: false)
+
+// Or with a Schema object
+->withSchema(Schema::make($schema, name: 'person', strict: false))
+```
+
+**How each provider does it:** OpenAI and Mistral use the native `json_schema` response format. Anthropic has no native equivalent, so Sidekick forces a single tool whose input matches your schema and reads the structured result back from it. Either way you get the same decoded array on `$response->structured`. Cohere is not supported yet and throws a clear exception.
+
+**Structured methods:**
+
+| Method | Description |
+|--------|-------------|
+| `withSchema(array\|Schema $schema, string $name = 'response', bool $strict = true)` | Ask the model for JSON matching a JSON Schema |
 
 ### Conversations (with DB persistence)
 
@@ -670,6 +716,7 @@ All events are in the `PapaRascalDev\Sidekick\Events` namespace.
 |-----------|--------|-----------|---------|--------|
 | Text | Yes | Yes | Yes | Yes |
 | Tool calling | Yes | Yes | Yes | - |
+| Structured output | Yes | Yes | Yes | - |
 | Image | Yes | - | - | - |
 | Audio (TTS) | Yes | - | - | - |
 | Transcription | Yes | - | - | - |

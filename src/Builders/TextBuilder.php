@@ -14,6 +14,7 @@ use PapaRascalDev\Sidekick\Responses\StreamResponse;
 use PapaRascalDev\Sidekick\Responses\TextResponse;
 use PapaRascalDev\Sidekick\SidekickManager;
 use PapaRascalDev\Sidekick\ValueObjects\Message;
+use PapaRascalDev\Sidekick\ValueObjects\Schema;
 use PapaRascalDev\Sidekick\ValueObjects\Tool;
 use PapaRascalDev\Sidekick\ValueObjects\ToolCall;
 
@@ -30,6 +31,8 @@ class TextBuilder
     private array $tools = [];
 
     private int $maxToolCalls = 5;
+
+    private ?Schema $schema = null;
 
     public function __construct(
         private readonly SidekickManager $manager,
@@ -129,6 +132,21 @@ class TextBuilder
         return $this;
     }
 
+    /**
+     * Ask the model to return JSON conforming to the given JSON Schema.
+     * The decoded result is available on TextResponse::$structured.
+     *
+     * @param  array<string, mixed>|Schema  $schema
+     */
+    public function withSchema(array|Schema $schema, string $name = 'response', bool $strict = true): self
+    {
+        $this->schema = $schema instanceof Schema
+            ? $schema
+            : new Schema($schema, $name, $strict);
+
+        return $this;
+    }
+
     public function generate(): TextResponse
     {
         $provider = $this->resolveProvider();
@@ -148,6 +166,7 @@ class TextBuilder
                     maxTokens: $this->maxTokens,
                     temperature: $this->temperature,
                     tools: array_values($this->tools),
+                    schema: $this->schema,
                 );
 
                 event(new ResponseReceived($this->provider, $this->model, Capability::Text, $response));
