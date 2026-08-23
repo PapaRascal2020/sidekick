@@ -11,6 +11,7 @@ use PapaRascalDev\Sidekick\Contracts\ProvidesModeration;
 use PapaRascalDev\Sidekick\Contracts\ProvidesText;
 use PapaRascalDev\Sidekick\Contracts\ProvidesTranscription;
 use PapaRascalDev\Sidekick\Enums\Capability;
+use PapaRascalDev\Sidekick\Providers\Concerns\HandlesOpenAiTools;
 use PapaRascalDev\Sidekick\Responses\AudioResponse;
 use PapaRascalDev\Sidekick\Responses\EmbeddingResponse;
 use PapaRascalDev\Sidekick\Responses\ImageResponse;
@@ -24,6 +25,8 @@ use PapaRascalDev\Sidekick\ValueObjects\Usage;
 
 class OpenAiProvider extends AbstractProvider implements ProvidesText, ProvidesImages, ProvidesAudio, ProvidesTranscription, ProvidesEmbeddings, ProvidesModeration
 {
+    use HandlesOpenAiTools;
+
     public function name(): string
     {
         return 'openai';
@@ -51,9 +54,14 @@ class OpenAiProvider extends AbstractProvider implements ProvidesText, ProvidesI
         return $data['choices'][0]['delta']['content'] ?? null;
     }
 
-    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0): TextResponse
+    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0, array $tools = []): TextResponse
     {
         $payload = $this->buildChatPayload($model, $messages, $systemPrompt, $maxTokens, $temperature);
+
+        if ($tools !== []) {
+            $payload['tools'] = $this->formatTools($tools);
+        }
+
         $startTime = microtime(true);
 
         $data = $this->post('/chat/completions', $payload);
@@ -70,7 +78,13 @@ class OpenAiProvider extends AbstractProvider implements ProvidesText, ProvidesI
                 latencyMs: $latency,
             ),
             finishReason: $data['choices'][0]['finish_reason'] ?? null,
+            toolCalls: $this->parseToolCalls($data),
         );
+    }
+
+    public function toolResultMessages(TextResponse $response, array $results): array
+    {
+        return $this->openAiToolResultMessages($response, $results);
     }
 
     public function streamText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0): Generator

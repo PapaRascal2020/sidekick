@@ -16,7 +16,7 @@
 
 # Sidekick v2.0
 
-A fluent Laravel package for integrating with **OpenAI**, **Anthropic Claude**, **Mistral**, and **Cohere** AI services. Features a modern builder API, typed responses, streaming support, database-backed conversations, an embeddable chat widget, and first-class testing support.
+A fluent Laravel package for integrating with **OpenAI**, **Anthropic Claude**, **Mistral**, and **Cohere** AI services. Features a modern builder API, typed responses, streaming support, tool calling, database-backed conversations, an embeddable chat widget, and first-class testing support.
 
 ## Requirements
 
@@ -168,6 +168,88 @@ $fullText = $stream->text();
 // Or return as an SSE response from a controller
 return $stream->toResponse();
 ```
+
+### Tool Calling (Function Calling)
+
+Give the model tools it can call, and Sidekick runs them for you. Define a tool with a name, a description, a JSON Schema for its arguments, and a handler. Sidekick sends the tool to the model, executes your handler when the model asks for it, feeds the result back, and loops until the model returns a final answer.
+
+Supported on OpenAI, Anthropic, and Mistral.
+
+```php
+use PapaRascalDev\Sidekick\Facades\Sidekick;
+use PapaRascalDev\Sidekick\ValueObjects\Tool;
+
+$response = Sidekick::text()
+    ->using('openai', 'gpt-4o')
+    ->withPrompt('What is the weather in London?')
+    ->withTools([
+        Tool::make(
+            name: 'get_weather',
+            description: 'Get the current weather for a city.',
+            parameters: [
+                'type' => 'object',
+                'properties' => [
+                    'city' => ['type' => 'string', 'description' => 'The city name'],
+                ],
+                'required' => ['city'],
+            ],
+            handler: fn (array $args) => "Sunny, 22C in {$args['city']}",
+        ),
+    ])
+    ->generate();
+
+echo $response->text; // "It is currently sunny and 22C in London."
+```
+
+The handler receives the model's arguments as an array and returns a string (arrays and objects are JSON encoded automatically). The result is sent back to the model, so the final `$response->text` is the answer after the tool has run.
+
+#### Manual handling
+
+If a tool has no handler, Sidekick stops after the model asks for it and hands the calls back to you to run yourself:
+
+```php
+$response = Sidekick::text()
+    ->using('openai', 'gpt-4o')
+    ->withPrompt('What is the weather in London?')
+    ->withTools([
+        Tool::make('get_weather', 'Get the current weather for a city.', [
+            'type' => 'object',
+            'properties' => ['city' => ['type' => 'string']],
+        ]),
+    ])
+    ->generate();
+
+if ($response->hasToolCalls()) {
+    foreach ($response->toolCalls as $call) {
+        echo $call->name;               // "get_weather"
+        echo $call->arguments['city'];  // "London"
+        echo $call->id;                 // provider tool call id
+    }
+}
+```
+
+#### Limiting tool rounds
+
+By default Sidekick runs up to 5 automatic tool rounds before returning control. Adjust with `withMaxToolCalls()`:
+
+```php
+Sidekick::text()
+    ->using('anthropic', 'claude-sonnet-4-20250514')
+    ->withPrompt('Plan my trip.')
+    ->withTools([/* ... */])
+    ->withMaxToolCalls(10)
+    ->generate();
+```
+
+**Tool methods:**
+
+| Method | Description |
+|--------|-------------|
+| `withTools(array $tools)` | Add tools (`Tool` objects or arrays) |
+| `withTool(Tool $tool)` | Add a single tool |
+| `withMaxToolCalls(int $max)` | Max automatic tool rounds (default: 5) |
+
+`Tool::make()` accepts `name`, `description`, `parameters` (a JSON Schema object), and an optional `handler` callable. Cohere does not support tool calling yet and throws a clear exception if tools are passed.
 
 ### Conversations (with DB persistence)
 
@@ -587,6 +669,7 @@ All events are in the `PapaRascalDev\Sidekick\Events` namespace.
 | Capability | OpenAI | Anthropic | Mistral | Cohere |
 |-----------|--------|-----------|---------|--------|
 | Text | Yes | Yes | Yes | Yes |
+| Tool calling | Yes | Yes | Yes | - |
 | Image | Yes | - | - | - |
 | Audio (TTS) | Yes | - | - | - |
 | Transcription | Yes | - | - | - |
