@@ -7,6 +7,7 @@ use PapaRascalDev\Sidekick\Responses\StreamResponse;
 use PapaRascalDev\Sidekick\Responses\TextResponse;
 use PapaRascalDev\Sidekick\ValueObjects\Message;
 use PapaRascalDev\Sidekick\ValueObjects\Meta;
+use PapaRascalDev\Sidekick\ValueObjects\Schema;
 use PapaRascalDev\Sidekick\ValueObjects\Tool;
 use PapaRascalDev\Sidekick\ValueObjects\Usage;
 
@@ -20,6 +21,7 @@ class FakeTextBuilder
     private float $temperature = 1.0;
     private array $tools = [];
     private int $maxToolCalls = 5;
+    private ?Schema $schema = null;
 
     public function __construct(
         private readonly SidekickFake $fake,
@@ -100,6 +102,15 @@ class FakeTextBuilder
     public function withMaxToolCalls(int $maxToolCalls): self
     {
         $this->maxToolCalls = $maxToolCalls;
+
+        return $this;
+    }
+
+    public function withSchema(array|Schema $schema, string $name = 'response', bool $strict = true): self
+    {
+        $this->schema = $schema instanceof Schema
+            ? $schema
+            : new Schema($schema, $name, $strict);
 
         return $this;
     }

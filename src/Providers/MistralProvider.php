@@ -7,15 +7,18 @@ use Illuminate\Http\Client\PendingRequest;
 use PapaRascalDev\Sidekick\Contracts\ProvidesEmbeddings;
 use PapaRascalDev\Sidekick\Contracts\ProvidesText;
 use PapaRascalDev\Sidekick\Enums\Capability;
+use PapaRascalDev\Sidekick\Providers\Concerns\FormatsJsonSchema;
 use PapaRascalDev\Sidekick\Providers\Concerns\HandlesOpenAiTools;
 use PapaRascalDev\Sidekick\Responses\EmbeddingResponse;
 use PapaRascalDev\Sidekick\Responses\TextResponse;
 use PapaRascalDev\Sidekick\ValueObjects\Message;
 use PapaRascalDev\Sidekick\ValueObjects\Meta;
+use PapaRascalDev\Sidekick\ValueObjects\Schema;
 use PapaRascalDev\Sidekick\ValueObjects\Usage;
 
 class MistralProvider extends AbstractProvider implements ProvidesText, ProvidesEmbeddings
 {
+    use FormatsJsonSchema;
     use HandlesOpenAiTools;
 
     public function name(): string
@@ -38,12 +41,16 @@ class MistralProvider extends AbstractProvider implements ProvidesText, Provides
         return $data['choices'][0]['delta']['content'] ?? null;
     }
 
-    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0, array $tools = []): TextResponse
+    public function generateText(string $model, array $messages, ?string $systemPrompt = null, int $maxTokens = 1024, float $temperature = 1.0, array $tools = [], ?Schema $schema = null): TextResponse
     {
         $payload = $this->buildChatPayload($model, $messages, $systemPrompt, $maxTokens, $temperature);
 
         if ($tools !== []) {
             $payload['tools'] = $this->formatTools($tools);
+        }
+
+        if ($schema !== null) {
+            $payload['response_format'] = $this->jsonSchemaResponseFormat($schema);
         }
 
         $startTime = microtime(true);
@@ -52,8 +59,10 @@ class MistralProvider extends AbstractProvider implements ProvidesText, Provides
 
         $latency = (microtime(true) - $startTime) * 1000;
 
+        $content = $data['choices'][0]['message']['content'] ?? '';
+
         return new TextResponse(
-            text: $data['choices'][0]['message']['content'] ?? '',
+            text: $content,
             usage: Usage::fromArray($data['usage'] ?? []),
             meta: new Meta(
                 provider: $this->name(),
@@ -63,6 +72,7 @@ class MistralProvider extends AbstractProvider implements ProvidesText, Provides
             ),
             finishReason: $data['choices'][0]['finish_reason'] ?? null,
             toolCalls: $this->parseToolCalls($data),
+            structured: $schema !== null ? $this->decodeStructured($content) : null,
         );
     }
 
