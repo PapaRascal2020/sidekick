@@ -8,4 +8,5 @@ enum Provider: string
     case Anthropic = 'anthropic';
     case Mistral = 'mistral';
     case Cohere = 'cohere';
+    case Groq = 'groq';
 }
