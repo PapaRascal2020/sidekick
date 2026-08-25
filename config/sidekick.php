@@ -65,6 +65,12 @@ return [
             'base_url' => env('SIDEKICK_OPENAI_BASE_URL', 'https://api.openai.com/v1'),
         ],
 
+        // Groq is OpenAI-compatible; it reuses the OpenAI request format via GroqProvider.
+        'groq' => [
+            'api_key' => env('SIDEKICK_GROQ_TOKEN'),
+            'base_url' => env('SIDEKICK_GROQ_BASE_URL', 'https://api.groq.com/openai/v1'),
+        ],
+
         'anthropic' => [
             'api_key' => env('SIDEKICK_CLAUDE_TOKEN'),
             'base_url' => env('SIDEKICK_ANTHROPIC_BASE_URL', 'https://api.anthropic.com/v1'),

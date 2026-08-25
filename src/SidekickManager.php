@@ -16,6 +16,7 @@ use PapaRascalDev\Sidekick\Contracts\ProviderContract;
 use PapaRascalDev\Sidekick\Exceptions\ConfigurationException;
 use PapaRascalDev\Sidekick\Providers\AnthropicProvider;
 use PapaRascalDev\Sidekick\Providers\CohereProvider;
+use PapaRascalDev\Sidekick\Providers\GroqProvider;
 use PapaRascalDev\Sidekick\Providers\MistralProvider;
 use PapaRascalDev\Sidekick\Providers\OpenAiProvider;
 use PapaRascalDev\Sidekick\Testing\SidekickFake;
@@ -67,6 +68,7 @@ class SidekickManager extends Manager
 
         return match ($name) {
             'openai' => new OpenAiProvider($config),
+            'groq' => new GroqProvider($config),
             'anthropic' => new AnthropicProvider($config),
             'mistral' => new MistralProvider($config),
             'cohere' => new CohereProvider($config),
@@ -186,5 +188,10 @@ class SidekickManager extends Manager
     public function createCohereDriver(): CohereProvider
     {
         return new CohereProvider($this->config->get('sidekick.providers.cohere', []));
+    }
+
+    public function createGroqDriver(): GroqProvider
+    {
+        return new GroqProvider($this->config->get('sidekick.providers.groq', []));
     }
 }
